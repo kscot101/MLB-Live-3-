@@ -3,35 +3,439 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MLB Dashboard</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #0b1220;
-      color: white;
-      padding: 16px;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 4px;
-    }
-
-    .card {
-      background: #111827;
-      border-radius: 18px;
-      padding: 16px;
-      margin-top: 16px;
-    }
+    body{font-family:Arial,sans-serif;margin:0;background:#0b1220;color:white;padding:16px}
+    h1{font-size:30px;margin-bottom:4px}
+    h2{margin-top:30px;font-size:22px}
+    .sub,.key{color:#cbd5e1}
+    .key{background:#111827;border-radius:14px;padding:12px;margin:16px 0;font-size:14px;line-height:1.5}
+    .card{border-radius:18px;padding:14px;margin-bottom:12px}
+    summary{list-style:none;cursor:pointer}
+    summary::-webkit-details-marker{display:none}
+    .main-row{display:flex;gap:12px;align-items:center}
+    .logo{width:42px;height:42px;background:white;border-radius:50%;padding:5px;object-fit:contain}
+    .num-wrap{min-width:62px;text-align:center}
+    .num{font-size:36px;font-weight:bold;line-height:1}
+    .stat-label{font-size:12px;font-weight:bold;color:#facc15;margin-top:3px}
+    .name{font-size:20px;font-weight:bold}
+    .team,.game,.status,.label,.extra{color:#e2e8f0;margin-top:3px}
+    .extra{font-weight:bold;color:#fde68a}
+    .label{font-size:12px;text-transform:uppercase;color:#facc15;letter-spacing:.05em}
+    .ks{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+    .hits{background:linear-gradient(135deg,#065f46,#10b981)}
+    .hot{background:linear-gradient(135deg,#be123c,#f97316)}
+    .streak{background:linear-gradient(135deg,#9333ea,#ec4899)}
+    .hotpitcher{background:linear-gradient(135deg,#0f766e,#06b6d4)}
+    .prevks{background:linear-gradient(135deg,#7c2d12,#ea580c)}
+    .prevhits{background:linear-gradient(135deg,#4c1d95,#8b5cf6)}
+    .leader{border:2px solid #facc15;transform:scale(1.02)}
+    .elite{box-shadow:0 0 14px rgba(250,204,21,.95)}
+    .good{box-shadow:0 0 10px rgba(34,197,94,.8)}
+    .bad{box-shadow:0 0 12px rgba(239,68,68,.9)}
+    .details{margin-top:14px;background:rgba(15,23,42,.55);border-radius:14px;padding:10px}
+    .player-row{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.12);color:#f8fafc}
+    .player-row:last-child{border-bottom:none}
+    .loading{background:#111827;border-radius:18px;padding:14px;color:#cbd5e1}
+    .refresh{font-size:12px;color:#94a3b8;margin-top:6px}
   </style>
 </head>
 
 <body>
-  <h1>⚾ MLB Dashboard</h1>
-  <p>If you can see this, your GitHub webpage is working.</p>
+  <h1>⚾ Live MLB Leaders</h1>
+  <div class="sub">Live sections update every 30 seconds</div>
+  <div id="lastUpdated" class="refresh">Loading...</div>
 
-  <div class="card">
-    Dashboard test card
+  <div class="key">
+    🔵 Live pitcher strikeouts<br>
+    🟢 Live player hits<br>
+    🔥 Hot hitters: 5+ hits over last 4 completed game days<br>
+    💗 Streaking hitters: 3+ game hit streak<br>
+    🌊 Hot pitchers: 8+ Ks in each of last 2 games and playing today<br>
+    🟠 Previous game day: teams struck out most<br>
+    🟣 Previous game day: teams with most hits
   </div>
+
+  <h2>🔥 Live Strikeouts</h2><div id="liveKs" class="loading">Loading...</div>
+  <h2>💥 Live Hits</h2><div id="liveHits" class="loading">Loading...</div>
+  <h2>🔥 Hot Hitters</h2><div id="hotHitters" class="loading">Loading...</div>
+  <h2>💗 Streaking Hitters</h2><div id="streakingHitters" class="loading">Loading...</div>
+  <h2>🌊 Hot Pitchers</h2><div id="hotPitchers" class="loading">Loading...</div>
+  <h2>📊 Previous Game Day — Teams Struck Out Most</h2><div id="prevKs" class="loading">Loading...</div>
+  <h2>📈 Previous Game Day — Teams With Most Hits</h2><div id="prevHits" class="loading">Loading...</div>
+
+<script>
+const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
+
+async function getJson(url){
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(url + sep + "_=" + Date.now(), {cache:"no-store"});
+  if(!res.ok) throw new Error("Fetch failed: " + url);
+  return await res.json();
+}
+
+function gameLabel(game){
+  return game.teams.away.team.name + " @ " + game.teams.home.team.name;
+}
+
+function statLabel(label){
+  if(label.includes("Ks") || label.includes("Strikeout") || label.includes("Pitcher")) return "Ks";
+  if(label.includes("Streaking")) return "Games";
+  return "Hits";
+}
+
+function tier(label,value){
+  value = Number(value);
+  if(label.includes("Pitcher Ks") && value >= 10) return "elite";
+  if(label.includes("Pitcher Ks") && value >= 7) return "good";
+  if(label.includes("Live Player Hits") && value >= 4) return "elite";
+  if(label.includes("Live Player Hits") && value >= 3) return "good";
+  if(label.includes("Hot Hitter Hits") && value >= 8) return "elite";
+  if(label.includes("Hot Hitter Hits") && value >= 5) return "good";
+  if(label.includes("Streaking") && value >= 4) return "elite";
+  if(label.includes("Streaking") && value >= 3) return "good";
+  if(label.includes("Hot Pitcher") && value >= 18) return "elite";
+  if(label.includes("Hot Pitcher") && value >= 16) return "good";
+  if(label.includes("Team Ks") && value >= 7) return "bad";
+  if(label.includes("Team Hits") && value >= 12) return "elite";
+  if(label.includes("Team Hits") && value >= 9) return "good";
+  return "";
+}
+
+function makeCard(row,label,colorClass,detailsHtml){
+  const value = Number(row.value || 0);
+  const extra = row.extra ? '<div class="extra">' + row.extra + '</div>' : "";
+  const icon = label.includes("Hot Pitcher") ? " 🌊" :
+               label.includes("Streaking") ? " 💗" :
+               label.includes("Hot Hitter") ? " 🔥" :
+               label.includes("Team Ks") && value >= 7 ? " 🔥" : "";
+
+  const top =
+    '<div class="main-row">' +
+      '<img class="logo" src="' + logo(row.teamId) + '">' +
+      '<div class="num-wrap">' +
+        '<div class="num">' + (row.value || "-") + '</div>' +
+        '<div class="stat-label">' + statLabel(label) + '</div>' +
+      '</div>' +
+      '<div class="info">' +
+        '<div class="name">' + row.name + icon + '</div>' +
+        '<div class="team">' + (row.team || "") + '</div>' +
+        '<div class="game">' + (row.game || "") + '</div>' +
+        '<div class="status">' + (row.status || "") + '</div>' +
+        extra +
+        '<div class="label">' + label + (detailsHtml ? " · tap to expand" : "") + '</div>' +
+      '</div>' +
+    '</div>';
+
+  if(detailsHtml){
+    return '<details class="card ' + colorClass + ' ' + tier(label,row.value) + (row.leader ? ' leader' : '') + '">' +
+      '<summary>' + top + '</summary>' +
+      '<div class="details">' + detailsHtml + '</div>' +
+    '</details>';
+  }
+
+  return '<div class="card ' + colorClass + ' ' + tier(label,row.value) + (row.leader ? ' leader' : '') + '">' + top + '</div>';
+}
+
+function render(id,rows,label,colorClass,detailsType){
+  rows = rows.slice(0,5);
+
+  if(!rows.length){
+    document.getElementById(id).innerHTML = '<div class="card ' + colorClass + '">No data right now.</div>';
+    return;
+  }
+
+  rows[0].leader = true;
+
+  document.getElementById(id).innerHTML = rows.map(row => {
+    let details = "";
+
+    if(detailsType === "players" && row.players){
+      details = row.players.map(p =>
+        '<div class="player-row"><span>' + p.name + '</span><strong>' + p.hits + ' H</strong></div>'
+      ).join("");
+    }
+
+    if(detailsType === "logs" && row.logs){
+      details = row.logs.map(g =>
+        '<div class="player-row"><span>' + g.date + " · " + g.game + '</span><strong>' + g.hits + ' H</strong></div>'
+      ).join("");
+    }
+
+    if(detailsType === "pitcherlogs" && row.logs){
+      details = row.logs.map(g =>
+        '<div class="player-row"><span>' + g.date + " · " + g.opponent + '</span><strong>' + g.ks + ' K</strong></div>'
+      ).join("");
+    }
+
+    return makeCard(row,label,colorClass,details);
+  }).join("");
+}
+
+function liveStatus(live){
+  const state = live.gameData.status.detailedState || "Live";
+  const line = live.liveData.linescore || {};
+  if(line.currentInningOrdinal && line.inningState){
+    return state + " · " + line.inningState + " " + line.currentInningOrdinal;
+  }
+  return state;
+}
+
+async function loadLiveStats(){
+  const today = new Date().toISOString().split("T")[0];
+  const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today);
+
+  let liveGames = [], liveKs = [], liveHits = [];
+
+  (schedule.dates || []).forEach(date => {
+    date.games.forEach(game => {
+      if(game.status.abstractGameState === "Live") liveGames.push(game);
+    });
+  });
+
+  for(const game of liveGames){
+    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+
+    const awayTeam = live.gameData.teams.away;
+    const homeTeam = live.gameData.teams.home;
+    const gameText = awayTeam.name + " @ " + homeTeam.name;
+    const statusText = liveStatus(live);
+
+    ["away","home"].forEach(side => {
+      const team = side === "away" ? awayTeam : homeTeam;
+      const players = live.liveData.boxscore.teams[side].players || {};
+
+      Object.values(players).forEach(player => {
+        const pitching = player.stats && player.stats.pitching;
+        const batting = player.stats && player.stats.batting;
+
+        if(pitching && Number(pitching.strikeOuts || 0) > 0){
+          liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,team:team.name,game:gameText,status:statusText,teamId:team.id});
+        }
+
+        if(batting && Number(batting.hits || 0) > 0){
+          liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,team:team.name,game:gameText,status:statusText,teamId:team.id});
+        }
+      });
+    });
+  }
+
+  liveKs.sort((a,b)=>b.value-a.value);
+  liveHits.sort((a,b)=>b.value-a.value);
+
+  render("liveKs",liveKs,"Pitcher Ks","ks",null);
+  render("liveHits",liveHits,"Live Player Hits","hits",null);
+
+  document.getElementById("lastUpdated").innerText =
+    "Last live update: " + new Date().toLocaleTimeString() + " · Live games: " + liveGames.length;
+}
+
+async function findPreviousCompletedGameDay(){
+  for(let i=1;i<=10;i++){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const dateString = d.toISOString().split("T")[0];
+    const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + dateString);
+
+    let finals = [];
+    (schedule.dates || []).forEach(date => {
+      date.games.forEach(game => {
+        if(game.status.abstractGameState === "Final") finals.push(game);
+      });
+    });
+
+    if(finals.length) return {dateString, games: finals};
+  }
+  return {dateString:"", games:[]};
+}
+
+async function loadPreviousGameDayStats(){
+  const previous = await findPreviousCompletedGameDay();
+  let prevKs = [], prevHits = [];
+
+  for(const game of previous.games){
+    const box = await getJson("https://statsapi.mlb.com/api/v1/game/" + game.gamePk + "/boxscore");
+
+    ["away","home"].forEach(side => {
+      const team = game.teams[side].team;
+      const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
+      const battingStats = box.teams[side].teamStats.batting;
+
+      const teamKs = Number(battingStats.strikeOuts || 0);
+      const teamHits = Number(battingStats.hits || 0);
+
+      let players = [];
+      Object.values(box.teams[side].players || {}).forEach(player => {
+        const batting = player.stats && player.stats.batting;
+        if(batting && Number(batting.hits || 0) > 0){
+          players.push({name:player.person.fullName,hits:Number(batting.hits||0)});
+        }
+      });
+
+      players.sort((a,b)=>b.hits-a.hits);
+
+      prevKs.push({value:teamKs,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,extra:teamKs+" team strikeouts"});
+      prevHits.push({value:teamHits,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,extra:"",players});
+    });
+  }
+
+  prevKs.sort((a,b)=>b.value-a.value);
+  prevHits.sort((a,b)=>b.value-a.value);
+
+  render("prevKs",prevKs,"Team Ks","prevks",null);
+  render("prevHits",prevHits,"Team Hits","prevhits","players");
+}
+
+async function loadHotHitters(){
+  let days = [], hotMap = {}, appearanceMap = {};
+
+  for(let i=1;i<=14 && days.length<4;i++){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const dateString = d.toISOString().split("T")[0];
+
+    const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + dateString);
+    let finals = [];
+
+    (schedule.dates || []).forEach(date => {
+      date.games.forEach(game => {
+        if(game.status.abstractGameState === "Final") finals.push(game);
+      });
+    });
+
+    if(!finals.length) continue;
+    days.push(dateString);
+
+    for(const game of finals){
+      const box = await getJson("https://statsapi.mlb.com/api/v1/game/" + game.gamePk + "/boxscore");
+
+      ["away","home"].forEach(side => {
+        const team = game.teams[side].team;
+
+        Object.values(box.teams[side].players || {}).forEach(player => {
+          const batting = player.stats && player.stats.batting;
+          if(!batting) return;
+
+          const hits = Number(batting.hits || 0);
+          const atBats = Number(batting.atBats || 0);
+          const plateAppearances = Number(batting.plateAppearances || 0);
+          if(atBats <= 0 && plateAppearances <= 0) return;
+
+          const id = player.person.id;
+
+          if(!hotMap[id]){
+            hotMap[id] = {value:0,name:player.person.fullName,team:team.name,game:"Last 4 completed game days",status:"",teamId:team.id,logs:[]};
+          }
+
+          hotMap[id].value += hits;
+          hotMap[id].logs.push({date:dateString,game:gameLabel(game),hits});
+
+          if(!appearanceMap[id]){
+            appearanceMap[id] = {name:player.person.fullName,team:team.name,teamId:team.id,logsByDate:{}};
+          }
+
+          appearanceMap[id].logsByDate[dateString] = {date:dateString,game:gameLabel(game),hits};
+        });
+      });
+    }
+  }
+
+  const hotHitters = Object.values(hotMap).filter(h=>h.value>=5).sort((a,b)=>b.value-a.value);
+
+  let streakingHitters = [];
+  Object.values(appearanceMap).forEach(player => {
+    let streak = 0, logs = [];
+
+    for(const day of days){
+      const log = player.logsByDate[day];
+      if(!log) continue;
+      if(log.hits > 0){ streak++; logs.push(log); }
+      else break;
+    }
+
+    if(streak >= 3){
+      streakingHitters.push({value:streak,name:player.name,team:player.team,game:"Hit in "+streak+" straight completed games",status:"",teamId:player.teamId,logs});
+    }
+  });
+
+  streakingHitters.sort((a,b)=>b.value-a.value);
+
+  render("hotHitters",hotHitters,"Hot Hitter Hits","hot","logs");
+  render("streakingHitters",streakingHitters,"Streaking Hitter Hits","streak","logs");
+}
+
+async function loadHotPitchersToday(){
+  const today = new Date().toISOString().split("T")[0];
+  const season = new Date().getFullYear();
+
+  const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher");
+  let probablePitchers = [];
+
+  (schedule.dates || []).forEach(date => {
+    date.games.forEach(game => {
+      ["away","home"].forEach(side => {
+        const team = game.teams[side].team;
+        const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
+        const probable = game.teams[side].probablePitcher;
+
+        if(probable && probable.id){
+          probablePitchers.push({id:probable.id,name:probable.fullName,team:team.name,teamId:team.id,opponent:opponent.name,game:gameLabel(game)});
+        }
+      });
+    });
+  });
+
+  let hotPitchers = [];
+
+  for(const p of probablePitchers){
+    const stats = await getJson("https://statsapi.mlb.com/api/v1/people/" + p.id + "/stats?stats=gameLog&group=pitching&season=" + season);
+    const splits = (((stats.stats || [])[0] || {}).splits || [])
+      .filter(s => s.stat && s.stat.strikeOuts !== undefined)
+      .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    const lastTwo = splits.slice(0,2);
+    if(lastTwo.length < 2) continue;
+
+    const k1 = Number(lastTwo[0].stat.strikeOuts || 0);
+    const k2 = Number(lastTwo[1].stat.strikeOuts || 0);
+
+    if(k1 >= 8 && k2 >= 8){
+      hotPitchers.push({
+        value:k1+k2,
+        name:p.name,
+        team:p.team,
+        game:"Today vs "+p.opponent,
+        status:"Last 2 games: "+k1+" K, "+k2+" K",
+        teamId:p.teamId,
+        extra:"Probable starter today",
+        logs:lastTwo.map(s => ({date:s.date,opponent:s.opponent ? s.opponent.name : "Opponent",ks:Number(s.stat.strikeOuts || 0)}))
+      });
+    }
+  }
+
+  hotPitchers.sort((a,b)=>b.value-a.value);
+  render("hotPitchers",hotPitchers,"Hot Pitcher Ks","hotpitcher","pitcherlogs");
+}
+
+async function loadStaticSectionsOnce(){
+  await loadPreviousGameDayStats();
+  await loadHotHitters();
+  await loadHotPitchersToday();
+}
+
+async function loadDashboard(){
+  try{
+    await loadLiveStats();
+  }catch(err){
+    console.error(err);
+    document.getElementById("liveKs").innerHTML = '<div class="card ks">Error loading live data. Refresh page.</div>';
+    document.getElementById("liveHits").innerHTML = '<div class="card hits">Error loading live data. Refresh page.</div>';
+  }
+}
+
+loadDashboard();
+loadStaticSectionsOnce();
+setInterval(loadDashboard,30000);
+</script>
 </body>
 </html>
