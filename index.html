@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,94 +11,125 @@
       margin: 0;
       font-family: Inter, Arial, sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(37,99,235,.35), transparent 30%),
-        radial-gradient(circle at top right, rgba(236,72,153,.25), transparent 25%),
-        #07111f;
+        radial-gradient(circle at 15% 10%, rgba(34,197,94,.35), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(16,185,129,.22), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(20,184,166,.18), transparent 35%),
+        #020617;
       color: white;
-      padding: 14px;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(34,197,94,.18) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: .35;
+      pointer-events: none;
     }
 
     .app {
-      max-width: 920px;
+      max-width: 950px;
       margin: 0 auto;
     }
 
     .header {
       position: sticky;
-      top: 0;
+      top: 10px;
       z-index: 10;
-      backdrop-filter: blur(16px);
-      background: rgba(7,17,31,.82);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 22px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      background: rgba(2,6,23,.78);
+      border: 1px solid rgba(34,197,94,.35);
+      box-shadow: 0 0 35px rgba(34,197,94,.22);
+      backdrop-filter: blur(18px);
+      border-radius: 28px;
+      padding: 18px;
+      margin-bottom: 18px;
     }
 
     h1 {
       margin: 0;
-      font-size: 30px;
-      letter-spacing: -.04em;
+      font-size: 32px;
+      letter-spacing: -.05em;
+      color: #dcfce7;
+      text-shadow: 0 0 18px rgba(34,197,94,.65);
     }
 
-    .sub {
-      color: #cbd5e1;
-      margin-top: 5px;
-      font-size: 14px;
+    h2 {
+      margin-top: 34px;
+      font-size: 22px;
+      color: #bbf7d0;
+    }
+
+    .sub, .section-note {
+      color: #a7f3d0;
     }
 
     .refresh {
       display: inline-block;
       margin-top: 10px;
-      padding: 6px 10px;
+      padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(34,197,94,.14);
+      background: rgba(34,197,94,.16);
+      border: 1px solid rgba(34,197,94,.35);
       color: #86efac;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .key {
-      background: rgba(15,23,42,.72);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 20px;
-      padding: 14px;
-      color: #cbd5e1;
-      line-height: 1.6;
+      background: rgba(2,6,23,.72);
+      border: 1px solid rgba(34,197,94,.28);
+      box-shadow: inset 0 0 25px rgba(34,197,94,.08);
+      border-radius: 26px;
+      padding: 16px;
+      color: #d1fae5;
+      line-height: 1.65;
       font-size: 14px;
-      margin-bottom: 22px;
-    }
-
-    h2 {
-      margin: 28px 0 12px;
-      font-size: 20px;
-      letter-spacing: -.03em;
-    }
-
-    .section-note {
-      color: #94a3b8;
-      font-size: 13px;
-      margin-top: -6px;
-      margin-bottom: 10px;
+      margin-bottom: 24px;
     }
 
     .card {
       position: relative;
       overflow: hidden;
-      border-radius: 24px;
+      border-radius: 999px 32px 32px 999px;
       padding: 16px;
-      margin-bottom: 13px;
-      border: 1px solid rgba(255,255,255,.1);
-      box-shadow: 0 18px 40px rgba(0,0,0,.28);
+      margin-bottom: 14px;
+      border: 1px solid rgba(134,239,172,.28);
+      box-shadow:
+        0 18px 42px rgba(0,0,0,.38),
+        0 0 28px rgba(34,197,94,.14);
+      animation: bubbleIn .35s ease both;
     }
 
-    .card:before {
+    .card::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,.18), transparent 35%);
+      background:
+        radial-gradient(circle at 10% 50%, rgba(255,255,255,.24), transparent 16%),
+        linear-gradient(135deg, rgba(255,255,255,.16), transparent 35%);
       pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow:
+        0 22px 55px rgba(0,0,0,.45),
+        0 0 38px rgba(34,197,94,.28);
+    }
+
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     summary {
@@ -113,106 +144,148 @@
     .main-row {
       position: relative;
       display: grid;
-      grid-template-columns: 48px 68px 1fr;
+      grid-template-columns: 54px 72px 1fr;
       gap: 12px;
       align-items: center;
     }
 
     .logo {
-      width: 48px;
-      height: 48px;
-      background: rgba(255,255,255,.94);
+      width: 54px;
+      height: 54px;
+      background: #ecfdf5;
       border-radius: 50%;
-      padding: 6px;
+      padding: 7px;
       object-fit: contain;
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+      box-shadow:
+        inset 0 0 12px rgba(34,197,94,.25),
+        0 0 20px rgba(34,197,94,.38);
     }
 
     .num-wrap {
       text-align: center;
-      background: rgba(15,23,42,.35);
-      border-radius: 18px;
-      padding: 8px 4px;
+      background: rgba(2,6,23,.42);
+      border: 1px solid rgba(134,239,172,.2);
+      border-radius: 999px;
+      padding: 9px 4px;
     }
 
     .num {
-      font-size: 34px;
-      font-weight: 900;
+      font-size: 36px;
+      font-weight: 950;
       line-height: .9;
-      letter-spacing: -.05em;
+      color: #f0fdf4;
+      text-shadow: 0 0 18px rgba(34,197,94,.65);
     }
 
     .stat-label {
       margin-top: 5px;
       font-size: 11px;
-      font-weight: 800;
-      color: #fde68a;
+      font-weight: 900;
+      color: #86efac;
       text-transform: uppercase;
     }
 
     .name {
-      font-size: 19px;
-      font-weight: 900;
-      letter-spacing: -.02em;
+      font-size: 20px;
+      font-weight: 950;
+      color: #f0fdf4;
     }
 
     .team, .game, .status, .extra {
       margin-top: 3px;
-      color: #e2e8f0;
+      color: #d1fae5;
       font-size: 13px;
     }
 
     .extra {
-      color: #fde68a;
-      font-weight: 800;
+      color: #bef264;
+      font-weight: 900;
     }
 
     .label {
       display: inline-block;
       margin-top: 8px;
-      padding: 5px 9px;
+      padding: 5px 10px;
       border-radius: 999px;
-      background: rgba(0,0,0,.23);
-      color: #facc15;
+      background: rgba(2,6,23,.45);
+      border: 1px solid rgba(134,239,172,.22);
+      color: #bbf7d0;
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: .05em;
       text-transform: uppercase;
     }
 
-    .ks { background: linear-gradient(135deg,#1e3a8a,#2563eb); }
-    .hits { background: linear-gradient(135deg,#047857,#10b981); }
-    .hot { background: linear-gradient(135deg,#be123c,#f97316); }
-    .streak { background: linear-gradient(135deg,#7e22ce,#ec4899); }
-    .hotpitcher { background: linear-gradient(135deg,#0f766e,#06b6d4); }
-    .prevks { background: linear-gradient(135deg,#7c2d12,#ea580c); }
-    .prevhits { background: linear-gradient(135deg,#4c1d95,#8b5cf6); }
-
-    .leader {
-      border: 2px solid #facc15;
-      box-shadow: 0 0 0 1px rgba(250,204,21,.25), 0 20px 50px rgba(250,204,21,.18);
+    .ks {
+      background: linear-gradient(135deg, #064e3b, #16a34a);
     }
 
-    .elite { box-shadow: 0 0 22px rgba(250,204,21,.55), 0 18px 40px rgba(0,0,0,.28); }
-    .good { box-shadow: 0 0 18px rgba(34,197,94,.45), 0 18px 40px rgba(0,0,0,.28); }
-    .bad { box-shadow: 0 0 18px rgba(239,68,68,.48), 0 18px 40px rgba(0,0,0,.28); }
+    .hits {
+      background: linear-gradient(135deg, #022c22, #22c55e);
+    }
+
+    .hot {
+      background: linear-gradient(135deg, #14532d, #84cc16);
+    }
+
+    .streak {
+      background: linear-gradient(135deg, #052e16, #10b981);
+    }
+
+    .hotpitcher {
+      background: linear-gradient(135deg, #042f2e, #14b8a6);
+    }
+
+    .prevks {
+      background: linear-gradient(135deg, #1c1917, #15803d);
+    }
+
+    .prevhits {
+      background: linear-gradient(135deg, #022c22, #4ade80);
+    }
+
+    .leader {
+      border: 2px solid #bef264;
+      box-shadow:
+        0 0 0 1px rgba(190,242,100,.3),
+        0 0 36px rgba(190,242,100,.38),
+        0 18px 42px rgba(0,0,0,.38);
+    }
+
+    .elite {
+      box-shadow:
+        0 0 36px rgba(190,242,100,.55),
+        0 18px 42px rgba(0,0,0,.38);
+    }
+
+    .good {
+      box-shadow:
+        0 0 28px rgba(34,197,94,.45),
+        0 18px 42px rgba(0,0,0,.38);
+    }
+
+    .bad {
+      box-shadow:
+        0 0 28px rgba(250,204,21,.45),
+        0 18px 42px rgba(0,0,0,.38);
+    }
 
     .details {
       position: relative;
       margin-top: 14px;
-      background: rgba(2,6,23,.42);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      padding: 10px;
+      background: rgba(2,6,23,.48);
+      border: 1px solid rgba(134,239,172,.16);
+      border-radius: 24px;
+      padding: 12px;
     }
 
     .player-row {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 9px 5px;
-      border-bottom: 1px solid rgba(255,255,255,.1);
-      color: #f8fafc;
+      padding: 9px 6px;
+      border-bottom: 1px solid rgba(134,239,172,.14);
+      color: #f0fdf4;
       font-size: 14px;
     }
 
@@ -221,11 +294,11 @@
     }
 
     .loading {
-      background: rgba(15,23,42,.7);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 22px;
+      background: rgba(2,6,23,.72);
+      border: 1px solid rgba(34,197,94,.24);
+      border-radius: 26px;
       padding: 16px;
-      color: #cbd5e1;
+      color: #bbf7d0;
     }
   </style>
 </head>
@@ -273,6 +346,15 @@
 
 <script>
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
+
+function nyDate(offsetDays = 0){
+  const ny = new Date(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
+  ny.setDate(ny.getDate() + offsetDays);
+  const y = ny.getFullYear();
+  const m = String(ny.getMonth() + 1).padStart(2, "0");
+  const d = String(ny.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + d;
+}
 
 async function getJson(url){
   const sep = url.includes("?") ? "&" : "?";
@@ -389,7 +471,7 @@ function liveStatus(live){
 }
 
 async function loadLiveStats(){
-  const today = new Date().toISOString().split("T")[0];
+  const today = nyDate(0);
   const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today);
 
   let liveGames = [], liveKs = [], liveHits = [];
@@ -439,9 +521,7 @@ async function loadLiveStats(){
 
 async function findPreviousCompletedGameDay(){
   for(let i=1;i<=10;i++){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    const dateString = d.toISOString().split("T")[0];
+    const dateString = nyDate(-i);
     const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + dateString);
 
     let finals = [];
@@ -497,10 +577,7 @@ async function loadHotHitters(){
   let days = [], hotMap = {}, appearanceMap = {};
 
   for(let i=1;i<=14 && days.length<4;i++){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    const dateString = d.toISOString().split("T")[0];
-
+    const dateString = nyDate(-i);
     const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + dateString);
     let finals = [];
 
@@ -572,8 +649,8 @@ async function loadHotHitters(){
 }
 
 async function loadHotPitchersToday(){
-  const today = new Date().toISOString().split("T")[0];
-  const season = new Date().getFullYear();
+  const today = nyDate(0);
+  const season = Number(today.slice(0,4));
 
   const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher");
   let probablePitchers = [];
