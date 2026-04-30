@@ -1,68 +1,275 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MLB Dashboard</title>
+  <title>MLB Edge Dashboard</title>
 
   <style>
-    body{font-family:Arial,sans-serif;margin:0;background:#0b1220;color:white;padding:16px}
-    h1{font-size:30px;margin-bottom:4px}
-    h2{margin-top:30px;font-size:22px}
-    .sub,.key{color:#cbd5e1}
-    .key{background:#111827;border-radius:14px;padding:12px;margin:16px 0;font-size:14px;line-height:1.5}
-    .card{border-radius:18px;padding:14px;margin-bottom:12px}
-    summary{list-style:none;cursor:pointer}
-    summary::-webkit-details-marker{display:none}
-    .main-row{display:flex;gap:12px;align-items:center}
-    .logo{width:42px;height:42px;background:white;border-radius:50%;padding:5px;object-fit:contain}
-    .num-wrap{min-width:62px;text-align:center}
-    .num{font-size:36px;font-weight:bold;line-height:1}
-    .stat-label{font-size:12px;font-weight:bold;color:#facc15;margin-top:3px}
-    .name{font-size:20px;font-weight:bold}
-    .team,.game,.status,.label,.extra{color:#e2e8f0;margin-top:3px}
-    .extra{font-weight:bold;color:#fde68a}
-    .label{font-size:12px;text-transform:uppercase;color:#facc15;letter-spacing:.05em}
-    .ks{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
-    .hits{background:linear-gradient(135deg,#065f46,#10b981)}
-    .hot{background:linear-gradient(135deg,#be123c,#f97316)}
-    .streak{background:linear-gradient(135deg,#9333ea,#ec4899)}
-    .hotpitcher{background:linear-gradient(135deg,#0f766e,#06b6d4)}
-    .prevks{background:linear-gradient(135deg,#7c2d12,#ea580c)}
-    .prevhits{background:linear-gradient(135deg,#4c1d95,#8b5cf6)}
-    .leader{border:2px solid #facc15;transform:scale(1.02)}
-    .elite{box-shadow:0 0 14px rgba(250,204,21,.95)}
-    .good{box-shadow:0 0 10px rgba(34,197,94,.8)}
-    .bad{box-shadow:0 0 12px rgba(239,68,68,.9)}
-    .details{margin-top:14px;background:rgba(15,23,42,.55);border-radius:14px;padding:10px}
-    .player-row{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.12);color:#f8fafc}
-    .player-row:last-child{border-bottom:none}
-    .loading{background:#111827;border-radius:18px;padding:14px;color:#cbd5e1}
-    .refresh{font-size:12px;color:#94a3b8;margin-top:6px}
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.35), transparent 30%),
+        radial-gradient(circle at top right, rgba(236,72,153,.25), transparent 25%),
+        #07111f;
+      color: white;
+      padding: 14px;
+    }
+
+    .app {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(7,17,31,.82);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -.04em;
+    }
+
+    .sub {
+      color: #cbd5e1;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .refresh {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.14);
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .key {
+      background: rgba(15,23,42,.72);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 28px 0 12px;
+      font-size: 20px;
+      letter-spacing: -.03em;
+    }
+
+    .section-note {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: -6px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 16px;
+      margin-bottom: 13px;
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 18px 40px rgba(0,0,0,.28);
+    }
+
+    .card:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), transparent 35%);
+      pointer-events: none;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .main-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px 68px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,.94);
+      border-radius: 50%;
+      padding: 6px;
+      object-fit: contain;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+
+    .num-wrap {
+      text-align: center;
+      background: rgba(15,23,42,.35);
+      border-radius: 18px;
+      padding: 8px 4px;
+    }
+
+    .num {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: .9;
+      letter-spacing: -.05em;
+    }
+
+    .stat-label {
+      margin-top: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fde68a;
+      text-transform: uppercase;
+    }
+
+    .name {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+
+    .team, .game, .status, .extra {
+      margin-top: 3px;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+
+    .extra {
+      color: #fde68a;
+      font-weight: 800;
+    }
+
+    .label {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.23);
+      color: #facc15;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .ks { background: linear-gradient(135deg,#1e3a8a,#2563eb); }
+    .hits { background: linear-gradient(135deg,#047857,#10b981); }
+    .hot { background: linear-gradient(135deg,#be123c,#f97316); }
+    .streak { background: linear-gradient(135deg,#7e22ce,#ec4899); }
+    .hotpitcher { background: linear-gradient(135deg,#0f766e,#06b6d4); }
+    .prevks { background: linear-gradient(135deg,#7c2d12,#ea580c); }
+    .prevhits { background: linear-gradient(135deg,#4c1d95,#8b5cf6); }
+
+    .leader {
+      border: 2px solid #facc15;
+      box-shadow: 0 0 0 1px rgba(250,204,21,.25), 0 20px 50px rgba(250,204,21,.18);
+    }
+
+    .elite { box-shadow: 0 0 22px rgba(250,204,21,.55), 0 18px 40px rgba(0,0,0,.28); }
+    .good { box-shadow: 0 0 18px rgba(34,197,94,.45), 0 18px 40px rgba(0,0,0,.28); }
+    .bad { box-shadow: 0 0 18px rgba(239,68,68,.48), 0 18px 40px rgba(0,0,0,.28); }
+
+    .details {
+      position: relative;
+      margin-top: 14px;
+      background: rgba(2,6,23,.42);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .player-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 5px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      color: #f8fafc;
+      font-size: 14px;
+    }
+
+    .player-row:last-child {
+      border-bottom: none;
+    }
+
+    .loading {
+      background: rgba(15,23,42,.7);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding: 16px;
+      color: #cbd5e1;
+    }
   </style>
 </head>
 
 <body>
-  <h1>⚾ Live MLB Leaders</h1>
-  <div class="sub">Live sections update every 30 seconds</div>
-  <div id="lastUpdated" class="refresh">Loading...</div>
-
-  <div class="key">
-    🔵 Live pitcher strikeouts<br>
-    🟢 Live player hits<br>
-    🔥 Hot hitters: 5+ hits over last 4 completed game days<br>
-    💗 Streaking hitters: 3+ game hit streak<br>
-    🌊 Hot pitchers: 8+ Ks in each of last 2 games and playing today<br>
-    🟠 Previous game day: teams struck out most<br>
-    🟣 Previous game day: teams with most hits
+<div class="app">
+  <div class="header">
+    <h1>⚾ MLB Edge Dashboard</h1>
+    <div class="sub">Live leaders, hot bats, streaks, and K trends</div>
+    <div id="lastUpdated" class="refresh">Loading live data...</div>
   </div>
 
-  <h2>🔥 Live Strikeouts</h2><div id="liveKs" class="loading">Loading...</div>
-  <h2>💥 Live Hits</h2><div id="liveHits" class="loading">Loading...</div>
-  <h2>🔥 Hot Hitters</h2><div id="hotHitters" class="loading">Loading...</div>
-  <h2>💗 Streaking Hitters</h2><div id="streakingHitters" class="loading">Loading...</div>
-  <h2>🌊 Hot Pitchers</h2><div id="hotPitchers" class="loading">Loading...</div>
-  <h2>📊 Previous Game Day — Teams Struck Out Most</h2><div id="prevKs" class="loading">Loading...</div>
-  <h2>📈 Previous Game Day — Teams With Most Hits</h2><div id="prevHits" class="loading">Loading...</div>
+  <div class="key">
+    🔵 Live pitcher strikeouts · 🟢 Live player hits · 🔥 Hot hitters · 💗 Streaking hitters<br>
+    🌊 Hot pitchers: 8+ Ks in each of last 2 games and playing today<br>
+    🟠 Previous game day team Ks · 🟣 Previous game day team hits
+  </div>
+
+  <h2>🔥 Live Strikeouts</h2>
+  <div class="section-note">Pitchers in games happening right now</div>
+  <div id="liveKs" class="loading">Loading...</div>
+
+  <h2>💥 Live Hits</h2>
+  <div class="section-note">Hit leaders in live games</div>
+  <div id="liveHits" class="loading">Loading...</div>
+
+  <h2>🔥 Hot Hitters</h2>
+  <div class="section-note">5+ hits over the last 4 completed game days</div>
+  <div id="hotHitters" class="loading">Loading...</div>
+
+  <h2>💗 Streaking Hitters</h2>
+  <div class="section-note">Hit in 3+ straight completed games</div>
+  <div id="streakingHitters" class="loading">Loading...</div>
+
+  <h2>🌊 Hot Pitchers</h2>
+  <div class="section-note">Playing today with 8+ Ks in each of last 2 starts</div>
+  <div id="hotPitchers" class="loading">Loading...</div>
+
+  <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
+  <div id="prevKs" class="loading">Loading...</div>
+
+  <h2>📈 Previous Game Day — Teams With Most Hits</h2>
+  <div id="prevHits" class="loading">Loading...</div>
+</div>
 
 <script>
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
