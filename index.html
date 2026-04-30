@@ -50,6 +50,13 @@
       margin-bottom: 18px;
     }
 
+    .top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
     h1 {
       margin: 0;
       font-size: 32px;
@@ -84,6 +91,178 @@
       color: #86efac;
       font-size: 12px;
       font-weight: 800;
+    }
+
+    .stadium-toggle {
+      border: 1px solid rgba(134,239,172,.28);
+      background: rgba(34,197,94,.14);
+      color: #bbf7d0;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-weight: 950;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 0 18px rgba(34,197,94,.12);
+    }
+
+    .stadium-toggle.active {
+      background: rgba(190,242,100,.24);
+      color: #f7fee7;
+      border-color: rgba(190,242,100,.45);
+      box-shadow: 0 0 26px rgba(190,242,100,.25);
+    }
+
+    .score-strip {
+      margin-top: 14px;
+      background: rgba(2,6,23,.7);
+      border: 1px solid rgba(134,239,172,.22);
+      border-radius: 999px;
+      padding: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(34,197,94,.08);
+    }
+
+    .score-strip-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+      padding: 0 6px;
+    }
+
+    .score-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,.9);
+    }
+
+    .score-title {
+      color: #bbf7d0;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .ticker-viewport {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .ticker-track {
+      display: inline-flex;
+      gap: 10px;
+      min-width: max-content;
+      animation: tickerScroll 55s linear infinite;
+      will-change: transform;
+    }
+
+    .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.75);
+      border: 1px solid rgba(134,239,172,.18);
+      color: #d1fae5;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .ticker-live {
+      border-color: rgba(34,197,94,.5);
+      box-shadow: 0 0 16px rgba(34,197,94,.16);
+    }
+
+    .ticker-final {
+      opacity: .78;
+    }
+
+    .ticker-preview {
+      opacity: .9;
+    }
+
+    .ticker-score {
+      color: #f0fdf4;
+      font-weight: 950;
+      font-size: 15px;
+    }
+
+    .ticker-detail {
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 900;
+      margin-left: 4px;
+    }
+
+    .filter-wrap {
+      margin: 16px 0 20px;
+      background: rgba(2,6,23,.72);
+      border: 1px solid rgba(34,197,94,.22);
+      border-radius: 26px;
+      padding: 12px;
+      box-shadow: inset 0 0 20px rgba(34,197,94,.06);
+    }
+
+    .filter-title {
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: thin;
+    }
+
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(134,239,172,.18);
+      background: rgba(15,23,42,.75);
+      color: #d1fae5;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-btn img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      padding: 3px;
+      object-fit: contain;
+    }
+
+    .filter-btn.active {
+      background: rgba(34,197,94,.22);
+      border-color: rgba(190,242,100,.45);
+      color: #f0fdf4;
+      box-shadow: 0 0 18px rgba(34,197,94,.16);
     }
 
     .key {
@@ -350,6 +529,23 @@
       text-transform: uppercase;
     }
 
+    .profile-btn {
+      position: relative;
+      display: inline-block;
+      margin-top: 8px;
+      margin-left: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(190,242,100,.32);
+      background: rgba(190,242,100,.13);
+      color: #f7fee7;
+      font-size: 11px;
+      font-weight: 950;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
     .ks {
       background: linear-gradient(135deg, #064e3b, #16a34a);
     }
@@ -474,6 +670,123 @@
       color: #bbf7d0;
     }
 
+    .profile-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.78);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .profile-modal.open {
+      display: flex;
+    }
+
+    .profile-panel {
+      width: min(560px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at top left, rgba(34,197,94,.22), transparent 35%),
+        rgba(2,6,23,.96);
+      border: 1px solid rgba(134,239,172,.28);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.55), 0 0 36px rgba(34,197,94,.2);
+    }
+
+    .profile-head {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .profile-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      padding: 8px;
+      object-fit: contain;
+    }
+
+    .profile-title {
+      font-size: 24px;
+      font-weight: 950;
+      color: #f0fdf4;
+      line-height: 1.1;
+    }
+
+    .profile-sub {
+      margin-top: 5px;
+      color: #a7f3d0;
+      font-size: 13px;
+    }
+
+    .profile-stat {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.16);
+      border: 1px solid rgba(134,239,172,.24);
+      color: #bbf7d0;
+      font-weight: 950;
+      margin-bottom: 12px;
+    }
+
+    .profile-close {
+      float: right;
+      border: 1px solid rgba(134,239,172,.24);
+      background: rgba(15,23,42,.85);
+      color: #bbf7d0;
+      border-radius: 999px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-weight: 950;
+    }
+
+    body.stadium-mode .header {
+      position: relative;
+    }
+
+    body.stadium-mode .key,
+    body.stadium-mode .section-note,
+    body.stadium-mode .filter-wrap {
+      display: none;
+    }
+
+    body.stadium-mode .pulse-grid {
+      grid-template-columns: 1fr;
+    }
+
+    body.stadium-mode .stat-layout {
+      grid-template-columns: 1fr;
+    }
+
+    body.stadium-mode .card,
+    body.stadium-mode .pulse-card {
+      padding: 22px;
+      border-radius: 34px;
+    }
+
+    body.stadium-mode .num {
+      font-size: 48px;
+    }
+
+    body.stadium-mode .name {
+      font-size: 26px;
+    }
+
+    body.stadium-mode h2 {
+      font-size: 28px;
+    }
+
     @media (max-width: 820px) {
       .stat-layout {
         grid-template-columns: 1fr;
@@ -496,6 +809,14 @@
         padding: 14px;
       }
 
+      .top-row {
+        display: block;
+      }
+
+      .stadium-toggle {
+        margin-top: 10px;
+      }
+
       h1 {
         font-size: 26px;
       }
@@ -512,6 +833,15 @@
       .pulse-card {
         min-height: auto;
         border-radius: 24px;
+      }
+
+      .score-strip {
+        border-radius: 22px;
+      }
+
+      .ticker-item {
+        font-size: 12px;
+        padding: 7px 10px;
       }
 
       .card {
@@ -553,6 +883,14 @@
         border-radius: 20px;
         padding: 10px;
       }
+
+      body.stadium-mode .num {
+        font-size: 40px;
+      }
+
+      body.stadium-mode .name {
+        font-size: 22px;
+      }
     }
   </style>
 </head>
@@ -560,9 +898,33 @@
 <body>
 <div class="app">
   <div class="header">
-    <h1>⚾ MLB Edge Dashboard</h1>
-    <div class="sub">A live baseball companion for tonight’s action</div>
-    <div id="lastUpdated" class="refresh">Loading live data...</div>
+    <div class="top-row">
+      <div>
+        <h1>⚾ MLB Edge Dashboard</h1>
+        <div class="sub">A live baseball companion for tonight’s action</div>
+        <div id="lastUpdated" class="refresh">Loading live data...</div>
+      </div>
+      <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">🏟 Stadium Mode</button>
+    </div>
+
+    <div class="score-strip">
+      <div class="score-strip-top">
+        <div class="score-dot"></div>
+        <div class="score-title">Live Scoreboard</div>
+      </div>
+      <div class="ticker-viewport">
+        <div id="scoreTicker" class="ticker-track">
+          <div class="ticker-item">Loading scores...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="teamFilterWrap" class="filter-wrap">
+    <div class="filter-title">Filter by team playing today</div>
+    <div id="teamFilters" class="filter-bar">
+      <button class="filter-btn active">All Teams</button>
+    </div>
   </div>
 
   <div class="key">
@@ -631,10 +993,22 @@
   </div>
 </div>
 
+<div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)">
+  <div class="profile-panel">
+    <button class="profile-close" onclick="closeProfile()">Close</button>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
 <script>
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 
+let profileStore = [];
+
 let appState = {
+  selectedTeamId: "all",
+  todaysTeams: [],
+  scoreGames: [],
   liveKs: [],
   liveHits: [],
   prevKs: [],
@@ -660,8 +1034,141 @@ async function getJson(url){
   return await res.json();
 }
 
+function teamName(team){
+  return team.abbreviation || team.teamName || team.name || "Team";
+}
+
 function gameLabel(game){
   return game.teams.away.team.name + " @ " + game.teams.home.team.name;
+}
+
+function setTeamFilter(teamId){
+  appState.selectedTeamId = String(teamId);
+  renderAllData();
+}
+
+function filterRows(rows){
+  if(appState.selectedTeamId === "all") return rows || [];
+  return (rows || []).filter(row => String(row.teamId) === String(appState.selectedTeamId));
+}
+
+function gameMatchesFilter(game){
+  if(appState.selectedTeamId === "all") return true;
+  return String(game.teams.away.team.id) === String(appState.selectedTeamId) ||
+         String(game.teams.home.team.id) === String(appState.selectedTeamId);
+}
+
+function renderTeamFilters(){
+  const teams = appState.todaysTeams || [];
+
+  let html =
+    '<button class="filter-btn ' + (appState.selectedTeamId === "all" ? "active" : "") + '" onclick="setTeamFilter(\'all\')">All Teams</button>';
+
+  teams.forEach(team => {
+    html +=
+      '<button class="filter-btn ' + (String(appState.selectedTeamId) === String(team.id) ? "active" : "") + '" onclick="setTeamFilter(' + team.id + ')">' +
+        '<img src="' + logo(team.id) + '">' +
+        '<span>' + team.abbreviation + '</span>' +
+      '</button>';
+  });
+
+  document.getElementById("teamFilters").innerHTML = html;
+}
+
+function collectTodayTeams(games){
+  const map = {};
+
+  games.forEach(game => {
+    ["away","home"].forEach(side => {
+      const team = game.teams[side].team;
+      map[team.id] = {
+        id: team.id,
+        name: team.name,
+        abbreviation: team.abbreviation || team.teamName || team.name
+      };
+    });
+  });
+
+  appState.todaysTeams = Object.values(map).sort((a,b) => a.abbreviation.localeCompare(b.abbreviation));
+}
+
+function tickerStatus(game){
+  const state = game.status.abstractGameState;
+  const detailed = game.status.detailedState || "";
+
+  if(state === "Live"){
+    const line = game.linescore || {};
+    if(line.currentInningOrdinal && line.inningState){
+      return line.inningState + " " + line.currentInningOrdinal;
+    }
+    return detailed || "Live";
+  }
+
+  if(state === "Final"){
+    return detailed || "Final";
+  }
+
+  const dt = new Date(game.gameDate);
+  return dt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+}
+
+function scoreValue(game, side){
+  const score = game.teams[side].score;
+  if(score === undefined || score === null){
+    return game.status.abstractGameState === "Preview" ? "–" : "0";
+  }
+  return score;
+}
+
+function renderScoreTicker(games){
+  games = (games || []).filter(gameMatchesFilter);
+
+  if(!games.length){
+    document.getElementById("scoreTicker").innerHTML =
+      '<div class="ticker-item">No games found for this filter.</div>';
+    return;
+  }
+
+  const items = games.map(game => {
+    const state = game.status.abstractGameState;
+    const cls = state === "Live" ? "ticker-live" : state === "Final" ? "ticker-final" : "ticker-preview";
+    const away = teamName(game.teams.away.team);
+    const home = teamName(game.teams.home.team);
+    const awayScore = scoreValue(game, "away");
+    const homeScore = scoreValue(game, "home");
+    const detail = tickerStatus(game);
+
+    return (
+      '<div class="ticker-item ' + cls + '">' +
+        '<span>' + away + '</span>' +
+        '<span class="ticker-score">' + awayScore + '</span>' +
+        '<span>@</span>' +
+        '<span>' + home + '</span>' +
+        '<span class="ticker-score">' + homeScore + '</span>' +
+        '<span class="ticker-detail">' + detail + '</span>' +
+      '</div>'
+    );
+  });
+
+  document.getElementById("scoreTicker").innerHTML = items.concat(items).join("");
+}
+
+async function loadScoreTicker(){
+  const today = nyDate(0);
+  const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=linescore");
+
+  let games = [];
+  (schedule.dates || []).forEach(date => {
+    date.games.forEach(game => games.push(game));
+  });
+
+  games.sort((a,b) => {
+    const order = {Live: 0, Preview: 1, Final: 2};
+    return (order[a.status.abstractGameState] ?? 3) - (order[b.status.abstractGameState] ?? 3);
+  });
+
+  appState.scoreGames = games;
+  collectTodayTeams(games);
 }
 
 function statLabel(label){
@@ -688,8 +1195,15 @@ function tier(label,value){
   return "";
 }
 
+function registerProfile(row,label){
+  const id = profileStore.length;
+  profileStore.push({row,label});
+  return id;
+}
+
 function makeCard(row,label,colorClass,detailsHtml){
   const value = Number(row.value || 0);
+  const profileId = registerProfile(row,label);
   const extra = row.extra ? '<div class="extra">' + row.extra + '</div>' : "";
   const icon = label.includes("Hot Pitcher") ? " 🌊" :
                label.includes("Streaking") ? " 💗" :
@@ -709,7 +1223,10 @@ function makeCard(row,label,colorClass,detailsHtml){
         '<div class="game">' + (row.game || "") + '</div>' +
         '<div class="status">' + (row.status || "") + '</div>' +
         extra +
-        '<div class="label">' + label + (detailsHtml ? " · tap to expand" : "") + '</div>' +
+        '<div>' +
+          '<span class="label">' + label + (detailsHtml ? " · tap to expand" : "") + '</span>' +
+          '<button class="profile-btn" onclick="event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
+        '</div>' +
       '</div>' +
     '</div>';
 
@@ -724,14 +1241,12 @@ function makeCard(row,label,colorClass,detailsHtml){
 }
 
 function render(id,rows,label,colorClass,detailsType){
-  rows = rows.slice(0,5);
+  rows = (rows || []).slice(0,5).map((row,index) => ({...row, leader:index === 0}));
 
   if(!rows.length){
     document.getElementById(id).innerHTML = '<div class="card ' + colorClass + '">No data right now.</div>';
     return;
   }
-
-  rows[0].leader = true;
 
   document.getElementById(id).innerHTML = rows.map(row => {
     let details = "";
@@ -781,6 +1296,72 @@ function render(id,rows,label,colorClass,detailsType){
   }).join("");
 }
 
+function profileDetails(row){
+  let html = "";
+
+  if(row.players && row.players.length){
+    html +=
+      '<div class="details-header">Player hit breakdown</div>' +
+      '<div class="details-grid">' +
+        row.players.map(p =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + p.name + '</div>' +
+            '<div class="detail-stat">' + p.hits + ' H</div>' +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  if(row.logs && row.logs.length){
+    html +=
+      '<div class="details-header">Recent log</div>' +
+      '<div class="details-grid">' +
+        row.logs.map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + (g.game || g.opponent || "Game") + '</div>' +
+            '<div class="detail-sub">' + (g.date || "") + '</div>' +
+            '<div class="detail-stat">' + (g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  return html || '<div class="detail-chip"><div class="detail-name">No extra profile details yet.</div></div>';
+}
+
+function openProfile(id){
+  const item = profileStore[id];
+  if(!item) return;
+
+  const row = item.row;
+  const label = item.label;
+
+  document.getElementById("profileContent").innerHTML =
+    '<div class="profile-head">' +
+      '<img class="profile-logo" src="' + logo(row.teamId) + '">' +
+      '<div>' +
+        '<div class="profile-title">' + row.name + '</div>' +
+        '<div class="profile-sub">' + (row.team || "") + '</div>' +
+        '<div class="profile-sub">' + (row.game || "") + '</div>' +
+        '<div class="profile-sub">' + (row.status || "") + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="profile-stat">' + (row.value || "-") + ' ' + statLabel(label) + '</div>' +
+    (row.extra ? '<div class="extra">' + row.extra + '</div>' : '') +
+    '<div class="label">' + label + '</div>' +
+    '<div style="margin-top:14px;">' + profileDetails(row) + '</div>';
+
+  document.getElementById("profileModal").classList.add("open");
+}
+
+function closeProfile(){
+  document.getElementById("profileModal").classList.remove("open");
+}
+
+function closeProfileFromBackdrop(event){
+  if(event.target.id === "profileModal") closeProfile();
+}
+
 function pulseCard(icon,title,main,sub,tag){
   return (
     '<div class="pulse-card">' +
@@ -794,92 +1375,80 @@ function pulseCard(icon,title,main,sub,tag){
 }
 
 function renderBaseballPulse(){
+  const liveKs = filterRows(appState.liveKs);
+  const liveHits = filterRows(appState.liveHits);
+  const hotPitchers = filterRows(appState.hotPitchers);
+  const hotHitters = filterRows(appState.hotHitters);
+  const streakingHitters = filterRows(appState.streakingHitters);
+  const prevKs = filterRows(appState.prevKs);
+  const prevHits = filterRows(appState.prevHits);
+
   let cards = [];
 
-  if(appState.liveKs.length){
-    const p = appState.liveKs[0];
-    cards.push(pulseCard(
-      "👑",
-      "Live K King",
-      p.name + " · " + p.value + " Ks",
-      p.team + " · " + p.status,
-      "Live now"
-    ));
+  if(liveKs.length){
+    const p = liveKs[0];
+    cards.push(pulseCard("👑","Live K King",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live now"));
   }
 
-  if(appState.liveHits.length){
-    const h = appState.liveHits[0];
-    cards.push(pulseCard(
-      "💥",
-      "Live Hit Leader",
-      h.name + " · " + h.value + " hits",
-      h.team + " · " + h.status,
-      "Live now"
-    ));
+  if(liveHits.length){
+    const h = liveHits[0];
+    cards.push(pulseCard("💥","Live Hit Leader",h.name + " · " + h.value + " hits",h.team + " · " + h.status,"Live now"));
   }
 
-  if(appState.hotPitchers.length){
-    const p = appState.hotPitchers[0];
-    cards.push(pulseCard(
-      "🌊",
-      "Pitcher To Watch",
-      p.name,
-      p.status + " · " + p.game,
-      "K watch"
-    ));
+  if(hotPitchers.length){
+    const p = hotPitchers[0];
+    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · " + p.game,"K watch"));
   }
 
-  if(appState.hotHitters.length){
-    const h = appState.hotHitters[0];
-    cards.push(pulseCard(
-      "🔥",
-      "Hottest Bat",
-      h.name + " · " + h.value + " hits",
-      h.team + " · last 4 completed game days",
-      "Hot bat"
-    ));
+  if(hotHitters.length){
+    const h = hotHitters[0];
+    cards.push(pulseCard("🔥","Hottest Bat",h.name + " · " + h.value + " hits",h.team + " · last 4 completed game days","Hot bat"));
   }
 
-  if(appState.streakingHitters.length){
-    const s = appState.streakingHitters[0];
-    cards.push(pulseCard(
-      "💗",
-      "Best Hit Streak",
-      s.name,
-      s.team + " · hit in " + s.value + " straight games",
-      "Streaking"
-    ));
+  if(streakingHitters.length){
+    const s = streakingHitters[0];
+    cards.push(pulseCard("💗","Best Hit Streak",s.name,s.team + " · hit in " + s.value + " straight games","Streaking"));
   }
 
-  const kTeam = appState.prevKs.find(t => Number(t.value) >= 7);
+  const kTeam = prevKs.find(t => Number(t.value) >= 7);
   if(kTeam){
-    cards.push(pulseCard(
-      "🟠",
-      "Swing-And-Miss Alert",
-      kTeam.name + " · " + kTeam.value + " Ks",
-      "Struck out a lot last game · watch opposing pitcher spots",
-      "Team K trend"
-    ));
+    cards.push(pulseCard("🟠","Swing-And-Miss Alert",kTeam.name + " · " + kTeam.value + " Ks","Struck out a lot last game · watch opposing pitcher spots","Team K trend"));
   }
 
-  const hitTeam = appState.prevHits[0];
+  const hitTeam = prevHits[0];
   if(hitTeam){
-    cards.push(pulseCard(
-      "🟣",
-      "Team Bats Were Hot",
-      hitTeam.name + " · " + hitTeam.value + " hits",
-      hitTeam.status + " · previous completed game day",
-      "Team hits"
-    ));
+    cards.push(pulseCard("🟣","Team Bats Were Hot",hitTeam.name + " · " + hitTeam.value + " hits",hitTeam.status + " · previous completed game day","Team hits"));
   }
 
   if(!cards.length){
     document.getElementById("pulseCards").innerHTML =
-      '<div class="loading">No pulse yet. Check back once games start or after the latest boxscores load.</div>';
+      '<div class="loading">No pulse yet for this filter. Check back once games start or after boxscores load.</div>';
     return;
   }
 
   document.getElementById("pulseCards").innerHTML = cards.slice(0,6).join("");
+}
+
+function renderAllData(){
+  profileStore = [];
+
+  renderTeamFilters();
+  renderScoreTicker(appState.scoreGames);
+
+  render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks",null);
+  render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits",null);
+  render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs");
+  render("hotHitters",filterRows(appState.hotHitters),"Hot Hitter Hits","hot","logs");
+  render("streakingHitters",filterRows(appState.streakingHitters),"Streaking Hitter Hits","streak","logs");
+  render("prevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("prevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
+
+  renderBaseballPulse();
+}
+
+function toggleStadiumMode(){
+  document.body.classList.toggle("stadium-mode");
+  document.getElementById("stadiumBtn").classList.toggle("active");
 }
 
 function liveStatus(live){
@@ -936,9 +1505,7 @@ async function loadLiveStats(){
   appState.liveKs = liveKs;
   appState.liveHits = liveHits;
 
-  render("liveKs",liveKs,"Pitcher Ks","ks",null);
-  render("liveHits",liveHits,"Live Player Hits","hits",null);
-  renderBaseballPulse();
+  renderAllData();
 
   document.getElementById("lastUpdated").innerText =
     "Last live update: " + new Date().toLocaleTimeString() + " · Live games: " + liveGames.length;
@@ -997,9 +1564,7 @@ async function loadPreviousGameDayStats(){
   appState.prevKs = prevKs;
   appState.prevHits = prevHits;
 
-  render("prevKs",prevKs,"Team Ks","prevks",null);
-  render("prevHits",prevHits,"Team Hits","prevhits","players");
-  renderBaseballPulse();
+  renderAllData();
 }
 
 async function loadHotHitters(){
@@ -1076,9 +1641,7 @@ async function loadHotHitters(){
   appState.hotHitters = hotHitters;
   appState.streakingHitters = streakingHitters;
 
-  render("hotHitters",hotHitters,"Hot Hitter Hits","hot","logs");
-  render("streakingHitters",streakingHitters,"Streaking Hitter Hits","streak","logs");
-  renderBaseballPulse();
+  renderAllData();
 }
 
 async function loadHotPitchersToday(){
@@ -1134,18 +1697,24 @@ async function loadHotPitchersToday(){
 
   appState.hotPitchers = hotPitchers;
 
-  render("hotPitchers",hotPitchers,"Hot Pitcher Ks","hotpitcher","pitcherlogs");
-  renderBaseballPulse();
+  renderAllData();
 }
 
 async function loadStaticSectionsOnce(){
   await loadPreviousGameDayStats();
   await loadHotHitters();
   await loadHotPitchersToday();
-  renderBaseballPulse();
+  renderAllData();
 }
 
 async function loadDashboard(){
+  try{
+    await loadScoreTicker();
+  }catch(err){
+    console.error(err);
+    document.getElementById("scoreTicker").innerHTML = '<div class="ticker-item">Error loading scoreboard</div>';
+  }
+
   try{
     await loadLiveStats();
   }catch(err){
