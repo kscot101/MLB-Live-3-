@@ -98,6 +98,93 @@
       margin-bottom: 24px;
     }
 
+    .pulse-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .pulse-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 132px;
+      background:
+        radial-gradient(circle at top left, rgba(190,242,100,.22), transparent 35%),
+        linear-gradient(135deg, rgba(2,44,34,.95), rgba(6,78,59,.92));
+      border: 1px solid rgba(134,239,172,.28);
+      border-radius: 28px;
+      padding: 15px;
+      box-shadow: 0 18px 42px rgba(0,0,0,.38), 0 0 28px rgba(34,197,94,.16);
+      animation: bubbleIn .35s ease both;
+    }
+
+    .pulse-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent 38%);
+      pointer-events: none;
+    }
+
+    .pulse-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(2,6,23,.42);
+      border: 1px solid rgba(134,239,172,.24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 10px;
+      box-shadow: 0 0 18px rgba(34,197,94,.18);
+      position: relative;
+    }
+
+    .pulse-title {
+      position: relative;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #86efac;
+      font-weight: 950;
+      margin-bottom: 5px;
+    }
+
+    .pulse-main {
+      position: relative;
+      font-size: 18px;
+      font-weight: 950;
+      color: #f0fdf4;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .pulse-sub {
+      position: relative;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #d1fae5;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .pulse-tag {
+      position: relative;
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.14);
+      border: 1px solid rgba(134,239,172,.22);
+      color: #bbf7d0;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
     .card {
       position: relative;
       overflow: hidden;
@@ -121,7 +208,7 @@
       pointer-events: none;
     }
 
-    .card:hover {
+    .card:hover, .pulse-card:hover {
       transform: translateY(-2px) scale(1.01);
       box-shadow:
         0 22px 55px rgba(0,0,0,.45),
@@ -257,10 +344,6 @@
       background: linear-gradient(135deg, #022c22, #4ade80);
     }
 
-    .edge {
-      background: linear-gradient(135deg, #031b14, #0f766e);
-    }
-
     .leader {
       border: 2px solid #bef264;
       box-shadow:
@@ -349,63 +432,6 @@
       font-weight: 900;
     }
 
-    .edge-card {
-      background: rgba(2,6,23,.72);
-      border: 1px solid rgba(134,239,172,.22);
-      border-radius: 26px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 14px 34px rgba(0,0,0,.35), 0 0 24px rgba(34,197,94,.14);
-      animation: bubbleIn .35s ease both;
-    }
-
-    .edge-top {
-      display: grid;
-      grid-template-columns: 46px 1fr;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .edge-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: rgba(34,197,94,.16);
-      border: 1px solid rgba(134,239,172,.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 0 18px rgba(34,197,94,.18);
-    }
-
-    .edge-title {
-      font-size: 17px;
-      font-weight: 950;
-      color: #f0fdf4;
-    }
-
-    .edge-sub {
-      margin-top: 3px;
-      font-size: 13px;
-      color: #a7f3d0;
-      line-height: 1.35;
-    }
-
-    .edge-tag {
-      display: inline-block;
-      margin-top: 9px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(34,197,94,.14);
-      border: 1px solid rgba(134,239,172,.22);
-      color: #bbf7d0;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-
     .loading {
       background: rgba(2,6,23,.72);
       border: 1px solid rgba(34,197,94,.24);
@@ -432,6 +458,15 @@
       h2 {
         font-size: 20px;
         margin-top: 28px;
+      }
+
+      .pulse-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pulse-card {
+        min-height: auto;
+        border-radius: 24px;
       }
 
       .card {
@@ -481,19 +516,20 @@
 <div class="app">
   <div class="header">
     <h1>⚾ MLB Edge Dashboard</h1>
-    <div class="sub">Live leaders, hot bats, streaks, and K trends</div>
+    <div class="sub">A live baseball companion for tonight’s action</div>
     <div id="lastUpdated" class="refresh">Loading live data...</div>
   </div>
 
   <div class="key">
-    🔵 Live pitcher strikeouts · 🟢 Live player hits · 🔥 Hot hitters · 💗 Streaking hitters<br>
-    🌊 Hot pitchers: 8+ Ks in each of last 2 games and playing today<br>
-    ⚡ Tonight’s Edge: quick pregame watchlist from your dashboard data
+    ⚡ Baseball Pulse gives quick storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot hitters<br>
+    💗 Hit streaks · 🌊 Hot pitchers · 🟠 Team K trends · 🟣 Previous team hit leaders
   </div>
 
-  <h2>⚡ Tonight’s Edge</h2>
-  <div class="section-note">Quick watchlist built from hot pitchers, hot hitters, streaks, and team K trends</div>
-  <div id="edgeCards" class="loading">Loading edge signals...</div>
+  <h2>⚡ Tonight’s Baseball Pulse</h2>
+  <div class="section-note">Quick storylines for fans watching at the game, at home, or with friends</div>
+  <div id="pulseCards" class="pulse-grid">
+    <div class="loading">Loading pulse...</div>
+  </div>
 
   <h2>🔥 Live Strikeouts</h2>
   <div class="section-note">Pitchers in games happening right now</div>
@@ -526,6 +562,8 @@
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 
 let appState = {
+  liveKs: [],
+  liveHits: [],
   prevKs: [],
   prevHits: [],
   hotHitters: [],
@@ -670,70 +708,105 @@ function render(id,rows,label,colorClass,detailsType){
   }).join("");
 }
 
-function renderEdgeInsights(){
-  let edges = [];
+function pulseCard(icon,title,main,sub,tag){
+  return (
+    '<div class="pulse-card">' +
+      '<div class="pulse-icon">' + icon + '</div>' +
+      '<div class="pulse-title">' + title + '</div>' +
+      '<div class="pulse-main">' + main + '</div>' +
+      '<div class="pulse-sub">' + sub + '</div>' +
+      '<div class="pulse-tag">' + tag + '</div>' +
+    '</div>'
+  );
+}
 
-  appState.hotPitchers.slice(0,3).forEach(p => {
-    edges.push({
-      icon:"🌊",
-      title:p.name,
-      sub:p.team + " · " + p.game,
-      why:p.status + " · K prop watchlist",
-      tag:"Hot pitcher"
-    });
-  });
+function renderBaseballPulse(){
+  let cards = [];
 
-  appState.prevKs.filter(t => Number(t.value) >= 8).slice(0,3).forEach(t => {
-    edges.push({
-      icon:"🟠",
-      title:t.name + " struck out " + t.value + " times",
-      sub:t.game + " · " + t.status,
-      why:"High team-K game yesterday. Watch opposing pitcher K spots.",
-      tag:"Team K trend"
-    });
-  });
+  if(appState.liveKs.length){
+    const p = appState.liveKs[0];
+    cards.push(pulseCard(
+      "👑",
+      "Live K King",
+      p.name + " · " + p.value + " Ks",
+      p.team + " · " + p.status,
+      "Live now"
+    ));
+  }
 
-  appState.hotHitters.slice(0,3).forEach(h => {
-    edges.push({
-      icon:"🔥",
-      title:h.name,
-      sub:h.team + " · " + h.value + " hits over last 4 completed game days",
-      why:"Hot bat watchlist for hits and total bases.",
-      tag:"Hot hitter"
-    });
-  });
+  if(appState.liveHits.length){
+    const h = appState.liveHits[0];
+    cards.push(pulseCard(
+      "💥",
+      "Live Hit Leader",
+      h.name + " · " + h.value + " hits",
+      h.team + " · " + h.status,
+      "Live now"
+    ));
+  }
 
-  appState.streakingHitters.slice(0,3).forEach(h => {
-    edges.push({
-      icon:"💗",
-      title:h.name,
-      sub:h.team + " · hit in " + h.value + " straight games",
-      why:"Streaking hitter watchlist.",
-      tag:"Hit streak"
-    });
-  });
+  if(appState.hotPitchers.length){
+    const p = appState.hotPitchers[0];
+    cards.push(pulseCard(
+      "🌊",
+      "Pitcher To Watch",
+      p.name,
+      p.status + " · " + p.game,
+      "K watch"
+    ));
+  }
 
-  edges = edges.slice(0,8);
+  if(appState.hotHitters.length){
+    const h = appState.hotHitters[0];
+    cards.push(pulseCard(
+      "🔥",
+      "Hottest Bat",
+      h.name + " · " + h.value + " hits",
+      h.team + " · last 4 completed game days",
+      "Hot bat"
+    ));
+  }
 
-  if(!edges.length){
-    document.getElementById("edgeCards").innerHTML =
-      '<div class="edge-card">No edge signals yet. Check back after lineups/probables and completed game data update.</div>';
+  if(appState.streakingHitters.length){
+    const s = appState.streakingHitters[0];
+    cards.push(pulseCard(
+      "💗",
+      "Best Hit Streak",
+      s.name,
+      s.team + " · hit in " + s.value + " straight games",
+      "Streaking"
+    ));
+  }
+
+  const kTeam = appState.prevKs.find(t => Number(t.value) >= 7);
+  if(kTeam){
+    cards.push(pulseCard(
+      "🟠",
+      "Swing-And-Miss Alert",
+      kTeam.name + " · " + kTeam.value + " Ks",
+      "Struck out a lot last game · watch opposing pitcher spots",
+      "Team K trend"
+    ));
+  }
+
+  const hitTeam = appState.prevHits[0];
+  if(hitTeam){
+    cards.push(pulseCard(
+      "🟣",
+      "Team Bats Were Hot",
+      hitTeam.name + " · " + hitTeam.value + " hits",
+      hitTeam.status + " · previous completed game day",
+      "Team hits"
+    ));
+  }
+
+  if(!cards.length){
+    document.getElementById("pulseCards").innerHTML =
+      '<div class="loading">No pulse yet. Check back once games start or after the latest boxscores load.</div>';
     return;
   }
 
-  document.getElementById("edgeCards").innerHTML = edges.map(e =>
-    '<div class="edge-card">' +
-      '<div class="edge-top">' +
-        '<div class="edge-icon">' + e.icon + '</div>' +
-        '<div>' +
-          '<div class="edge-title">' + e.title + '</div>' +
-          '<div class="edge-sub">' + e.sub + '</div>' +
-          '<div class="edge-sub">' + e.why + '</div>' +
-          '<div class="edge-tag">' + e.tag + '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>'
-  ).join("");
+  document.getElementById("pulseCards").innerHTML = cards.slice(0,6).join("");
 }
 
 function liveStatus(live){
@@ -787,8 +860,12 @@ async function loadLiveStats(){
   liveKs.sort((a,b)=>b.value-a.value);
   liveHits.sort((a,b)=>b.value-a.value);
 
+  appState.liveKs = liveKs;
+  appState.liveHits = liveHits;
+
   render("liveKs",liveKs,"Pitcher Ks","ks",null);
   render("liveHits",liveHits,"Live Player Hits","hits",null);
+  renderBaseballPulse();
 
   document.getElementById("lastUpdated").innerText =
     "Last live update: " + new Date().toLocaleTimeString() + " · Live games: " + liveGames.length;
@@ -849,6 +926,7 @@ async function loadPreviousGameDayStats(){
 
   render("prevKs",prevKs,"Team Ks","prevks",null);
   render("prevHits",prevHits,"Team Hits","prevhits","players");
+  renderBaseballPulse();
 }
 
 async function loadHotHitters(){
@@ -927,6 +1005,7 @@ async function loadHotHitters(){
 
   render("hotHitters",hotHitters,"Hot Hitter Hits","hot","logs");
   render("streakingHitters",streakingHitters,"Streaking Hitter Hits","streak","logs");
+  renderBaseballPulse();
 }
 
 async function loadHotPitchersToday(){
@@ -983,13 +1062,14 @@ async function loadHotPitchersToday(){
   appState.hotPitchers = hotPitchers;
 
   render("hotPitchers",hotPitchers,"Hot Pitcher Ks","hotpitcher","pitcherlogs");
+  renderBaseballPulse();
 }
 
 async function loadStaticSectionsOnce(){
   await loadPreviousGameDayStats();
   await loadHotHitters();
   await loadHotPitchersToday();
-  renderEdgeInsights();
+  renderBaseballPulse();
 }
 
 async function loadDashboard(){
