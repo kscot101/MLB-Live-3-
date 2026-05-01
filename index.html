@@ -673,6 +673,7 @@
       border: 1px solid rgba(134,239,172,.22);
       font-size: 12px;
       font-weight: 900;
+      margin-right: 4px;
     }
 
     .loading {
@@ -759,6 +760,7 @@
       color: #bbf7d0;
       font-weight: 950;
       margin-bottom: 12px;
+      margin-right: 5px;
     }
 
     .profile-close {
@@ -1012,7 +1014,7 @@
 
   <div class="key">
     ⚡ Pulse gives quick storylines · 🔵 Live Ks · 🟢 Live hits · 💗 Hit streaks<br>
-    🌊 Hot pitchers · 🟠 Team K trends · 🟣 Previous team hit leaders
+    🌊 Hot pitchers · 🟠 Team K + Whiff% trends · 🟣 Previous team hit leaders
   </div>
 
   <section class="tab-panel active" data-tab="pulse">
@@ -1050,7 +1052,7 @@
 
         <div class="stat-section">
           <h2>🌊 Hot Pitchers</h2>
-          <div class="section-note">Playing today with 8+ Ks in each of last 2 starts</div>
+          <div class="section-note">Playing today with 8+ Ks in each of last 2 starts, plus last-two-start Whiff%</div>
           <div id="hotPitchers" class="loading">Loading...</div>
         </div>
 
@@ -1178,11 +1180,13 @@ async function getPitchCodeMap(){
 
   try {
     const data = await getJson("https://statsapi.mlb.com/api/v1/pitchCodes");
-    const list = Array.isArray(data) ? data : [];
+    const list = Array.isArray(data) ? data : (data.codes || data.pitchCodes || []);
     const map = {};
 
     list.forEach(code => {
-      map[code.code] = {
+      const c = code.code || code.pitchCode || code.value;
+      if(!c) return;
+      map[c] = {
         swing: !!code.swingStatus,
         miss: !!code.swingMissStatus
       };
@@ -1191,7 +1195,7 @@ async function getPitchCodeMap(){
     pitchCodeMapCache = map;
     return map;
   } catch(err) {
-    console.warn("Pitch code map failed, using fallback text parser", err);
+    console.warn("Pitch code map failed, using fallback parser", err);
     pitchCodeMapCache = {};
     return pitchCodeMapCache;
   }
@@ -1243,6 +1247,61 @@ function computeTeamWhiffStats(live, pitchMap){
   });
 
   return result;
+}
+
+function getSplitGamePk(split){
+  if(split.game && split.game.gamePk) return split.game.gamePk;
+  if(split.game && split.game.pk) return split.game.pk;
+  if(split.gamePk) return split.gamePk;
+
+  const link = (split.game && split.game.link) || split.gameLink || "";
+  const match = String(link).match(/game\/(\d+)/);
+
+  return match ? match[1] : null;
+}
+
+async function computePitcherWhiffForGame(gamePk, pitcherId, pitchMap){
+  if(!gamePk){
+    return {swings:0, misses:0, whiffPct:"0.0"};
+  }
+
+  try {
+    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
+
+    let swings = 0;
+    let misses = 0;
+
+    const plays = (((live.liveData || {}).plays || {}).allPlays || []);
+
+    plays.forEach(play => {
+      const playPitcherId =
+        play.matchup &&
+        play.matchup.pitcher &&
+        play.matchup.pitcher.id;
+
+      if(String(playPitcherId) !== String(pitcherId)) return;
+
+      (play.playEvents || []).forEach(event => {
+        if(!(event.isPitch || event.type === "pitch" || (event.details && event.details.code))) return;
+
+        const code = event.details ? event.details.code : "";
+        const mapped = pitchMap[code];
+        const status = mapped || fallbackSwingStatus(event);
+
+        if(status.swing) swings += 1;
+        if(status.miss) misses += 1;
+      });
+    });
+
+    return {
+      swings,
+      misses,
+      whiffPct: swings > 0 ? ((misses / swings) * 100).toFixed(1) : "0.0"
+    };
+  } catch(err) {
+    console.warn("Pitcher whiff calculation failed for game", gamePk, err);
+    return {swings:0, misses:0, whiffPct:"0.0"};
+  }
 }
 
 function setActiveTab(tab){
@@ -1524,13 +1583,14 @@ function render(id,rows,label,colorClass,detailsType){
 
     if(detailsType === "pitcherlogs" && row.logs){
       details =
-        '<div class="details-header">Recent strikeout log</div>' +
+        '<div class="details-header">Recent strikeout + whiff log</div>' +
         '<div class="details-grid">' +
           row.logs.map(g =>
             '<div class="detail-chip">' +
               '<div class="detail-name">' + h(g.opponent) + '</div>' +
               '<div class="detail-sub">' + h(g.date) + '</div>' +
               '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+              '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
             '</div>'
           ).join("") +
         '</div>';
@@ -1577,6 +1637,7 @@ function profileDetails(row){
             '<div class="detail-name">' + h(g.game || g.opponent || "Game") + '</div>' +
             '<div class="detail-sub">' + h(g.date || "") + '</div>' +
             '<div class="detail-stat">' + h(g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
+            (g.whiffPct !== undefined ? '<div class="detail-stat">' + h(g.whiffPct) + '% Whiff</div>' : '') +
           '</div>'
         ).join("") +
       '</div>';
@@ -1603,6 +1664,7 @@ function openProfile(id){
       '</div>' +
     '</div>' +
     '<div class="profile-stat">' + h(val(row.value)) + ' ' + h(statLabel(label)) + '</div>' +
+    (row.whiffPct !== undefined ? '<div class="profile-stat">' + h(row.whiffPct) + '% Whiff</div>' : '') +
     (row.extra ? '<div class="extra">' + h(row.extra) + '</div>' : '') +
     '<div class="label">' + h(label) + '</div>' +
     '<div style="margin-top:14px;">' + profileDetails(row) + '</div>';
@@ -1653,7 +1715,7 @@ function renderBaseballPulse(){
 
   if(hotPitchers.length){
     const p = hotPitchers[0];
-    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · " + p.game,"K watch"));
+    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "% · " + p.game,"K watch"));
   }
 
   if(hotHitters.length){
@@ -1829,8 +1891,8 @@ async function loadPreviousGameDayStats(){
   let prevKs = [], prevHits = [];
 
   for(const game of previous.games){
-    const box = await getJson("https://statsapi.mlb.com/api/v1/game/" + game.gamePk + "/boxscore");
     const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+    const box = live.liveData.boxscore;
     const whiffStats = computeTeamWhiffStats(live, pitchMap);
 
     ["away","home"].forEach(side => {
@@ -1968,6 +2030,7 @@ async function loadHotHitters(){
 async function loadHotPitchersToday(){
   const today = nyDate(0);
   const season = Number(today.slice(0,4));
+  const pitchMap = await getPitchCodeMap();
 
   const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher");
   let probablePitchers = [];
@@ -1980,7 +2043,14 @@ async function loadHotPitchersToday(){
         const probable = game.teams[side].probablePitcher;
 
         if(probable && probable.id){
-          probablePitchers.push({id:probable.id,name:probable.fullName,team:team.name,teamId:team.id,opponent:opponent.name,game:gameLabel(game)});
+          probablePitchers.push({
+            id:probable.id,
+            name:probable.fullName,
+            team:team.name,
+            teamId:team.id,
+            opponent:opponent.name,
+            game:gameLabel(game)
+          });
         }
       });
     });
@@ -2001,6 +2071,30 @@ async function loadHotPitchersToday(){
     const k2 = Number(lastTwo[1].stat.strikeOuts || 0);
 
     if(k1 >= 8 && k2 >= 8){
+      let totalSwings = 0;
+      let totalMisses = 0;
+      let logs = [];
+
+      for(const split of lastTwo){
+        const gamePk = getSplitGamePk(split);
+        const whiff = await computePitcherWhiffForGame(gamePk, p.id, pitchMap);
+        const ks = Number(split.stat.strikeOuts || 0);
+
+        totalSwings += whiff.swings;
+        totalMisses += whiff.misses;
+
+        logs.push({
+          date:split.date,
+          opponent:split.opponent ? split.opponent.name : "Opponent",
+          ks:ks,
+          whiffPct:whiff.whiffPct,
+          swings:whiff.swings,
+          misses:whiff.misses
+        });
+      }
+
+      const totalWhiffPct = totalSwings > 0 ? ((totalMisses / totalSwings) * 100).toFixed(1) : "0.0";
+
       hotPitchers.push({
         value:k1+k2,
         name:p.name,
@@ -2008,8 +2102,11 @@ async function loadHotPitchersToday(){
         game:"Today vs "+p.opponent,
         status:"Last 2 games: "+k1+" K, "+k2+" K",
         teamId:p.teamId,
-        extra:"Probable starter today",
-        logs:lastTwo.map(s => ({date:s.date,opponent:s.opponent ? s.opponent.name : "Opponent",ks:Number(s.stat.strikeOuts || 0)}))
+        whiffPct:totalWhiffPct,
+        swings:totalSwings,
+        misses:totalMisses,
+        extra:"Probable starter today · Whiff%: "+totalWhiffPct+"% ("+totalMisses+"/"+totalSwings+")",
+        logs
       });
     }
   }
