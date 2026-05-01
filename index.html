@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MLB Edge Dashboard</title>
+  <title>Diamond Pulse</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -25,8 +25,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(34,197,94,.18) 1px, transparent 1px);
+      background-image: radial-gradient(circle, rgba(34,197,94,.18) 1px, transparent 1px);
       background-size: 28px 28px;
       opacity: .35;
       pointer-events: none;
@@ -35,6 +34,7 @@
     .app {
       max-width: 1150px;
       margin: 0 auto;
+      position: relative;
     }
 
     .header {
@@ -52,14 +52,14 @@
 
     .top-row {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 12px;
     }
 
     h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 34px;
       letter-spacing: -.05em;
       color: #dcfce7;
       text-shadow: 0 0 18px rgba(34,197,94,.65);
@@ -277,14 +277,16 @@
       margin-bottom: 24px;
     }
 
-    .pulse-grid {
+    .pulse-grid,
+    .wow-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 12px;
     }
 
-    .pulse-card {
+    .pulse-card,
+    .wow-card {
       position: relative;
       overflow: hidden;
       min-height: 132px;
@@ -298,7 +300,15 @@
       animation: bubbleIn .35s ease both;
     }
 
-    .pulse-card::before {
+    .wow-card {
+      min-height: 104px;
+      background:
+        radial-gradient(circle at top left, rgba(34,197,94,.28), transparent 35%),
+        linear-gradient(135deg, rgba(3,105,70,.95), rgba(20,83,45,.92));
+    }
+
+    .pulse-card::before,
+    .wow-card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -306,7 +316,8 @@
       pointer-events: none;
     }
 
-    .pulse-icon {
+    .pulse-icon,
+    .wow-icon {
       width: 42px;
       height: 42px;
       border-radius: 50%;
@@ -321,7 +332,8 @@
       position: relative;
     }
 
-    .pulse-title {
+    .pulse-title,
+    .wow-title {
       position: relative;
       font-size: 12px;
       text-transform: uppercase;
@@ -331,7 +343,8 @@
       margin-bottom: 5px;
     }
 
-    .pulse-main {
+    .pulse-main,
+    .wow-main {
       position: relative;
       font-size: 18px;
       font-weight: 950;
@@ -340,7 +353,8 @@
       overflow-wrap: anywhere;
     }
 
-    .pulse-sub {
+    .pulse-sub,
+    .wow-sub {
       position: relative;
       margin-top: 6px;
       font-size: 13px;
@@ -349,7 +363,8 @@
       overflow-wrap: anywhere;
     }
 
-    .pulse-tag {
+    .pulse-tag,
+    .wow-tag {
       position: relative;
       display: inline-block;
       margin-top: 10px;
@@ -362,6 +377,39 @@
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: .05em;
+    }
+
+    .game-night {
+      background:
+        radial-gradient(circle at top left, rgba(190,242,100,.2), transparent 34%),
+        rgba(2,6,23,.72);
+      border: 1px solid rgba(134,239,172,.26);
+      border-radius: 28px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,.35), 0 0 24px rgba(34,197,94,.14);
+    }
+
+    .game-night-title {
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    .game-night-main {
+      color: #f0fdf4;
+      font-size: 22px;
+      font-weight: 950;
+      margin-bottom: 5px;
+    }
+
+    .game-night-sub {
+      color: #d1fae5;
+      font-size: 14px;
+      line-height: 1.4;
     }
 
     .stat-layout {
@@ -421,7 +469,7 @@
       pointer-events: none;
     }
 
-    .card:hover, .pulse-card:hover {
+    .card:hover, .pulse-card:hover, .wow-card:hover {
       transform: translateY(-2px) scale(1.01);
       box-shadow:
         0 22px 55px rgba(0,0,0,.45),
@@ -546,33 +594,13 @@
       letter-spacing: .05em;
     }
 
-    .ks {
-      background: linear-gradient(135deg, #064e3b, #16a34a);
-    }
-
-    .hits {
-      background: linear-gradient(135deg, #022c22, #22c55e);
-    }
-
-    .hot {
-      background: linear-gradient(135deg, #14532d, #84cc16);
-    }
-
-    .streak {
-      background: linear-gradient(135deg, #052e16, #10b981);
-    }
-
-    .hotpitcher {
-      background: linear-gradient(135deg, #042f2e, #14b8a6);
-    }
-
-    .prevks {
-      background: linear-gradient(135deg, #1c1917, #15803d);
-    }
-
-    .prevhits {
-      background: linear-gradient(135deg, #022c22, #4ade80);
-    }
+    .ks { background: linear-gradient(135deg, #064e3b, #16a34a); }
+    .hits { background: linear-gradient(135deg, #022c22, #22c55e); }
+    .hot { background: linear-gradient(135deg, #14532d, #84cc16); }
+    .streak { background: linear-gradient(135deg, #052e16, #10b981); }
+    .hotpitcher { background: linear-gradient(135deg, #042f2e, #14b8a6); }
+    .prevks { background: linear-gradient(135deg, #1c1917, #15803d); }
+    .prevhits { background: linear-gradient(135deg, #022c22, #4ade80); }
 
     .leader {
       border: 2px solid #bef264;
@@ -670,6 +698,14 @@
       color: #bbf7d0;
     }
 
+    .footer-note {
+      margin: 26px 0 80px;
+      color: #86efac;
+      opacity: .75;
+      font-size: 12px;
+      text-align: center;
+    }
+
     .profile-modal {
       position: fixed;
       inset: 0;
@@ -751,6 +787,14 @@
       font-weight: 950;
     }
 
+    .mobile-tabs {
+      display: none;
+    }
+
+    .tab-panel {
+      display: block;
+    }
+
     body.stadium-mode .header {
       position: relative;
     }
@@ -761,7 +805,8 @@
       display: none;
     }
 
-    body.stadium-mode .pulse-grid {
+    body.stadium-mode .pulse-grid,
+    body.stadium-mode .wow-grid {
       grid-template-columns: 1fr;
     }
 
@@ -770,7 +815,8 @@
     }
 
     body.stadium-mode .card,
-    body.stadium-mode .pulse-card {
+    body.stadium-mode .pulse-card,
+    body.stadium-mode .wow-card {
       padding: 22px;
       border-radius: 34px;
     }
@@ -794,9 +840,9 @@
       }
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 720px) {
       body {
-        padding: 10px;
+        padding: 10px 10px 86px;
       }
 
       .app {
@@ -826,11 +872,17 @@
         margin-top: 28px;
       }
 
-      .pulse-grid {
+      .key {
+        display: none;
+      }
+
+      .pulse-grid,
+      .wow-grid {
         grid-template-columns: 1fr;
       }
 
-      .pulse-card {
+      .pulse-card,
+      .wow-card {
         min-height: auto;
         border-radius: 24px;
       }
@@ -884,6 +936,56 @@
         padding: 10px;
       }
 
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .mobile-tabs {
+        position: fixed;
+        z-index: 50;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        background: rgba(2,6,23,.88);
+        border: 1px solid rgba(134,239,172,.24);
+        box-shadow: 0 0 32px rgba(34,197,94,.18);
+        backdrop-filter: blur(14px);
+        border-radius: 22px;
+        padding: 8px;
+      }
+
+      .tab-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 8px 4px;
+        background: transparent;
+        color: #a7f3d0;
+        font-size: 11px;
+        font-weight: 950;
+        cursor: pointer;
+      }
+
+      .tab-btn.active {
+        background: rgba(34,197,94,.18);
+        color: #f0fdf4;
+        box-shadow: inset 0 0 16px rgba(34,197,94,.08);
+      }
+
+      body.stadium-mode .mobile-tabs {
+        display: none;
+      }
+
+      body.stadium-mode .tab-panel {
+        display: block;
+      }
+
       body.stadium-mode .num {
         font-size: 40px;
       }
@@ -900,7 +1002,7 @@
   <div class="header">
     <div class="top-row">
       <div>
-        <h1>⚾ MLB Edge Dashboard</h1>
+        <h1>⚾ Diamond Pulse</h1>
         <div class="sub">A live baseball companion for tonight’s action</div>
         <div id="lastUpdated" class="refresh">Loading live data...</div>
       </div>
@@ -928,70 +1030,117 @@
   </div>
 
   <div class="key">
-    ⚡ Baseball Pulse gives quick storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot hitters<br>
+    ⚡ Pulse gives quick storylines · 🧨 Wow Meter shows big moments · 🔵 Live Ks · 🟢 Live hits<br>
     💗 Hit streaks · 🌊 Hot pitchers · 🟠 Team K trends · 🟣 Previous team hit leaders
   </div>
 
-  <h2>⚡ Tonight’s Baseball Pulse</h2>
-  <div class="section-note">Quick storylines for fans watching at the game, at home, or with friends</div>
-  <div id="pulseCards" class="pulse-grid">
-    <div class="loading">Loading pulse...</div>
-  </div>
+  <section class="tab-panel active" data-tab="pulse">
+    <h2>⚡ Tonight’s Baseball Pulse</h2>
+    <div class="section-note">Quick storylines for fans watching at the game, at home, or with friends</div>
+    <div id="pulseCards" class="pulse-grid">
+      <div class="loading">Loading pulse...</div>
+    </div>
+
+    <h2>🎯 Game of the Night</h2>
+    <div id="gameOfNight" class="game-night">Loading game of the night...</div>
+
+    <h2>🧨 Wow Meter</h2>
+    <div class="section-note">Big live or recent moments worth noticing</div>
+    <div id="wowMeter" class="wow-grid">
+      <div class="loading">Loading wow moments...</div>
+    </div>
+  </section>
 
   <div class="stat-layout">
 
     <div class="stat-column">
-      <div class="column-pill">Pitching + K Watch</div>
+      <section class="tab-panel" data-tab="live">
+        <div class="column-pill">Live Action</div>
 
-      <div class="stat-section">
-        <h2>🔥 Live Strikeouts</h2>
-        <div class="section-note">Pitchers in games happening right now</div>
-        <div id="liveKs" class="loading">Loading...</div>
-      </div>
+        <div class="stat-section">
+          <h2>🔥 Live Strikeouts</h2>
+          <div class="section-note">Pitchers in games happening right now</div>
+          <div id="liveKs" class="loading">Loading...</div>
+        </div>
 
-      <div class="stat-section">
-        <h2>🌊 Hot Pitchers</h2>
-        <div class="section-note">Playing today with 8+ Ks in each of last 2 starts</div>
-        <div id="hotPitchers" class="loading">Loading...</div>
-      </div>
+        <div class="stat-section">
+          <h2>💥 Live Hits</h2>
+          <div class="section-note">Hit leaders in live games</div>
+          <div id="liveHits" class="loading">Loading...</div>
+        </div>
+      </section>
 
-      <div class="stat-section">
-        <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
-        <div class="section-note">Teams with the most strikeouts in their previous completed game</div>
-        <div id="prevKs" class="loading">Loading...</div>
-      </div>
+      <section class="tab-panel" data-tab="arms">
+        <div class="column-pill">Pitching + K Watch</div>
+
+        <div class="stat-section">
+          <h2>🌊 Hot Pitchers</h2>
+          <div class="section-note">Playing today with 8+ Ks in each of last 2 starts</div>
+          <div id="hotPitchers" class="loading">Loading...</div>
+        </div>
+
+        <div class="stat-section">
+          <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
+          <div class="section-note">Teams with the most strikeouts in their previous completed game</div>
+          <div id="armsPrevKs" class="loading">Loading...</div>
+        </div>
+      </section>
     </div>
 
     <div class="stat-column">
-      <div class="column-pill">Hitting + Hot Bats</div>
+      <section class="tab-panel" data-tab="bats">
+        <div class="column-pill">Hitting + Hot Bats</div>
 
-      <div class="stat-section">
-        <h2>💥 Live Hits</h2>
-        <div class="section-note">Hit leaders in live games</div>
-        <div id="liveHits" class="loading">Loading...</div>
-      </div>
+        <div class="stat-section">
+          <h2>🔥 Hot Hitters</h2>
+          <div class="section-note">5+ hits over the last 4 completed game days</div>
+          <div id="hotHitters" class="loading">Loading...</div>
+        </div>
 
-      <div class="stat-section">
-        <h2>🔥 Hot Hitters</h2>
-        <div class="section-note">5+ hits over the last 4 completed game days</div>
-        <div id="hotHitters" class="loading">Loading...</div>
-      </div>
+        <div class="stat-section">
+          <h2>💗 Streaking Hitters</h2>
+          <div class="section-note">Hit in 3+ straight completed games</div>
+          <div id="streakingHitters" class="loading">Loading...</div>
+        </div>
 
-      <div class="stat-section">
-        <h2>💗 Streaking Hitters</h2>
-        <div class="section-note">Hit in 3+ straight completed games</div>
-        <div id="streakingHitters" class="loading">Loading...</div>
-      </div>
+        <div class="stat-section">
+          <h2>📈 Previous Game Day — Teams With Most Hits</h2>
+          <div class="section-note">Teams with the most hits in their previous completed game</div>
+          <div id="batsPrevHits" class="loading">Loading...</div>
+        </div>
+      </section>
 
-      <div class="stat-section">
-        <h2>📈 Previous Game Day — Teams With Most Hits</h2>
-        <div class="section-note">Teams with the most hits in their previous completed game</div>
-        <div id="prevHits" class="loading">Loading...</div>
-      </div>
+      <section class="tab-panel" data-tab="recap">
+        <div class="column-pill">Yesterday’s Recap</div>
+
+        <div class="stat-section">
+          <h2>📊 Team Strikeouts</h2>
+          <div class="section-note">Previous completed game day</div>
+          <div id="recapKs" class="loading">Loading...</div>
+        </div>
+
+        <div class="stat-section">
+          <h2>📈 Team Hits</h2>
+          <div class="section-note">Tap to see player hit breakdowns</div>
+          <div id="recapHits" class="loading">Loading...</div>
+        </div>
+      </section>
     </div>
 
   </div>
+
+  <div class="footer-note">
+    Unofficial fan dashboard using public baseball data. Not affiliated with MLB.
+  </div>
 </div>
+
+<nav class="mobile-tabs">
+  <button class="tab-btn active" onclick="setActiveTab('pulse')">⚡ Pulse</button>
+  <button class="tab-btn" onclick="setActiveTab('live')">📡 Live</button>
+  <button class="tab-btn" onclick="setActiveTab('bats')">🔥 Bats</button>
+  <button class="tab-btn" onclick="setActiveTab('arms')">🌊 Arms</button>
+  <button class="tab-btn" onclick="setActiveTab('recap')">📊 Recap</button>
+</nav>
 
 <div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)">
   <div class="profile-panel">
@@ -1007,8 +1156,8 @@ let profileStore = [];
 
 let appState = {
   selectedTeamId: "all",
-  todaysTeams: [],
   scoreGames: [],
+  todaysTeams: [],
   liveKs: [],
   liveHits: [],
   prevKs: [],
@@ -1017,6 +1166,20 @@ let appState = {
   streakingHitters: [],
   hotPitchers: []
 };
+
+function h(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[ch]));
+}
+
+function val(value){
+  return value === undefined || value === null || value === "" ? "-" : value;
+}
 
 function nyDate(offsetDays = 0){
   const ny = new Date(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
@@ -1032,6 +1195,23 @@ async function getJson(url){
   const res = await fetch(url + sep + "_=" + Date.now(), {cache:"no-store"});
   if(!res.ok) throw new Error("Fetch failed: " + url);
   return await res.json();
+}
+
+function setActiveTab(tab){
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.toggle("active", panel.dataset.tab === tab);
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes("'" + tab + "'"));
+  });
+
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function toggleStadiumMode(){
+  document.body.classList.toggle("stadium-mode");
+  document.getElementById("stadiumBtn").classList.toggle("active");
 }
 
 function teamName(team){
@@ -1058,23 +1238,6 @@ function gameMatchesFilter(game){
          String(game.teams.home.team.id) === String(appState.selectedTeamId);
 }
 
-function renderTeamFilters(){
-  const teams = appState.todaysTeams || [];
-
-  let html =
-    '<button class="filter-btn ' + (appState.selectedTeamId === "all" ? "active" : "") + '" onclick="setTeamFilter(\'all\')">All Teams</button>';
-
-  teams.forEach(team => {
-    html +=
-      '<button class="filter-btn ' + (String(appState.selectedTeamId) === String(team.id) ? "active" : "") + '" onclick="setTeamFilter(' + team.id + ')">' +
-        '<img src="' + logo(team.id) + '">' +
-        '<span>' + team.abbreviation + '</span>' +
-      '</button>';
-  });
-
-  document.getElementById("teamFilters").innerHTML = html;
-}
-
 function collectTodayTeams(games){
   const map = {};
 
@@ -1090,6 +1253,23 @@ function collectTodayTeams(games){
   });
 
   appState.todaysTeams = Object.values(map).sort((a,b) => a.abbreviation.localeCompare(b.abbreviation));
+}
+
+function renderTeamFilters(){
+  const teams = appState.todaysTeams || [];
+
+  let html =
+    '<button class="filter-btn ' + (appState.selectedTeamId === "all" ? "active" : "") + '" onclick="setTeamFilter(\\'all\\')">All Teams</button>';
+
+  teams.forEach(team => {
+    html +=
+      '<button class="filter-btn ' + (String(appState.selectedTeamId) === String(team.id) ? "active" : "") + '" onclick="setTeamFilter(' + team.id + ')">' +
+        '<img src="' + logo(team.id) + '">' +
+        '<span>' + h(team.abbreviation) + '</span>' +
+      '</button>';
+  });
+
+  document.getElementById("teamFilters").innerHTML = html;
 }
 
 function tickerStatus(game){
@@ -1140,12 +1320,12 @@ function renderScoreTicker(games){
 
     return (
       '<div class="ticker-item ' + cls + '">' +
-        '<span>' + away + '</span>' +
-        '<span class="ticker-score">' + awayScore + '</span>' +
+        '<span>' + h(away) + '</span>' +
+        '<span class="ticker-score">' + h(awayScore) + '</span>' +
         '<span>@</span>' +
-        '<span>' + home + '</span>' +
-        '<span class="ticker-score">' + homeScore + '</span>' +
-        '<span class="ticker-detail">' + detail + '</span>' +
+        '<span>' + h(home) + '</span>' +
+        '<span class="ticker-score">' + h(homeScore) + '</span>' +
+        '<span class="ticker-detail">' + h(detail) + '</span>' +
       '</div>'
     );
   });
@@ -1204,7 +1384,7 @@ function registerProfile(row,label){
 function makeCard(row,label,colorClass,detailsHtml){
   const value = Number(row.value || 0);
   const profileId = registerProfile(row,label);
-  const extra = row.extra ? '<div class="extra">' + row.extra + '</div>' : "";
+  const extra = row.extra ? '<div class="extra">' + h(row.extra) + '</div>' : "";
   const icon = label.includes("Hot Pitcher") ? " 🌊" :
                label.includes("Streaking") ? " 💗" :
                label.includes("Hot Hitter") ? " 🔥" :
@@ -1214,17 +1394,17 @@ function makeCard(row,label,colorClass,detailsHtml){
     '<div class="main-row">' +
       '<img class="logo" src="' + logo(row.teamId) + '">' +
       '<div class="num-wrap">' +
-        '<div class="num">' + (row.value || "-") + '</div>' +
-        '<div class="stat-label">' + statLabel(label) + '</div>' +
+        '<div class="num">' + h(val(row.value)) + '</div>' +
+        '<div class="stat-label">' + h(statLabel(label)) + '</div>' +
       '</div>' +
       '<div class="info">' +
-        '<div class="name">' + row.name + icon + '</div>' +
-        '<div class="team">' + (row.team || "") + '</div>' +
-        '<div class="game">' + (row.game || "") + '</div>' +
-        '<div class="status">' + (row.status || "") + '</div>' +
+        '<div class="name">' + h(row.name) + icon + '</div>' +
+        '<div class="team">' + h(row.team || "") + '</div>' +
+        '<div class="game">' + h(row.game || "") + '</div>' +
+        '<div class="status">' + h(row.status || "") + '</div>' +
         extra +
         '<div>' +
-          '<span class="label">' + label + (detailsHtml ? " · tap to expand" : "") + '</span>' +
+          '<span class="label">' + h(label) + (detailsHtml ? " · tap to expand" : "") + '</span>' +
           '<button class="profile-btn" onclick="event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
         '</div>' +
       '</div>' +
@@ -1257,8 +1437,8 @@ function render(id,rows,label,colorClass,detailsType){
         '<div class="details-grid">' +
           row.players.map(p =>
             '<div class="detail-chip">' +
-              '<div class="detail-name">' + p.name + '</div>' +
-              '<div class="detail-stat">' + p.hits + ' H</div>' +
+              '<div class="detail-name">' + h(p.name) + '</div>' +
+              '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
             '</div>'
           ).join("") +
         '</div>';
@@ -1270,9 +1450,9 @@ function render(id,rows,label,colorClass,detailsType){
         '<div class="details-grid">' +
           row.logs.map(g =>
             '<div class="detail-chip">' +
-              '<div class="detail-name">' + g.game + '</div>' +
-              '<div class="detail-sub">' + g.date + '</div>' +
-              '<div class="detail-stat">' + g.hits + ' H</div>' +
+              '<div class="detail-name">' + h(g.game) + '</div>' +
+              '<div class="detail-sub">' + h(g.date) + '</div>' +
+              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
             '</div>'
           ).join("") +
         '</div>';
@@ -1284,9 +1464,9 @@ function render(id,rows,label,colorClass,detailsType){
         '<div class="details-grid">' +
           row.logs.map(g =>
             '<div class="detail-chip">' +
-              '<div class="detail-name">' + g.opponent + '</div>' +
-              '<div class="detail-sub">' + g.date + '</div>' +
-              '<div class="detail-stat">' + g.ks + ' K</div>' +
+              '<div class="detail-name">' + h(g.opponent) + '</div>' +
+              '<div class="detail-sub">' + h(g.date) + '</div>' +
+              '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
             '</div>'
           ).join("") +
         '</div>';
@@ -1305,8 +1485,8 @@ function profileDetails(row){
       '<div class="details-grid">' +
         row.players.map(p =>
           '<div class="detail-chip">' +
-            '<div class="detail-name">' + p.name + '</div>' +
-            '<div class="detail-stat">' + p.hits + ' H</div>' +
+            '<div class="detail-name">' + h(p.name) + '</div>' +
+            '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
           '</div>'
         ).join("") +
       '</div>';
@@ -1318,9 +1498,9 @@ function profileDetails(row){
       '<div class="details-grid">' +
         row.logs.map(g =>
           '<div class="detail-chip">' +
-            '<div class="detail-name">' + (g.game || g.opponent || "Game") + '</div>' +
-            '<div class="detail-sub">' + (g.date || "") + '</div>' +
-            '<div class="detail-stat">' + (g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
+            '<div class="detail-name">' + h(g.game || g.opponent || "Game") + '</div>' +
+            '<div class="detail-sub">' + h(g.date || "") + '</div>' +
+            '<div class="detail-stat">' + h(g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
           '</div>'
         ).join("") +
       '</div>';
@@ -1340,15 +1520,15 @@ function openProfile(id){
     '<div class="profile-head">' +
       '<img class="profile-logo" src="' + logo(row.teamId) + '">' +
       '<div>' +
-        '<div class="profile-title">' + row.name + '</div>' +
-        '<div class="profile-sub">' + (row.team || "") + '</div>' +
-        '<div class="profile-sub">' + (row.game || "") + '</div>' +
-        '<div class="profile-sub">' + (row.status || "") + '</div>' +
+        '<div class="profile-title">' + h(row.name) + '</div>' +
+        '<div class="profile-sub">' + h(row.team || "") + '</div>' +
+        '<div class="profile-sub">' + h(row.game || "") + '</div>' +
+        '<div class="profile-sub">' + h(row.status || "") + '</div>' +
       '</div>' +
     '</div>' +
-    '<div class="profile-stat">' + (row.value || "-") + ' ' + statLabel(label) + '</div>' +
-    (row.extra ? '<div class="extra">' + row.extra + '</div>' : '') +
-    '<div class="label">' + label + '</div>' +
+    '<div class="profile-stat">' + h(val(row.value)) + ' ' + h(statLabel(label)) + '</div>' +
+    (row.extra ? '<div class="extra">' + h(row.extra) + '</div>' : '') +
+    '<div class="label">' + h(label) + '</div>' +
     '<div style="margin-top:14px;">' + profileDetails(row) + '</div>';
 
   document.getElementById("profileModal").classList.add("open");
@@ -1366,10 +1546,22 @@ function pulseCard(icon,title,main,sub,tag){
   return (
     '<div class="pulse-card">' +
       '<div class="pulse-icon">' + icon + '</div>' +
-      '<div class="pulse-title">' + title + '</div>' +
-      '<div class="pulse-main">' + main + '</div>' +
-      '<div class="pulse-sub">' + sub + '</div>' +
-      '<div class="pulse-tag">' + tag + '</div>' +
+      '<div class="pulse-title">' + h(title) + '</div>' +
+      '<div class="pulse-main">' + h(main) + '</div>' +
+      '<div class="pulse-sub">' + h(sub) + '</div>' +
+      '<div class="pulse-tag">' + h(tag) + '</div>' +
+    '</div>'
+  );
+}
+
+function wowCard(icon,title,main,sub,tag){
+  return (
+    '<div class="wow-card">' +
+      '<div class="wow-icon">' + icon + '</div>' +
+      '<div class="wow-title">' + h(title) + '</div>' +
+      '<div class="wow-main">' + h(main) + '</div>' +
+      '<div class="wow-sub">' + h(sub) + '</div>' +
+      '<div class="wow-tag">' + h(tag) + '</div>' +
     '</div>'
   );
 }
@@ -1429,6 +1621,81 @@ function renderBaseballPulse(){
   document.getElementById("pulseCards").innerHTML = cards.slice(0,6).join("");
 }
 
+function renderGameOfNight(){
+  const games = (appState.scoreGames || []).filter(gameMatchesFilter);
+
+  if(!games.length){
+    document.getElementById("gameOfNight").innerHTML =
+      '<div class="game-night-title">Game of the Night</div><div class="game-night-main">No games found</div><div class="game-night-sub">Try switching back to All Teams.</div>';
+    return;
+  }
+
+  let live = games.filter(g => g.status.abstractGameState === "Live");
+  let target;
+
+  if(live.length){
+    live.sort((a,b) => {
+      const diffA = Math.abs(scoreValue(a,"away") - scoreValue(a,"home"));
+      const diffB = Math.abs(scoreValue(b,"away") - scoreValue(b,"home"));
+      const totalA = Number(scoreValue(a,"away")) + Number(scoreValue(a,"home"));
+      const totalB = Number(scoreValue(b,"away")) + Number(scoreValue(b,"home"));
+      return diffA - diffB || totalB - totalA;
+    });
+    target = live[0];
+  } else {
+    target = games[0];
+  }
+
+  const away = teamName(target.teams.away.team);
+  const home = teamName(target.teams.home.team);
+  const awayScore = scoreValue(target,"away");
+  const homeScore = scoreValue(target,"home");
+  const status = tickerStatus(target);
+
+  document.getElementById("gameOfNight").innerHTML =
+    '<div class="game-night-title">Game of the Night</div>' +
+    '<div class="game-night-main">' + h(away) + ' ' + h(awayScore) + ' @ ' + h(home) + ' ' + h(homeScore) + '</div>' +
+    '<div class="game-night-sub">' + h(status) + ' · Close games, live games, and high-action games rise to the top.</div>';
+}
+
+function renderWowMeter(){
+  const liveKs = filterRows(appState.liveKs);
+  const liveHits = filterRows(appState.liveHits);
+  const prevKs = filterRows(appState.prevKs);
+  const hotHitters = filterRows(appState.hotHitters);
+  const streaking = filterRows(appState.streakingHitters);
+
+  let cards = [];
+
+  liveKs.filter(p => Number(p.value) >= 8).slice(0,2).forEach(p => {
+    cards.push(wowCard("👑","Big K Night",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live"));
+  });
+
+  liveHits.filter(h => Number(h.value) >= 3).slice(0,2).forEach(p => {
+    cards.push(wowCard("💥","Three-Hit Watch",p.name + " · " + p.value + " hits",p.team + " · " + p.status,"Live"));
+  });
+
+  prevKs.filter(t => Number(t.value) >= 10).slice(0,2).forEach(t => {
+    cards.push(wowCard("🟠","K-Prone Lineup",t.name + " · " + t.value + " Ks",t.status + " · previous completed game","Trend"));
+  });
+
+  hotHitters.slice(0,2).forEach(hh => {
+    cards.push(wowCard("🔥","Hot Bat",hh.name + " · " + hh.value + " hits",hh.team + " · last 4 completed game days","Watch"));
+  });
+
+  streaking.slice(0,2).forEach(s => {
+    cards.push(wowCard("💗","Hit Streak",s.name + " · " + s.value + " games",s.team + " · streaking","Fun"));
+  });
+
+  if(!cards.length){
+    document.getElementById("wowMeter").innerHTML =
+      '<div class="loading">No wow moments yet. Big live performances will appear here.</div>';
+    return;
+  }
+
+  document.getElementById("wowMeter").innerHTML = cards.slice(0,6).join("");
+}
+
 function renderAllData(){
   profileStore = [];
 
@@ -1437,18 +1704,20 @@ function renderAllData(){
 
   render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks",null);
   render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits",null);
+
   render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs");
+  render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+
   render("hotHitters",filterRows(appState.hotHitters),"Hot Hitter Hits","hot","logs");
   render("streakingHitters",filterRows(appState.streakingHitters),"Streaking Hitter Hits","streak","logs");
-  render("prevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
-  render("prevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
+  render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
+
+  render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
   renderBaseballPulse();
-}
-
-function toggleStadiumMode(){
-  document.body.classList.toggle("stadium-mode");
-  document.getElementById("stadiumBtn").classList.toggle("active");
+  renderGameOfNight();
+  renderWowMeter();
 }
 
 function liveStatus(live){
