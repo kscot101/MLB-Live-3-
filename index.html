@@ -1135,11 +1135,11 @@
 </div>
 
 <nav class="mobile-tabs">
-  <button class="tab-btn active" onclick="setActiveTab('pulse')">⚡ Pulse</button>
-  <button class="tab-btn" onclick="setActiveTab('live')">📡 Live</button>
-  <button class="tab-btn" onclick="setActiveTab('bats')">🔥 Bats</button>
-  <button class="tab-btn" onclick="setActiveTab('arms')">🌊 Arms</button>
-  <button class="tab-btn" onclick="setActiveTab('recap')">📊 Recap</button>
+  <button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button>
+  <button class="tab-btn" data-tab-target="live">📡 Live</button>
+  <button class="tab-btn" data-tab-target="bats">🔥 Bats</button>
+  <button class="tab-btn" data-tab-target="arms">🌊 Arms</button>
+  <button class="tab-btn" data-tab-target="recap">📊 Recap</button>
 </nav>
 
 <div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)">
@@ -1203,11 +1203,15 @@ function setActiveTab(tab){
   });
 
   document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.getAttribute("onclick").includes("'" + tab + "'"));
+    btn.classList.toggle("active", btn.dataset.tabTarget === tab);
   });
 
   window.scrollTo({top: 0, behavior: "smooth"});
 }
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => setActiveTab(btn.dataset.tabTarget));
+});
 
 function toggleStadiumMode(){
   document.body.classList.toggle("stadium-mode");
@@ -1259,17 +1263,28 @@ function renderTeamFilters(){
   const teams = appState.todaysTeams || [];
 
   let html =
-    '<button class="filter-btn ' + (appState.selectedTeamId === "all" ? "active" : "") + '" onclick="setTeamFilter(\\'all\\')">All Teams</button>';
+    '<button class="filter-btn ' +
+    (appState.selectedTeamId === "all" ? "active" : "") +
+    '" data-team-id="all">All Teams</button>';
 
   teams.forEach(team => {
     html +=
-      '<button class="filter-btn ' + (String(appState.selectedTeamId) === String(team.id) ? "active" : "") + '" onclick="setTeamFilter(' + team.id + ')">' +
+      '<button class="filter-btn ' +
+      (String(appState.selectedTeamId) === String(team.id) ? "active" : "") +
+      '" data-team-id="' + h(team.id) + '">' +
         '<img src="' + logo(team.id) + '">' +
         '<span>' + h(team.abbreviation) + '</span>' +
       '</button>';
   });
 
-  document.getElementById("teamFilters").innerHTML = html;
+  const bar = document.getElementById("teamFilters");
+  bar.innerHTML = html;
+
+  bar.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTeamFilter(btn.dataset.teamId);
+    });
+  });
 }
 
 function tickerStatus(game){
@@ -1405,7 +1420,7 @@ function makeCard(row,label,colorClass,detailsHtml){
         extra +
         '<div>' +
           '<span class="label">' + h(label) + (detailsHtml ? " · tap to expand" : "") + '</span>' +
-          '<button class="profile-btn" onclick="event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
+          '<button class="profile-btn" onclick="event.preventDefault(); event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1583,8 +1598,8 @@ function renderBaseballPulse(){
   }
 
   if(liveHits.length){
-    const h = liveHits[0];
-    cards.push(pulseCard("💥","Live Hit Leader",h.name + " · " + h.value + " hits",h.team + " · " + h.status,"Live now"));
+    const hit = liveHits[0];
+    cards.push(pulseCard("💥","Live Hit Leader",hit.name + " · " + hit.value + " hits",hit.team + " · " + hit.status,"Live now"));
   }
 
   if(hotPitchers.length){
@@ -1593,8 +1608,8 @@ function renderBaseballPulse(){
   }
 
   if(hotHitters.length){
-    const h = hotHitters[0];
-    cards.push(pulseCard("🔥","Hottest Bat",h.name + " · " + h.value + " hits",h.team + " · last 4 completed game days","Hot bat"));
+    const hit = hotHitters[0];
+    cards.push(pulseCard("🔥","Hottest Bat",hit.name + " · " + hit.value + " hits",hit.team + " · last 4 completed game days","Hot bat"));
   }
 
   if(streakingHitters.length){
@@ -1635,8 +1650,8 @@ function renderGameOfNight(){
 
   if(live.length){
     live.sort((a,b) => {
-      const diffA = Math.abs(scoreValue(a,"away") - scoreValue(a,"home"));
-      const diffB = Math.abs(scoreValue(b,"away") - scoreValue(b,"home"));
+      const diffA = Math.abs(Number(scoreValue(a,"away")) - Number(scoreValue(a,"home")));
+      const diffB = Math.abs(Number(scoreValue(b,"away")) - Number(scoreValue(b,"home")));
       const totalA = Number(scoreValue(a,"away")) + Number(scoreValue(a,"home"));
       const totalB = Number(scoreValue(b,"away")) + Number(scoreValue(b,"home"));
       return diffA - diffB || totalB - totalA;
@@ -1671,7 +1686,7 @@ function renderWowMeter(){
     cards.push(wowCard("👑","Big K Night",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live"));
   });
 
-  liveHits.filter(h => Number(h.value) >= 3).slice(0,2).forEach(p => {
+  liveHits.filter(hit => Number(hit.value) >= 3).slice(0,2).forEach(p => {
     cards.push(wowCard("💥","Three-Hit Watch",p.name + " · " + p.value + " hits",p.team + " · " + p.status,"Live"));
   });
 
@@ -1679,8 +1694,8 @@ function renderWowMeter(){
     cards.push(wowCard("🟠","K-Prone Lineup",t.name + " · " + t.value + " Ks",t.status + " · previous completed game","Trend"));
   });
 
-  hotHitters.slice(0,2).forEach(hh => {
-    cards.push(wowCard("🔥","Hot Bat",hh.name + " · " + hh.value + " hits",hh.team + " · last 4 completed game days","Watch"));
+  hotHitters.slice(0,2).forEach(hit => {
+    cards.push(wowCard("🔥","Hot Bat",hit.name + " · " + hit.value + " hits",hit.team + " · last 4 completed game days","Watch"));
   });
 
   streaking.slice(0,2).forEach(s => {
@@ -1887,7 +1902,7 @@ async function loadHotHitters(){
     }
   }
 
-  const hotHitters = Object.values(hotMap).filter(h=>h.value>=5).sort((a,b)=>b.value-a.value);
+  const hotHitters = Object.values(hotMap).filter(hit => hit.value>=5).sort((a,b)=>b.value-a.value);
 
   let streakingHitters = [];
   Object.values(appearanceMap).forEach(player => {
