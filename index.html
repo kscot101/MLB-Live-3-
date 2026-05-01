@@ -277,16 +277,14 @@
       margin-bottom: 24px;
     }
 
-    .pulse-grid,
-    .wow-grid {
+    .pulse-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 12px;
     }
 
-    .pulse-card,
-    .wow-card {
+    .pulse-card {
       position: relative;
       overflow: hidden;
       min-height: 132px;
@@ -300,15 +298,7 @@
       animation: bubbleIn .35s ease both;
     }
 
-    .wow-card {
-      min-height: 104px;
-      background:
-        radial-gradient(circle at top left, rgba(34,197,94,.28), transparent 35%),
-        linear-gradient(135deg, rgba(3,105,70,.95), rgba(20,83,45,.92));
-    }
-
-    .pulse-card::before,
-    .wow-card::before {
+    .pulse-card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -316,8 +306,7 @@
       pointer-events: none;
     }
 
-    .pulse-icon,
-    .wow-icon {
+    .pulse-icon {
       width: 42px;
       height: 42px;
       border-radius: 50%;
@@ -332,8 +321,7 @@
       position: relative;
     }
 
-    .pulse-title,
-    .wow-title {
+    .pulse-title {
       position: relative;
       font-size: 12px;
       text-transform: uppercase;
@@ -343,8 +331,7 @@
       margin-bottom: 5px;
     }
 
-    .pulse-main,
-    .wow-main {
+    .pulse-main {
       position: relative;
       font-size: 18px;
       font-weight: 950;
@@ -353,8 +340,7 @@
       overflow-wrap: anywhere;
     }
 
-    .pulse-sub,
-    .wow-sub {
+    .pulse-sub {
       position: relative;
       margin-top: 6px;
       font-size: 13px;
@@ -363,8 +349,7 @@
       overflow-wrap: anywhere;
     }
 
-    .pulse-tag,
-    .wow-tag {
+    .pulse-tag {
       position: relative;
       display: inline-block;
       margin-top: 10px;
@@ -469,7 +454,7 @@
       pointer-events: none;
     }
 
-    .card:hover, .pulse-card:hover, .wow-card:hover {
+    .card:hover, .pulse-card:hover {
       transform: translateY(-2px) scale(1.01);
       box-shadow:
         0 22px 55px rgba(0,0,0,.45),
@@ -805,8 +790,7 @@
       display: none;
     }
 
-    body.stadium-mode .pulse-grid,
-    body.stadium-mode .wow-grid {
+    body.stadium-mode .pulse-grid {
       grid-template-columns: 1fr;
     }
 
@@ -815,8 +799,7 @@
     }
 
     body.stadium-mode .card,
-    body.stadium-mode .pulse-card,
-    body.stadium-mode .wow-card {
+    body.stadium-mode .pulse-card {
       padding: 22px;
       border-radius: 34px;
     }
@@ -876,13 +859,11 @@
         display: none;
       }
 
-      .pulse-grid,
-      .wow-grid {
+      .pulse-grid {
         grid-template-columns: 1fr;
       }
 
-      .pulse-card,
-      .wow-card {
+      .pulse-card {
         min-height: auto;
         border-radius: 24px;
       }
@@ -1030,8 +1011,8 @@
   </div>
 
   <div class="key">
-    ⚡ Pulse gives quick storylines · 🧨 Wow Meter shows big moments · 🔵 Live Ks · 🟢 Live hits<br>
-    💗 Hit streaks · 🌊 Hot pitchers · 🟠 Team K trends · 🟣 Previous team hit leaders
+    ⚡ Pulse gives quick storylines · 🔵 Live Ks · 🟢 Live hits · 💗 Hit streaks<br>
+    🌊 Hot pitchers · 🟠 Team K trends · 🟣 Previous team hit leaders
   </div>
 
   <section class="tab-panel active" data-tab="pulse">
@@ -1043,12 +1024,6 @@
 
     <h2>🎯 Game of the Night</h2>
     <div id="gameOfNight" class="game-night">Loading game of the night...</div>
-
-    <h2>🧨 Wow Meter</h2>
-    <div class="section-note">Big live or recent moments worth noticing</div>
-    <div id="wowMeter" class="wow-grid">
-      <div class="loading">Loading wow moments...</div>
-    </div>
   </section>
 
   <div class="stat-layout">
@@ -1081,7 +1056,7 @@
 
         <div class="stat-section">
           <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
-          <div class="section-note">Teams with the most strikeouts in their previous completed game</div>
+          <div class="section-note">Shows team strikeouts and estimated Whiff% from pitch-level data</div>
           <div id="armsPrevKs" class="loading">Loading...</div>
         </div>
       </section>
@@ -1115,7 +1090,7 @@
 
         <div class="stat-section">
           <h2>📊 Team Strikeouts</h2>
-          <div class="section-note">Previous completed game day</div>
+          <div class="section-note">Previous completed game day with Whiff%</div>
           <div id="recapKs" class="loading">Loading...</div>
         </div>
 
@@ -1153,6 +1128,7 @@
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 
 let profileStore = [];
+let pitchCodeMapCache = null;
 
 let appState = {
   selectedTeamId: "all",
@@ -1195,6 +1171,78 @@ async function getJson(url){
   const res = await fetch(url + sep + "_=" + Date.now(), {cache:"no-store"});
   if(!res.ok) throw new Error("Fetch failed: " + url);
   return await res.json();
+}
+
+async function getPitchCodeMap(){
+  if(pitchCodeMapCache) return pitchCodeMapCache;
+
+  try {
+    const data = await getJson("https://statsapi.mlb.com/api/v1/pitchCodes");
+    const list = Array.isArray(data) ? data : [];
+    const map = {};
+
+    list.forEach(code => {
+      map[code.code] = {
+        swing: !!code.swingStatus,
+        miss: !!code.swingMissStatus
+      };
+    });
+
+    pitchCodeMapCache = map;
+    return map;
+  } catch(err) {
+    console.warn("Pitch code map failed, using fallback text parser", err);
+    pitchCodeMapCache = {};
+    return pitchCodeMapCache;
+  }
+}
+
+function fallbackSwingStatus(event){
+  const text = ((event.details && (event.details.description || event.details.event)) || "").toLowerCase();
+  const code = event.details ? event.details.code : "";
+
+  const swingCodes = ["S","W","T","M","F","L","X","D","E"];
+  const missCodes = ["S","W","T","M"];
+
+  return {
+    swing: swingCodes.includes(code) || text.includes("swing") || text.includes("foul") || text.includes("in play"),
+    miss: missCodes.includes(code) || text.includes("swinging strike") || text.includes("missed bunt") || text.includes("foul tip")
+  };
+}
+
+function computeTeamWhiffStats(live, pitchMap){
+  const awayId = live.gameData.teams.away.id;
+  const homeId = live.gameData.teams.home.id;
+
+  const result = {};
+  result[awayId] = {swings:0, misses:0, whiffPct:"0.0"};
+  result[homeId] = {swings:0, misses:0, whiffPct:"0.0"};
+
+  const plays = (((live.liveData || {}).plays || {}).allPlays || []);
+
+  plays.forEach(play => {
+    const half = (play.about && play.about.halfInning) || "";
+    const battingTeamId = half === "top" ? awayId : homeId;
+
+    (play.playEvents || []).forEach(event => {
+      if(!(event.isPitch || event.type === "pitch" || (event.details && event.details.code))) return;
+
+      const code = event.details ? event.details.code : "";
+      const mapped = pitchMap[code];
+      const status = mapped || fallbackSwingStatus(event);
+
+      if(status.swing) result[battingTeamId].swings += 1;
+      if(status.miss) result[battingTeamId].misses += 1;
+    });
+  });
+
+  Object.keys(result).forEach(teamId => {
+    const swings = result[teamId].swings;
+    const misses = result[teamId].misses;
+    result[teamId].whiffPct = swings > 0 ? ((misses / swings) * 100).toFixed(1) : "0.0";
+  });
+
+  return result;
 }
 
 function setActiveTab(tab){
@@ -1367,6 +1415,7 @@ async function loadScoreTicker(){
 }
 
 function statLabel(label){
+  if(label.includes("Whiff")) return "Whiff";
   if(label.includes("Ks") || label.includes("Strikeout") || label.includes("Pitcher")) return "Ks";
   if(label.includes("Streaking")) return "Games";
   return "Hits";
@@ -1494,6 +1543,18 @@ function render(id,rows,label,colorClass,detailsType){
 function profileDetails(row){
   let html = "";
 
+  if(row.whiffPct !== undefined){
+    html +=
+      '<div class="details-header">Swing-and-miss detail</div>' +
+      '<div class="details-grid">' +
+        '<div class="detail-chip">' +
+          '<div class="detail-name">Whiff percentage</div>' +
+          '<div class="detail-sub">' + h(row.misses || 0) + ' misses on ' + h(row.swings || 0) + ' swings</div>' +
+          '<div class="detail-stat">' + h(row.whiffPct) + '%</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   if(row.players && row.players.length){
     html +=
       '<div class="details-header">Player hit breakdown</div>' +
@@ -1569,18 +1630,6 @@ function pulseCard(icon,title,main,sub,tag){
   );
 }
 
-function wowCard(icon,title,main,sub,tag){
-  return (
-    '<div class="wow-card">' +
-      '<div class="wow-icon">' + icon + '</div>' +
-      '<div class="wow-title">' + h(title) + '</div>' +
-      '<div class="wow-main">' + h(main) + '</div>' +
-      '<div class="wow-sub">' + h(sub) + '</div>' +
-      '<div class="wow-tag">' + h(tag) + '</div>' +
-    '</div>'
-  );
-}
-
 function renderBaseballPulse(){
   const liveKs = filterRows(appState.liveKs);
   const liveHits = filterRows(appState.liveHits);
@@ -1619,7 +1668,7 @@ function renderBaseballPulse(){
 
   const kTeam = prevKs.find(t => Number(t.value) >= 7);
   if(kTeam){
-    cards.push(pulseCard("🟠","Swing-And-Miss Alert",kTeam.name + " · " + kTeam.value + " Ks","Struck out a lot last game · watch opposing pitcher spots","Team K trend"));
+    cards.push(pulseCard("🟠","Swing-And-Miss Alert",kTeam.name + " · " + kTeam.value + " Ks","Whiff%: " + (kTeam.whiffPct || "0.0") + "% · watch opposing pitcher spots","Team K trend"));
   }
 
   const hitTeam = prevHits[0];
@@ -1673,44 +1722,6 @@ function renderGameOfNight(){
     '<div class="game-night-sub">' + h(status) + ' · Close games, live games, and high-action games rise to the top.</div>';
 }
 
-function renderWowMeter(){
-  const liveKs = filterRows(appState.liveKs);
-  const liveHits = filterRows(appState.liveHits);
-  const prevKs = filterRows(appState.prevKs);
-  const hotHitters = filterRows(appState.hotHitters);
-  const streaking = filterRows(appState.streakingHitters);
-
-  let cards = [];
-
-  liveKs.filter(p => Number(p.value) >= 8).slice(0,2).forEach(p => {
-    cards.push(wowCard("👑","Big K Night",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live"));
-  });
-
-  liveHits.filter(hit => Number(hit.value) >= 3).slice(0,2).forEach(p => {
-    cards.push(wowCard("💥","Three-Hit Watch",p.name + " · " + p.value + " hits",p.team + " · " + p.status,"Live"));
-  });
-
-  prevKs.filter(t => Number(t.value) >= 10).slice(0,2).forEach(t => {
-    cards.push(wowCard("🟠","K-Prone Lineup",t.name + " · " + t.value + " Ks",t.status + " · previous completed game","Trend"));
-  });
-
-  hotHitters.slice(0,2).forEach(hit => {
-    cards.push(wowCard("🔥","Hot Bat",hit.name + " · " + hit.value + " hits",hit.team + " · last 4 completed game days","Watch"));
-  });
-
-  streaking.slice(0,2).forEach(s => {
-    cards.push(wowCard("💗","Hit Streak",s.name + " · " + s.value + " games",s.team + " · streaking","Fun"));
-  });
-
-  if(!cards.length){
-    document.getElementById("wowMeter").innerHTML =
-      '<div class="loading">No wow moments yet. Big live performances will appear here.</div>';
-    return;
-  }
-
-  document.getElementById("wowMeter").innerHTML = cards.slice(0,6).join("");
-}
-
 function renderAllData(){
   profileStore = [];
 
@@ -1732,7 +1743,6 @@ function renderAllData(){
 
   renderBaseballPulse();
   renderGameOfNight();
-  renderWowMeter();
 }
 
 function liveStatus(live){
@@ -1814,10 +1824,14 @@ async function findPreviousCompletedGameDay(){
 
 async function loadPreviousGameDayStats(){
   const previous = await findPreviousCompletedGameDay();
+  const pitchMap = await getPitchCodeMap();
+
   let prevKs = [], prevHits = [];
 
   for(const game of previous.games){
     const box = await getJson("https://statsapi.mlb.com/api/v1/game/" + game.gamePk + "/boxscore");
+    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+    const whiffStats = computeTeamWhiffStats(live, pitchMap);
 
     ["away","home"].forEach(side => {
       const team = game.teams[side].team;
@@ -1826,6 +1840,8 @@ async function loadPreviousGameDayStats(){
 
       const teamKs = Number(battingStats.strikeOuts || 0);
       const teamHits = Number(battingStats.hits || 0);
+
+      const whiff = whiffStats[team.id] || {swings:0, misses:0, whiffPct:"0.0"};
 
       let players = [];
       Object.values(box.teams[side].players || {}).forEach(player => {
@@ -1837,8 +1853,29 @@ async function loadPreviousGameDayStats(){
 
       players.sort((a,b)=>b.hits-a.hits);
 
-      prevKs.push({value:teamKs,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,extra:teamKs+" team strikeouts"});
-      prevHits.push({value:teamHits,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,extra:"",players});
+      prevKs.push({
+        value:teamKs,
+        name:team.name,
+        team:"vs "+opponent.name,
+        game:gameLabel(game),
+        status:previous.dateString,
+        teamId:team.id,
+        whiffPct:whiff.whiffPct,
+        swings:whiff.swings,
+        misses:whiff.misses,
+        extra:teamKs+" team strikeouts · Whiff%: "+whiff.whiffPct+"%"
+      });
+
+      prevHits.push({
+        value:teamHits,
+        name:team.name,
+        team:"vs "+opponent.name,
+        game:gameLabel(game),
+        status:previous.dateString,
+        teamId:team.id,
+        extra:"",
+        players
+      });
     });
   }
 
