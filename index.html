@@ -80,8 +80,7 @@
       top: -20px;
       width: 180px;
       height: 180px;
-      background:
-        radial-gradient(circle, rgba(190,242,100,.18), transparent 55%);
+      background: radial-gradient(circle, rgba(190,242,100,.18), transparent 55%);
       pointer-events: none;
       filter: blur(6px);
     }
@@ -104,10 +103,10 @@
 
     .brand-watermark {
       position: absolute;
-      left: 14px;
-      top: -18px;
-      width: 110px;
-      height: 110px;
+      left: 12px;
+      top: -16px;
+      width: 108px;
+      height: 108px;
       opacity: .12;
       pointer-events: none;
       filter: drop-shadow(0 0 20px rgba(34,197,94,.45));
@@ -466,14 +465,6 @@
       line-height: 1.4;
     }
 
-    .top3-item-why {
-      margin-top: 8px;
-      color: #bef264;
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1.35;
-    }
-
     .key {
       background: rgba(2,6,23,.72);
       border: 1px solid rgba(34,197,94,.28);
@@ -540,15 +531,6 @@
       font-size: 14px;
       line-height: 1.45;
       color: #d1fae5;
-      position: relative;
-    }
-
-    .quick-why {
-      margin-top: 10px;
-      font-size: 12px;
-      line-height: 1.4;
-      color: #bef264;
-      font-weight: 900;
       position: relative;
     }
 
@@ -1302,61 +1284,44 @@
         <div class="brand-wrap">
           <svg viewBox="0 0 120 120" class="brand-watermark" aria-hidden="true">
             <defs>
-              <radialGradient id="wmBallGlow" cx="50%" cy="45%" r="60%">
-                <stop offset="0%" stop-color="#f0fdf4"/>
-                <stop offset="55%" stop-color="#bbf7d0"/>
-                <stop offset="100%" stop-color="#22c55e"/>
+              <radialGradient id="wmGlowRing" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0)" />
+                <stop offset="70%" stop-color="#22c55e" />
+                <stop offset="100%" stop-color="#bef264" />
               </radialGradient>
-              <linearGradient id="wmTrailGlow" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#bef264"/>
-                <stop offset="100%" stop-color="#22c55e"/>
-              </linearGradient>
+              <radialGradient id="wmBall" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#d1fae5" />
+              </radialGradient>
             </defs>
-            <path
-              d="M60 104 C44 88 22 72 18 49 C15 30 28 18 43 22 C51 24 57 31 60 38 C63 31 69 24 77 22 C92 18 105 30 102 49 C98 72 76 88 60 104Z"
-              fill="rgba(34,197,94,.22)"
-              stroke="#86efac"
-              stroke-width="4"
-            />
-            <circle cx="61" cy="58" r="23" fill="url(#wmBallGlow)" stroke="#dcfce7" stroke-width="3"/>
-            <path d="M47 45 C55 52 55 64 47 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-            <path d="M75 45 C67 52 67 64 75 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-            <path d="M51 49 L46 46 M53 56 L47 55 M52 64 L46 67" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
-            <path d="M71 49 L76 46 M69 56 L75 55 M70 64 L76 67" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
-            <path d="M23 88 L45 72" stroke="#bef264" stroke-width="7" stroke-linecap="round"/>
-            <circle cx="22" cy="88" r="5" fill="#bef264"/>
-            <path d="M76 36 C92 20 107 18 116 23" fill="none" stroke="url(#wmTrailGlow)" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="112" cy="23" r="4" fill="#bef264"/>
+            <circle cx="56" cy="60" r="28" fill="none" stroke="#22c55e" stroke-width="10" opacity="0.8"/>
+            <circle cx="56" cy="60" r="21" fill="url(#wmBall)" stroke="#dcfce7" stroke-width="2"/>
+            <path d="M44 48 C51 55 51 65 44 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M68 48 C61 55 61 65 68 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M78 56 L96 56" stroke="#22c55e" stroke-width="6" stroke-linecap="round"/>
+            <path d="M82 66 L102 66" stroke="#bef264" stroke-width="5" stroke-linecap="round"/>
+            <path d="M86 46 L102 46" stroke="#86efac" stroke-width="4" stroke-linecap="round"/>
           </svg>
 
           <div class="brand-logo" aria-hidden="true">
             <svg viewBox="0 0 120 120" class="diamond-logo">
               <defs>
-                <radialGradient id="ballGlow" cx="50%" cy="45%" r="60%">
-                  <stop offset="0%" stop-color="#f0fdf4"/>
-                  <stop offset="55%" stop-color="#bbf7d0"/>
-                  <stop offset="100%" stop-color="#22c55e"/>
+                <radialGradient id="logoBall" cx="50%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="100%" stop-color="#dcfce7" />
                 </radialGradient>
-                <linearGradient id="trailGlow" x1="0%" y1="100%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#bef264"/>
-                  <stop offset="100%" stop-color="#22c55e"/>
-                </linearGradient>
+                <radialGradient id="logoRing" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#22c55e" />
+                  <stop offset="100%" stop-color="#bef264" />
+                </radialGradient>
               </defs>
-              <path
-                d="M60 104 C44 88 22 72 18 49 C15 30 28 18 43 22 C51 24 57 31 60 38 C63 31 69 24 77 22 C92 18 105 30 102 49 C98 72 76 88 60 104Z"
-                fill="rgba(34,197,94,.22)"
-                stroke="#86efac"
-                stroke-width="4"
-              />
-              <circle cx="61" cy="58" r="23" fill="url(#ballGlow)" stroke="#dcfce7" stroke-width="3"/>
-              <path d="M47 45 C55 52 55 64 47 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-              <path d="M75 45 C67 52 67 64 75 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-              <path d="M51 49 L46 46 M53 56 L47 55 M52 64 L46 67" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
-              <path d="M71 49 L76 46 M69 56 L75 55 M70 64 L76 67" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
-              <path d="M23 88 L45 72" stroke="#bef264" stroke-width="7" stroke-linecap="round"/>
-              <circle cx="22" cy="88" r="5" fill="#bef264"/>
-              <path d="M76 36 C92 20 107 18 116 23" fill="none" stroke="url(#trailGlow)" stroke-width="5" stroke-linecap="round"/>
-              <circle cx="112" cy="23" r="4" fill="#bef264"/>
+              <circle cx="52" cy="60" r="31" fill="none" stroke="url(#logoRing)" stroke-width="12"/>
+              <circle cx="52" cy="60" r="22" fill="url(#logoBall)" stroke="#f0fdf4" stroke-width="2"/>
+              <path d="M40 48 C47 55 47 65 40 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+              <path d="M64 48 C57 55 57 65 64 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+              <path d="M76 56 L100 56" stroke="#22c55e" stroke-width="7" stroke-linecap="round"/>
+              <path d="M80 67 L106 67" stroke="#bef264" stroke-width="5.5" stroke-linecap="round"/>
+              <path d="M82 45 L102 45" stroke="#86efac" stroke-width="4.5" stroke-linecap="round"/>
             </svg>
           </div>
 
@@ -1396,26 +1361,26 @@
       <details class="helper-box" open>
         <summary>🧢 New to Baseball? Quick Helper</summary>
         <p>
-          No worries — this page is built so you can just glance and get the vibe.
-          If someone is “hot,” they’re playing well lately. If a lineup had a lot of strikeouts and a high whiff rate,
-          that usually means they were swinging and missing a lot.
+          No worries — this page is built so you can glance and get the main storylines.
+          If someone is hot, they’ve been playing well lately. If a lineup had a lot of strikeouts and a high whiff rate,
+          that means they were swinging and missing a lot.
         </p>
         <div class="helper-grid">
           <div class="helper-chip">
             <div class="helper-chip-title">Strikeouts (K)</div>
-            <div class="helper-chip-copy">How many batters a pitcher got out by strikeout.</div>
+            <div class="helper-chip-copy">How many batters a pitcher struck out.</div>
           </div>
           <div class="helper-chip">
             <div class="helper-chip-title">Whiff%</div>
-            <div class="helper-chip-copy">How often hitters swung and missed. Higher usually means nastier stuff.</div>
+            <div class="helper-chip-copy">How often hitters swung and missed.</div>
           </div>
           <div class="helper-chip">
             <div class="helper-chip-title">Hot Bats</div>
-            <div class="helper-chip-copy">Hitters who’ve been racking up hits lately.</div>
+            <div class="helper-chip-copy">Hitters who’ve been getting a lot of hits lately.</div>
           </div>
           <div class="helper-chip">
             <div class="helper-chip-title">Hit Streaks</div>
-            <div class="helper-chip-copy">Players who’ve gotten at least one hit in several straight games.</div>
+            <div class="helper-chip-copy">Players with at least one hit in several straight games.</div>
           </div>
         </div>
       </details>
@@ -1429,18 +1394,18 @@
     </div>
 
     <div class="key">
-      ⚡ Quick Look = simple fan-friendly storylines · 🔵 Live Ks · 🟢 Live hits · 💥 Hot Bats · 💗 Hit Streaks<br>
+      ⚡ Quick Look = easy storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot Bats · 💗 Hit Streaks<br>
       🌊 Hot pitchers with Whiff% · 🟠 Team strikeout trouble + Whiff% · 🟣 Previous team hit leaders
     </div>
 
     <h2>⚡ Tonight’s Quick Look</h2>
-    <div class="section-note">Fast, casual storylines so anybody can open the page and instantly know what’s interesting.</div>
+    <div class="section-note">Fast, simple storylines for tonight’s action.</div>
     <div id="quickLook" class="quick-grid">
       <div class="loading">Loading quick look...</div>
     </div>
 
     <h2>⚡ Baseball Pulse</h2>
-    <div class="section-note">More storylines with a little personality built in.</div>
+    <div class="section-note">Additional storylines from live and recent games.</div>
     <div id="pulseCards" class="pulse-grid">
       <div class="loading">Loading pulse...</div>
     </div>
@@ -1462,7 +1427,7 @@
 
         <div class="stat-section">
           <h2>💥 Live Hits</h2>
-          <div class="section-note">Who’s doing damage right now.</div>
+          <div class="section-note">Current hit leaders in live games.</div>
           <div id="liveHits" class="loading">Loading...</div>
         </div>
       </section>
@@ -1478,7 +1443,7 @@
 
         <div class="stat-section">
           <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
-          <div class="section-note">Which lineups were chasing yesterday, plus their Whiff%.</div>
+          <div class="section-note">Lineups with the most strikeouts in their last completed game, plus Whiff%.</div>
           <div id="armsPrevKs" class="loading">Loading...</div>
         </div>
       </section>
@@ -1502,7 +1467,7 @@
 
         <div class="stat-section">
           <h2>📈 Previous Game Day — Teams With Most Hits</h2>
-          <div class="section-note">Tap a team to see who got the hits.</div>
+          <div class="section-note">Tap a team to see the player hit breakdown.</div>
           <div id="batsPrevHits" class="loading">Loading...</div>
         </div>
       </section>
@@ -1518,7 +1483,7 @@
 
         <div class="stat-section">
           <h2>📈 Team Hits</h2>
-          <div class="section-note">Tap to see the player breakdown.</div>
+          <div class="section-note">Tap to see player details.</div>
           <div id="recapHits" class="loading">Loading...</div>
         </div>
       </section>
@@ -1911,39 +1876,6 @@ function tier(label,value){
   return "";
 }
 
-function personalityForRow(label, row){
-  const value = Number(row.value || 0);
-
-  if(label.includes("Hot Pitcher")) {
-    if(Number(row.whiffPct || 0) >= 35) return "He's making hitters look silly right now.";
-    return "This arm has been missing bats and bringing real punchout juice.";
-  }
-
-  if(label.includes("Team Ks")) {
-    if(value >= 10) return "That lineup was chasing all night.";
-    return "There was some swing-and-miss in that offense yesterday.";
-  }
-
-  if(label.includes("Hot Bat")) {
-    if(value >= 7) return "This bat is cooking.";
-    return "He's seeing the ball really well lately.";
-  }
-
-  if(label.includes("Hit Streak")) {
-    return "He keeps finding a way to cash a hit.";
-  }
-
-  if(label.includes("Live Player Hits")) {
-    return "He's already in the middle of the action.";
-  }
-
-  if(label.includes("Pitcher Ks")) {
-    return "He's piling up punchouts live.";
-  }
-
-  return "";
-}
-
 function registerProfile(row,label){
   const id = profileStore.length;
   profileStore.push({row,label});
@@ -1958,8 +1890,6 @@ function makeCard(row,label,colorClass,detailsHtml){
                label.includes("Hot Bat") ? " 🔥" :
                label.includes("Team Ks") && value >= 7 ? " 🔥" : "";
 
-  const personality = personalityForRow(label, row);
-
   const top =
     '<div class="main-row">' +
       '<img class="logo" src="' + logo(row.teamId) + '">' +
@@ -1973,7 +1903,6 @@ function makeCard(row,label,colorClass,detailsHtml){
         '<div class="game">' + h(row.game || "") + '</div>' +
         '<div class="status">' + h(row.status || "") + '</div>' +
         (row.extra ? '<div class="extra">' + h(row.extra) + '</div>' : '') +
-        (personality ? '<div class="extra">' + h(personality) + '</div>' : '') +
         '<div>' +
           '<span class="label">' + h(label) + (detailsHtml ? " · tap to expand" : "") + '</span>' +
           '<button class="profile-btn" onclick="event.preventDefault(); event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
@@ -2140,13 +2069,12 @@ function pulseCard(icon,title,main,sub,tag){
   );
 }
 
-function quickCard(tag, headline, copy, why){
+function quickCard(tag, headline, copy){
   return (
     '<div class="quick-card">' +
       '<div class="quick-tag">' + h(tag) + '</div>' +
       '<div class="quick-headline">' + h(headline) + '</div>' +
       '<div class="quick-copy">' + h(copy) + '</div>' +
-      '<div class="quick-why">' + h(why) + '</div>' +
     '</div>'
   );
 }
@@ -2206,9 +2134,8 @@ function renderQuickLook(){
       "Best Game to Watch",
       away + " " + scoreValue(bestGame,"away") + " @ " + home + " " + scoreValue(bestGame,"home"),
       bestGame.status.abstractGameState === "Live"
-        ? "This one looks like the best live sweat on the board right now."
-        : "This is a solid game to keep an eye on once things get rolling.",
-      "Why it matters: close games and active scoreboards are the easiest way for casual fans to jump in."
+        ? "Status: " + tickerStatus(bestGame)
+        : "Start time: " + tickerStatus(bestGame)
     ));
   }
 
@@ -2220,9 +2147,8 @@ function renderQuickLook(){
       "Pitcher to Watch",
       p.name + " vs " + p.opponent,
       opp
-        ? "He's carrying a " + (p.whiffPct || "0.0") + "% Whiff rate, and " + opp.name + " struck out " + opp.value + " times last game."
-        : "He's been missing bats lately and could be in for another punchout-heavy night.",
-      "Why it matters: if a pitcher is getting swings and misses and the other lineup is chasing, strikeouts can pile up fast."
+        ? "Pitcher Whiff%: " + (p.whiffPct || "0.0") + "% · " + opp.name + " had " + opp.value + " strikeouts last game and a " + (opp.whiffPct || "0.0") + "% Whiff rate."
+        : "Last 2 games: " + p.value + " total strikeouts · Whiff%: " + (p.whiffPct || "0.0") + "%"
     ));
   }
 
@@ -2232,28 +2158,27 @@ function renderQuickLook(){
       "Hot Bat",
       hotBat.name,
       liveHits[0] === hotBat
-        ? "He's already got " + hotBat.value + " hit" + (hotBat.value === 1 ? "" : "s") + " tonight and looks locked in."
-        : "He's stacked up " + hotBat.value + " hits over the last 4 completed game days — this bat is cooking.",
-      "Why it matters: even casual fans like riding the hot hand."
+        ? hotBat.team + " · " + hotBat.value + " hit" + (hotBat.value === 1 ? "" : "s") + " live"
+        : hotBat.team + " · " + hotBat.value + " hits over the last 4 completed game days"
     ));
   }
 
-  const troubleTeam = prevKs.find(t => Number(t.value) >= 7) || prevKs[0];
-  if(troubleTeam){
-    cards.push(quickCard(
-      "Contact Trouble",
-      troubleTeam.name + " had a rough time",
-      troubleTeam.name + " struck out " + troubleTeam.value + " times last game with a " + (troubleTeam.whiffPct || "0.0") + "% Whiff rate.",
-      "Why it matters: if that team’s swinging and missing again tonight, it can shape the whole game."
-    ));
-  } else if(streaking[0]) {
-    const s = streaking[0];
+  const streak = streaking[0];
+  if(streak){
     cards.push(quickCard(
       "Hit Streak Watch",
-      s.name,
-      "He has a hit in " + s.value + " straight completed games.",
-      "Why it matters: streaks are fun, easy to follow, and a good entry point for any fan."
+      streak.name,
+      streak.team + " · " + streak.value + " straight completed games with a hit"
     ));
+  } else {
+    const troubleTeam = prevKs.find(t => Number(t.value) >= 7) || prevKs[0];
+    if(troubleTeam){
+      cards.push(quickCard(
+        "Team Strikeout Watch",
+        troubleTeam.name,
+        troubleTeam.value + " strikeouts last game · Whiff%: " + (troubleTeam.whiffPct || "0.0") + "%"
+      ));
+    }
   }
 
   document.getElementById("quickLook").innerHTML = cards.length
@@ -2273,8 +2198,7 @@ function renderTop3(){
       title: pitcherSpot.pitcher.name + " strikeout spot",
       copy: pitcherSpot.pitcher.name + " carries a " + pitcherSpot.pitcher.whiffPct + "% Whiff rate into a matchup with " +
             pitcherSpot.opponentTeamTrend.name + ", who struck out " + pitcherSpot.opponentTeamTrend.value +
-            " times last game and posted a " + pitcherSpot.opponentTeamTrend.whiffPct + "% Whiff rate.",
-      why: "Why it matters: pitcher swing-and-miss plus hitter swing-and-miss is exactly the kind of combo fans can root for."
+            " times last game and posted a " + pitcherSpot.opponentTeamTrend.whiffPct + "% Whiff rate."
     });
   }
 
@@ -2282,35 +2206,29 @@ function renderTop3(){
     items.push({
       rank: String(items.length + 1),
       title: streak.name + " hit streak watch",
-      copy: streak.name + " has a hit in " + streak.value + " straight completed games. He just keeps showing up with a knock.",
-      why: "Why it matters: hit streaks are simple, fun, and easy to track at a glance."
+      copy: streak.name + " has a hit in " + streak.value + " straight completed games."
     });
   }
 
   if(thirdChoice){
     let title = "";
     let copy = "";
-    let why = "";
 
     if(filterRows(appState.liveHits)[0] && thirdChoice === filterRows(appState.liveHits)[0]){
-      title = thirdChoice.name + " is already active";
-      copy = thirdChoice.name + " has " + thirdChoice.value + " hit" + (thirdChoice.value === 1 ? "" : "s") + " in live action. He's in the middle of the story right now.";
-      why = "Why it matters: casual fans love a live box-score hero.";
+      title = thirdChoice.name + " live hits watch";
+      copy = thirdChoice.name + " has " + thirdChoice.value + " hit" + (thirdChoice.value === 1 ? "" : "s") + " in live action.";
     } else if(filterRows(appState.hotHitters)[0] && thirdChoice === filterRows(appState.hotHitters)[0]) {
       title = thirdChoice.name + " hot bat watch";
-      copy = thirdChoice.name + " has " + thirdChoice.value + " hits across the last 4 completed game days. This bat is cooking.";
-      why = "Why it matters: hot hitters are one of the easiest things to enjoy even if you're not deep into stats.";
+      copy = thirdChoice.name + " has " + thirdChoice.value + " hits across the last 4 completed game days.";
     } else {
-      title = thirdChoice.name + " is piling up Ks";
-      copy = thirdChoice.name + " has " + thirdChoice.value + " strikeouts in live action. He's bringing the heat.";
-      why = "Why it matters: strikeout nights are always easy to follow on the page.";
+      title = thirdChoice.name + " live strikeout watch";
+      copy = thirdChoice.name + " has " + thirdChoice.value + " strikeouts in live action.";
     }
 
     items.push({
       rank: String(items.length + 1),
       title,
-      copy,
-      why
+      copy
     });
   }
 
@@ -2319,7 +2237,6 @@ function renderTop3(){
       '<div class="top3-rank">Top ' + h(item.rank) + '</div>' +
       '<div class="top3-item-title">' + h(item.title) + '</div>' +
       '<div class="top3-item-copy">' + h(item.copy) + '</div>' +
-      '<div class="top3-item-why">' + h(item.why) + '</div>' +
     '</div>'
   ).join("");
 
@@ -2341,9 +2258,9 @@ function renderBaseballPulse(){
     const p = liveKs[0];
     cards.push(pulseCard(
       "👑",
-      "Live K King",
+      "Live K Leader",
       p.name + " · " + p.value + " Ks",
-      p.team + " · " + p.status + " · He's piling up punchouts live.",
+      p.team + " · " + p.status,
       "Live now"
     ));
   }
@@ -2354,7 +2271,7 @@ function renderBaseballPulse(){
       "💥",
       "Live Hit Leader",
       hit.name + " · " + hit.value + " hits",
-      hit.team + " · " + hit.status + " · He's right in the middle of the action.",
+      hit.team + " · " + hit.status,
       "Live now"
     ));
   }
@@ -2365,7 +2282,7 @@ function renderBaseballPulse(){
       "🌊",
       "Pitcher To Watch",
       p.name,
-      p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "% · " + "He's making hitters uncomfortable.",
+      p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%",
       "K watch"
     ));
   }
@@ -2374,9 +2291,9 @@ function renderBaseballPulse(){
     const hit = hotHitters[0];
     cards.push(pulseCard(
       "🔥",
-      "Hottest Bat",
+      "Hot Bat",
       hit.name + " · " + hit.value + " hits",
-      hit.team + " · Last 4 completed game days · This bat is cooking.",
+      hit.team + " · Last 4 completed game days",
       "Hot bat"
     ));
   }
@@ -2387,7 +2304,7 @@ function renderBaseballPulse(){
       "💗",
       "Best Hit Streak",
       s.name,
-      s.team + " · hit in " + s.value + " straight games · He just keeps cashing a hit.",
+      s.team + " · hit in " + s.value + " straight games",
       "Streaking"
     ));
   }
@@ -2396,10 +2313,10 @@ function renderBaseballPulse(){
   if(kTeam){
     cards.push(pulseCard(
       "🟠",
-      "Swing-And-Miss Alert",
+      "Team Strikeout Alert",
       kTeam.name + " · " + kTeam.value + " Ks",
-      "Whiff%: " + (kTeam.whiffPct || "0.0") + "% · That lineup was chasing yesterday.",
-      "Team K trend"
+      "Whiff%: " + (kTeam.whiffPct || "0.0") + "%",
+      "Team trend"
     ));
   }
 
@@ -2407,9 +2324,9 @@ function renderBaseballPulse(){
   if(hitTeam){
     cards.push(pulseCard(
       "🟣",
-      "Team Bats Were Hot",
+      "Team Hits Leader",
       hitTeam.name + " · " + hitTeam.value + " hits",
-      hitTeam.status + " · previous completed game day · They were spraying it around.",
+      hitTeam.status + " · previous completed game day",
       "Team hits"
     ));
   }
@@ -2441,12 +2358,7 @@ function renderGameOfNight(){
   document.getElementById("gameOfNight").innerHTML =
     '<div class="game-night-title">Game of the Night</div>' +
     '<div class="game-night-main">' + h(away) + ' ' + h(awayScore) + ' @ ' + h(home) + ' ' + h(homeScore) + '</div>' +
-    '<div class="game-night-sub">' +
-      h(status) + ' · ' +
-      h(target.status.abstractGameState === "Live"
-        ? "This looks like the best live sweat on the board."
-        : "A good spot for casual fans to jump in and follow the action tonight.") +
-    '</div>';
+    '<div class="game-night-sub">' + h(status) + '</div>';
 }
 
 function renderAllData(){
