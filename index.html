@@ -10,23 +10,16 @@
 
     :root {
       --bg: #020617;
-      --panel: rgba(2, 6, 23, 0.78);
-      --panel-2: rgba(15, 23, 42, 0.78);
-      --line: rgba(134, 239, 172, 0.22);
-      --line-strong: rgba(134, 239, 172, 0.34);
-      --text: #f0fdf4;
-      --muted: #a7f3d0;
-      --bright: #bbf7d0;
+      --panel: rgba(2,6,23,.78);
+      --panel2: rgba(15,23,42,.78);
+      --line: rgba(134,239,172,.24);
       --green: #22c55e;
-      --lime: #bef264;
       --mint: #86efac;
-      --glow: rgba(34, 197, 94, 0.25);
+      --lime: #bef264;
+      --text: #f0fdf4;
+      --soft: #d1fae5;
+      --muted: #a7f3d0;
       --shadow: 0 18px 42px rgba(0,0,0,.38);
-      --radius: 28px;
-    }
-
-    html {
-      scroll-behavior: smooth;
     }
 
     body {
@@ -62,8 +55,8 @@
     .header {
       position: sticky;
       top: 10px;
-      z-index: 10;
-      background: rgba(2,6,23,.78);
+      z-index: 20;
+      background: rgba(2,6,23,.82);
       border: 1px solid rgba(34,197,94,.35);
       box-shadow: 0 0 35px rgba(34,197,94,.22);
       backdrop-filter: blur(18px);
@@ -73,43 +66,19 @@
       overflow: hidden;
     }
 
-    .header::before {
-      content: "";
-      position: absolute;
-      right: -20px;
-      top: -20px;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, rgba(190,242,100,.18), transparent 55%);
-      pointer-events: none;
-      filter: blur(6px);
-    }
-
     .top-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .brand-wrap {
-      position: relative;
       display: flex;
       align-items: center;
       gap: 14px;
-    }
-
-    .brand-watermark {
-      position: absolute;
-      left: 12px;
-      top: -16px;
-      width: 108px;
-      height: 108px;
-      opacity: .12;
-      pointer-events: none;
-      filter: drop-shadow(0 0 20px rgba(34,197,94,.45));
     }
 
     .brand-logo {
@@ -124,12 +93,8 @@
         radial-gradient(circle at 50% 35%, rgba(190,242,100,.22), transparent 45%),
         rgba(2,6,23,.55);
       border: 1px solid rgba(134,239,172,.26);
-      box-shadow:
-        0 0 24px rgba(34,197,94,.25),
-        inset 0 0 22px rgba(34,197,94,.08);
+      box-shadow: 0 0 24px rgba(34,197,94,.25), inset 0 0 22px rgba(34,197,94,.08);
       overflow: hidden;
-      position: relative;
-      z-index: 2;
     }
 
     .diamond-logo {
@@ -144,24 +109,17 @@
       letter-spacing: -.05em;
       color: #dcfce7;
       text-shadow: 0 0 18px rgba(34,197,94,.65);
-      position: relative;
-      z-index: 2;
     }
 
     h2 {
-      margin-top: 34px;
+      margin-top: 30px;
       margin-bottom: 8px;
       font-size: 22px;
       color: #bbf7d0;
     }
 
     .sub, .section-note {
-      color: #a7f3d0;
-    }
-
-    .sub {
-      position: relative;
-      z-index: 2;
+      color: var(--muted);
     }
 
     .section-note {
@@ -177,11 +135,9 @@
       border-radius: 999px;
       background: rgba(34,197,94,.16);
       border: 1px solid rgba(34,197,94,.35);
-      color: #86efac;
+      color: var(--mint);
       font-size: 12px;
       font-weight: 800;
-      position: relative;
-      z-index: 2;
     }
 
     .stadium-toggle {
@@ -211,8 +167,6 @@
       padding: 8px;
       overflow: hidden;
       box-shadow: inset 0 0 20px rgba(34,197,94,.08);
-      position: relative;
-      z-index: 1;
     }
 
     .score-strip-top {
@@ -227,7 +181,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #22c55e;
+      background: var(--green);
       box-shadow: 0 0 12px rgba(34,197,94,.9);
     }
 
@@ -252,9 +206,7 @@
       will-change: transform;
     }
 
-    .ticker-track:hover {
-      animation-play-state: paused;
-    }
+    .ticker-track:hover { animation-play-state: paused; }
 
     @keyframes tickerScroll {
       from { transform: translateX(0); }
@@ -270,7 +222,7 @@
       border-radius: 999px;
       background: rgba(15,23,42,.75);
       border: 1px solid rgba(134,239,172,.18);
-      color: #d1fae5;
+      color: var(--soft);
       font-size: 13px;
       font-weight: 750;
     }
@@ -280,38 +232,36 @@
       box-shadow: 0 0 16px rgba(34,197,94,.16);
     }
 
-    .ticker-final {
-      opacity: .78;
-    }
-
-    .ticker-preview {
-      opacity: .9;
-    }
+    .ticker-final { opacity: .78; }
+    .ticker-preview { opacity: .9; }
 
     .ticker-score {
-      color: #f0fdf4;
+      color: var(--text);
       font-weight: 950;
       font-size: 15px;
     }
 
     .ticker-detail {
-      color: #86efac;
+      color: var(--mint);
       font-size: 12px;
       font-weight: 900;
       margin-left: 4px;
     }
 
+    .filter-wrap, .helper-box, .top3-box, .game-night {
+      background: rgba(2,6,23,.72);
+      border: 1px solid rgba(34,197,94,.24);
+      border-radius: 26px;
+      padding: 14px;
+      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
+    }
+
     .filter-wrap {
       margin: 16px 0 20px;
-      background: rgba(2,6,23,.72);
-      border: 1px solid rgba(34,197,94,.22);
-      border-radius: 26px;
-      padding: 12px;
-      box-shadow: inset 0 0 20px rgba(34,197,94,.06);
     }
 
     .filter-title {
-      color: #86efac;
+      color: var(--mint);
       font-size: 12px;
       font-weight: 950;
       text-transform: uppercase;
@@ -324,7 +274,6 @@
       gap: 9px;
       overflow-x: auto;
       padding-bottom: 2px;
-      scrollbar-width: thin;
     }
 
     .filter-btn {
@@ -333,7 +282,7 @@
       gap: 7px;
       border: 1px solid rgba(134,239,172,.18);
       background: rgba(15,23,42,.75);
-      color: #d1fae5;
+      color: var(--soft);
       border-radius: 999px;
       padding: 7px 11px;
       font-size: 12px;
@@ -354,7 +303,7 @@
     .filter-btn.active {
       background: rgba(34,197,94,.22);
       border-color: rgba(190,242,100,.45);
-      color: #f0fdf4;
+      color: var(--text);
       box-shadow: 0 0 18px rgba(34,197,94,.16);
     }
 
@@ -365,14 +314,6 @@
       margin-bottom: 8px;
     }
 
-    .helper-box, .top3-box {
-      background: rgba(2,6,23,.72);
-      border: 1px solid rgba(34,197,94,.24);
-      border-radius: 26px;
-      padding: 14px;
-      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
-    }
-
     .helper-box summary {
       list-style: none;
       cursor: pointer;
@@ -381,13 +322,11 @@
       font-size: 16px;
     }
 
-    .helper-box summary::-webkit-details-marker {
-      display: none;
-    }
+    .helper-box summary::-webkit-details-marker { display: none; }
 
     .helper-box p {
       margin: 10px 0 0;
-      color: #d1fae5;
+      color: var(--soft);
       line-height: 1.45;
       font-size: 14px;
     }
@@ -399,43 +338,36 @@
       margin-top: 12px;
     }
 
-    .helper-chip {
+    .helper-chip, .top3-item, .detail-chip {
       background: rgba(15,23,42,.75);
       border: 1px solid rgba(134,239,172,.15);
       border-radius: 18px;
       padding: 10px;
     }
 
-    .helper-chip-title {
+    .helper-chip-title, .top3-title {
       font-size: 13px;
       font-weight: 900;
       color: #bbf7d0;
       margin-bottom: 5px;
     }
 
-    .helper-chip-copy {
-      color: #d1fae5;
+    .helper-chip-copy, .top3-item-copy {
+      color: var(--soft);
       font-size: 12px;
       line-height: 1.4;
     }
 
     .top3-title {
+      font-size: 18px;
       color: #dcfce7;
       font-weight: 950;
-      font-size: 18px;
       margin-bottom: 8px;
     }
 
     .top3-list {
       display: grid;
       gap: 10px;
-    }
-
-    .top3-item {
-      background: rgba(15,23,42,.75);
-      border: 1px solid rgba(134,239,172,.18);
-      border-radius: 18px;
-      padding: 12px;
     }
 
     .top3-rank {
@@ -454,37 +386,18 @@
     .top3-item-title {
       font-size: 15px;
       font-weight: 950;
-      color: #f0fdf4;
+      color: var(--text);
       line-height: 1.25;
     }
 
-    .top3-item-copy {
-      margin-top: 6px;
-      color: #d1fae5;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .key {
-      background: rgba(2,6,23,.72);
-      border: 1px solid rgba(34,197,94,.28);
-      box-shadow: inset 0 0 25px rgba(34,197,94,.08);
-      border-radius: 26px;
-      padding: 16px;
-      color: #d1fae5;
-      line-height: 1.65;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    .quick-grid {
+    .quick-grid, .pulse-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 12px;
       margin-bottom: 16px;
     }
 
-    .quick-card {
+    .quick-card, .pulse-card {
       position: relative;
       overflow: hidden;
       background:
@@ -494,9 +407,14 @@
       border-radius: 28px;
       padding: 16px;
       box-shadow: var(--shadow), 0 0 26px rgba(34,197,94,.15);
+      animation: bubbleIn .35s ease both;
     }
 
-    .quick-card::before {
+    .pulse-card {
+      min-height: 132px;
+    }
+
+    .quick-card::before, .pulse-card::before, .card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -504,7 +422,7 @@
       pointer-events: none;
     }
 
-    .quick-tag {
+    .quick-tag, .pulse-tag, .label {
       display: inline-block;
       padding: 5px 9px;
       border-radius: 999px;
@@ -515,52 +433,28 @@
       font-weight: 950;
       text-transform: uppercase;
       letter-spacing: .06em;
+    }
+
+    .quick-tag {
       margin-bottom: 10px;
     }
 
-    .quick-headline {
+    .quick-headline, .pulse-main {
       font-size: 20px;
       font-weight: 950;
-      color: #f0fdf4;
+      color: var(--text);
       line-height: 1.2;
       position: relative;
+      overflow-wrap: anywhere;
     }
 
-    .quick-copy {
+    .quick-copy, .pulse-sub {
       margin-top: 8px;
       font-size: 14px;
       line-height: 1.45;
-      color: #d1fae5;
+      color: var(--soft);
       position: relative;
-    }
-
-    .pulse-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .pulse-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 132px;
-      background:
-        radial-gradient(circle at top left, rgba(190,242,100,.22), transparent 35%),
-        linear-gradient(135deg, rgba(2,44,34,.95), rgba(6,78,59,.92));
-      border: 1px solid rgba(134,239,172,.28);
-      border-radius: 28px;
-      padding: 15px;
-      box-shadow: 0 18px 42px rgba(0,0,0,.38), 0 0 28px rgba(34,197,94,.16);
-      animation: bubbleIn .35s ease both;
-    }
-
-    .pulse-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent 38%);
-      pointer-events: none;
+      overflow-wrap: anywhere;
     }
 
     .pulse-icon {
@@ -583,57 +477,17 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: .08em;
-      color: #86efac;
+      color: var(--mint);
       font-weight: 950;
       margin-bottom: 5px;
     }
 
-    .pulse-main {
-      position: relative;
-      font-size: 18px;
-      font-weight: 950;
-      color: #f0fdf4;
-      line-height: 1.15;
-      overflow-wrap: anywhere;
-    }
-
-    .pulse-sub {
-      position: relative;
-      margin-top: 6px;
-      font-size: 13px;
-      color: #d1fae5;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-
     .pulse-tag {
-      position: relative;
-      display: inline-block;
       margin-top: 10px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(34,197,94,.14);
-      border: 1px solid rgba(134,239,172,.22);
-      color: #bbf7d0;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-
-    .game-night {
-      background:
-        radial-gradient(circle at top left, rgba(190,242,100,.2), transparent 34%),
-        rgba(2,6,23,.72);
-      border: 1px solid rgba(134,239,172,.26);
-      border-radius: 28px;
-      padding: 16px;
-      margin-bottom: 18px;
-      box-shadow: 0 16px 36px rgba(0,0,0,.35), 0 0 24px rgba(34,197,94,.14);
     }
 
     .game-night-title {
-      color: #86efac;
+      color: var(--mint);
       font-size: 12px;
       font-weight: 950;
       text-transform: uppercase;
@@ -642,14 +496,14 @@
     }
 
     .game-night-main {
-      color: #f0fdf4;
+      color: var(--text);
       font-size: 22px;
       font-weight: 950;
       margin-bottom: 5px;
     }
 
     .game-night-sub {
-      color: #d1fae5;
+      color: var(--soft);
       font-size: 14px;
       line-height: 1.4;
     }
@@ -660,10 +514,6 @@
       gap: 20px;
       align-items: start;
       margin-top: 18px;
-    }
-
-    .stat-column {
-      min-width: 0;
     }
 
     .column-pill {
@@ -680,14 +530,6 @@
       letter-spacing: .06em;
     }
 
-    .stat-section {
-      min-width: 0;
-    }
-
-    .stat-section h2 {
-      margin-top: 22px;
-    }
-
     .card {
       position: relative;
       overflow: hidden;
@@ -695,38 +537,18 @@
       padding: 16px;
       margin-bottom: 14px;
       border: 1px solid rgba(134,239,172,.28);
-      box-shadow:
-        0 18px 42px rgba(0,0,0,.38),
-        0 0 28px rgba(34,197,94,.14);
+      box-shadow: var(--shadow), 0 0 28px rgba(34,197,94,.14);
       animation: bubbleIn .35s ease both;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 10% 50%, rgba(255,255,255,.24), transparent 16%),
-        linear-gradient(135deg, rgba(255,255,255,.16), transparent 35%);
-      pointer-events: none;
     }
 
     .card:hover, .pulse-card:hover, .quick-card:hover {
       transform: translateY(-2px) scale(1.01);
-      box-shadow:
-        0 22px 55px rgba(0,0,0,.45),
-        0 0 38px rgba(34,197,94,.28);
+      box-shadow: 0 22px 55px rgba(0,0,0,.45), 0 0 38px rgba(34,197,94,.28);
     }
 
     @keyframes bubbleIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px) scale(.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(12px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     summary {
@@ -734,9 +556,7 @@
       cursor: pointer;
     }
 
-    summary::-webkit-details-marker {
-      display: none;
-    }
+    summary::-webkit-details-marker { display: none; }
 
     .main-row {
       position: relative;
@@ -753,9 +573,7 @@
       border-radius: 50%;
       padding: 7px;
       object-fit: contain;
-      box-shadow:
-        inset 0 0 12px rgba(34,197,94,.25),
-        0 0 20px rgba(34,197,94,.38);
+      box-shadow: inset 0 0 12px rgba(34,197,94,.25), 0 0 20px rgba(34,197,94,.38);
     }
 
     .num-wrap {
@@ -770,7 +588,7 @@
       font-size: 36px;
       font-weight: 950;
       line-height: .9;
-      color: #f0fdf4;
+      color: var(--text);
       text-shadow: 0 0 18px rgba(34,197,94,.65);
     }
 
@@ -778,46 +596,34 @@
       margin-top: 5px;
       font-size: 11px;
       font-weight: 900;
-      color: #86efac;
+      color: var(--mint);
       text-transform: uppercase;
     }
 
-    .info {
-      min-width: 0;
-    }
+    .info { min-width: 0; }
 
     .name {
       font-size: 20px;
       font-weight: 950;
-      color: #f0fdf4;
+      color: var(--text);
       overflow-wrap: anywhere;
     }
 
     .team, .game, .status, .extra {
       margin-top: 3px;
-      color: #d1fae5;
+      color: var(--soft);
       font-size: 13px;
       overflow-wrap: anywhere;
       line-height: 1.35;
     }
 
     .extra {
-      color: #bef264;
+      color: var(--lime);
       font-weight: 900;
     }
 
     .label {
-      display: inline-block;
       margin-top: 8px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: rgba(2,6,23,.45);
-      border: 1px solid rgba(134,239,172,.22);
-      color: #bbf7d0;
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: .05em;
-      text-transform: uppercase;
     }
 
     .profile-btn {
@@ -846,29 +652,20 @@
     .prevhits { background: linear-gradient(135deg, #022c22, #4ade80); }
 
     .leader {
-      border: 2px solid #bef264;
-      box-shadow:
-        0 0 0 1px rgba(190,242,100,.3),
-        0 0 36px rgba(190,242,100,.38),
-        0 18px 42px rgba(0,0,0,.38);
+      border: 2px solid var(--lime);
+      box-shadow: 0 0 0 1px rgba(190,242,100,.3), 0 0 36px rgba(190,242,100,.38), var(--shadow);
     }
 
     .elite {
-      box-shadow:
-        0 0 36px rgba(190,242,100,.55),
-        0 18px 42px rgba(0,0,0,.38);
+      box-shadow: 0 0 36px rgba(190,242,100,.55), var(--shadow);
     }
 
     .good {
-      box-shadow:
-        0 0 28px rgba(34,197,94,.45),
-        0 18px 42px rgba(0,0,0,.38);
+      box-shadow: 0 0 28px rgba(34,197,94,.45), var(--shadow);
     }
 
     .bad {
-      box-shadow:
-        0 0 28px rgba(250,204,21,.45),
-        0 18px 42px rgba(0,0,0,.38);
+      box-shadow: 0 0 28px rgba(250,204,21,.45), var(--shadow);
     }
 
     .details {
@@ -884,7 +681,7 @@
     .details-header {
       font-size: 12px;
       font-weight: 900;
-      color: #86efac;
+      color: var(--mint);
       text-transform: uppercase;
       letter-spacing: .08em;
       margin-bottom: 10px;
@@ -896,19 +693,10 @@
       gap: 10px;
     }
 
-    .detail-chip {
-      background: rgba(15,23,42,.7);
-      border: 1px solid rgba(134,239,172,.16);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
-      min-width: 0;
-    }
-
     .detail-name {
       font-size: 13px;
       font-weight: 800;
-      color: #f0fdf4;
+      color: var(--text);
       line-height: 1.25;
       overflow-wrap: anywhere;
     }
@@ -916,7 +704,7 @@
     .detail-sub {
       margin-top: 4px;
       font-size: 11px;
-      color: #a7f3d0;
+      color: var(--muted);
       line-height: 1.25;
       overflow-wrap: anywhere;
     }
@@ -944,7 +732,7 @@
 
     .footer-note {
       margin: 26px 0 80px;
-      color: #86efac;
+      color: var(--mint);
       opacity: .75;
       font-size: 12px;
       text-align: center;
@@ -962,17 +750,13 @@
       backdrop-filter: blur(10px);
     }
 
-    .profile-modal.open {
-      display: flex;
-    }
+    .profile-modal.open { display: flex; }
 
     .profile-panel {
       width: min(560px, 100%);
       max-height: 88vh;
       overflow-y: auto;
-      background:
-        radial-gradient(circle at top left, rgba(34,197,94,.22), transparent 35%),
-        rgba(2,6,23,.96);
+      background: radial-gradient(circle at top left, rgba(34,197,94,.22), transparent 35%), rgba(2,6,23,.96);
       border: 1px solid rgba(134,239,172,.28);
       border-radius: 28px;
       padding: 18px;
@@ -999,13 +783,13 @@
     .profile-title {
       font-size: 24px;
       font-weight: 950;
-      color: #f0fdf4;
+      color: var(--text);
       line-height: 1.1;
     }
 
     .profile-sub {
       margin-top: 5px;
-      color: #a7f3d0;
+      color: var(--muted);
       font-size: 13px;
       line-height: 1.4;
     }
@@ -1033,19 +817,9 @@
       font-weight: 950;
     }
 
-    .mobile-tabs {
-      display: none;
-    }
+    .mobile-tabs { display: none; }
+    .tab-panel { display: block; }
 
-    .tab-panel {
-      display: block;
-    }
-
-    body.stadium-mode .header {
-      position: relative;
-    }
-
-    body.stadium-mode .key,
     body.stadium-mode .section-note,
     body.stadium-mode .filter-wrap,
     body.stadium-mode .helper-box {
@@ -1068,160 +842,46 @@
       border-radius: 34px;
     }
 
-    body.stadium-mode .num {
-      font-size: 48px;
-    }
-
-    body.stadium-mode .name {
-      font-size: 26px;
-    }
-
-    body.stadium-mode h2 {
-      font-size: 28px;
-    }
+    body.stadium-mode .num { font-size: 48px; }
+    body.stadium-mode .name { font-size: 26px; }
+    body.stadium-mode h2 { font-size: 28px; }
 
     @media (max-width: 920px) {
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
+      .info-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 820px) {
-      .stat-layout {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
+      .stat-layout { grid-template-columns: 1fr; gap: 0; }
     }
 
     @media (max-width: 720px) {
-      body {
-        padding: 10px 10px 86px;
-      }
+      body { padding: 10px 10px 86px; }
+      .app { max-width: 100%; }
+      .header { top: 6px; border-radius: 22px; padding: 14px; }
+      .top-row { display: block; }
+      .stadium-toggle { margin-top: 10px; }
+      .brand-wrap { gap: 10px; }
+      .brand-logo { width: 58px; height: 58px; border-radius: 22px; }
+      .diamond-logo { width: 55px; height: 55px; }
+      h1 { font-size: 26px; }
+      h2 { font-size: 20px; margin-top: 28px; }
+      .quick-grid, .pulse-grid { grid-template-columns: 1fr; }
+      .quick-card, .pulse-card { min-height: auto; border-radius: 24px; }
+      .score-strip { border-radius: 22px; }
+      .ticker-item { font-size: 12px; padding: 7px 10px; }
+      .helper-grid { grid-template-columns: 1fr; }
+      .card { border-radius: 26px; padding: 13px; }
+      .main-row { grid-template-columns: 46px 58px minmax(0, 1fr); gap: 10px; }
+      .logo { width: 46px; height: 46px; }
+      .num-wrap { padding: 8px 3px; }
+      .num { font-size: 30px; }
+      .name { font-size: 17px; }
+      .team, .game, .status, .extra { font-size: 12px; }
+      .details-grid { grid-template-columns: 1fr; }
+      .details { border-radius: 20px; padding: 10px; }
 
-      .app {
-        max-width: 100%;
-      }
-
-      .header {
-        top: 6px;
-        border-radius: 22px;
-        padding: 14px;
-      }
-
-      .top-row {
-        display: block;
-      }
-
-      .stadium-toggle {
-        margin-top: 10px;
-      }
-
-      .brand-wrap {
-        gap: 10px;
-      }
-
-      .brand-watermark {
-        width: 84px;
-        height: 84px;
-        left: 8px;
-        top: -10px;
-      }
-
-      .brand-logo {
-        width: 58px;
-        height: 58px;
-        border-radius: 22px;
-      }
-
-      .diamond-logo {
-        width: 55px;
-        height: 55px;
-      }
-
-      h1 {
-        font-size: 26px;
-      }
-
-      h2 {
-        font-size: 20px;
-        margin-top: 28px;
-      }
-
-      .key {
-        display: none;
-      }
-
-      .quick-grid,
-      .pulse-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-card,
-      .pulse-card {
-        min-height: auto;
-        border-radius: 24px;
-      }
-
-      .score-strip {
-        border-radius: 22px;
-      }
-
-      .ticker-item {
-        font-size: 12px;
-        padding: 7px 10px;
-      }
-
-      .helper-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        border-radius: 26px;
-        padding: 13px;
-      }
-
-      .main-row {
-        grid-template-columns: 46px 58px minmax(0, 1fr);
-        gap: 10px;
-      }
-
-      .logo {
-        width: 46px;
-        height: 46px;
-      }
-
-      .num-wrap {
-        padding: 8px 3px;
-      }
-
-      .num {
-        font-size: 30px;
-      }
-
-      .name {
-        font-size: 17px;
-      }
-
-      .team, .game, .status, .extra {
-        font-size: 12px;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .details {
-        border-radius: 20px;
-        padding: 10px;
-      }
-
-      .tab-panel {
-        display: none;
-      }
-
-      .tab-panel.active {
-        display: block;
-      }
+      .tab-panel { display: none; }
+      .tab-panel.active { display: block; }
 
       .mobile-tabs {
         position: fixed;
@@ -1245,7 +905,7 @@
         border-radius: 16px;
         padding: 8px 4px;
         background: transparent;
-        color: #a7f3d0;
+        color: var(--muted);
         font-size: 11px;
         font-weight: 950;
         cursor: pointer;
@@ -1253,25 +913,14 @@
 
       .tab-btn.active {
         background: rgba(34,197,94,.18);
-        color: #f0fdf4;
+        color: var(--text);
         box-shadow: inset 0 0 16px rgba(34,197,94,.08);
       }
 
-      body.stadium-mode .mobile-tabs {
-        display: none;
-      }
-
-      body.stadium-mode .tab-panel {
-        display: block;
-      }
-
-      body.stadium-mode .num {
-        font-size: 40px;
-      }
-
-      body.stadium-mode .name {
-        font-size: 22px;
-      }
+      body.stadium-mode .mobile-tabs { display: none; }
+      body.stadium-mode .tab-panel { display: block; }
+      body.stadium-mode .num { font-size: 40px; }
+      body.stadium-mode .name { font-size: 22px; }
     }
   </style>
 </head>
@@ -1282,27 +931,6 @@
     <div class="top-row">
       <div>
         <div class="brand-wrap">
-          <svg viewBox="0 0 120 120" class="brand-watermark" aria-hidden="true">
-            <defs>
-              <radialGradient id="wmGlowRing" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0)" />
-                <stop offset="70%" stop-color="#22c55e" />
-                <stop offset="100%" stop-color="#bef264" />
-              </radialGradient>
-              <radialGradient id="wmBall" cx="50%" cy="40%" r="60%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="100%" stop-color="#d1fae5" />
-              </radialGradient>
-            </defs>
-            <circle cx="56" cy="60" r="28" fill="none" stroke="#22c55e" stroke-width="10" opacity="0.8"/>
-            <circle cx="56" cy="60" r="21" fill="url(#wmBall)" stroke="#dcfce7" stroke-width="2"/>
-            <path d="M44 48 C51 55 51 65 44 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M68 48 C61 55 61 65 68 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M78 56 L96 56" stroke="#22c55e" stroke-width="6" stroke-linecap="round"/>
-            <path d="M82 66 L102 66" stroke="#bef264" stroke-width="5" stroke-linecap="round"/>
-            <path d="M86 46 L102 46" stroke="#86efac" stroke-width="4" stroke-linecap="round"/>
-          </svg>
-
           <div class="brand-logo" aria-hidden="true">
             <svg viewBox="0 0 120 120" class="diamond-logo">
               <defs>
@@ -1361,9 +989,8 @@
       <details class="helper-box" open>
         <summary>🧢 New to Baseball? Quick Helper</summary>
         <p>
-          No worries — this page is built so you can glance and get the main storylines.
-          If someone is hot, they’ve been playing well lately. If a lineup had a lot of strikeouts and a high whiff rate,
-          that means they were swinging and missing a lot.
+          This page is built so you can glance and get the main storylines. If someone is hot, they’ve been playing well lately.
+          If a lineup had a lot of strikeouts and a high whiff rate, that means they were swinging and missing a lot.
         </p>
         <div class="helper-grid">
           <div class="helper-chip">
@@ -1393,13 +1020,8 @@
       </div>
     </div>
 
-    <div class="key">
-      ⚡ Quick Look = easy storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot Bats · 💗 Hit Streaks<br>
-      🌊 Hot pitchers with Whiff% · 🟠 Team strikeout trouble + Whiff% · 🟣 Previous team hit leaders
-    </div>
-
     <h2>⚡ Tonight’s Quick Look</h2>
-    <div class="section-note">Fast, simple storylines for tonight’s action.</div>
+    <div class="section-note">Simple storylines for tonight’s action.</div>
     <div id="quickLook" class="quick-grid">
       <div class="loading">Loading quick look...</div>
     </div>
@@ -1410,28 +1032,38 @@
       <div class="loading">Loading pulse...</div>
     </div>
 
+    <h2>⭐ Featured Players</h2>
+    <div class="section-note">All featured player cards expand with boxscore or recent log details.</div>
+    <div id="featuredPlayers" class="loading">Loading featured players...</div>
+
     <h2>🎯 Game of the Night</h2>
     <div id="gameOfNight" class="game-night">Loading game of the night...</div>
   </section>
 
+  <section class="tab-panel" data-tab="live">
+    <div class="column-pill">Live Events</div>
+
+    <div class="stat-section">
+      <h2>📡 Live Games</h2>
+      <div class="section-note">Games currently being played, separated from everything else.</div>
+      <div id="liveGamesPanel" class="loading">Loading live events...</div>
+    </div>
+
+    <div class="stat-section">
+      <h2>🔥 Live Strikeouts</h2>
+      <div class="section-note">Pitchers in games happening right now. Tap to expand the live boxscore.</div>
+      <div id="liveKs" class="loading">Loading...</div>
+    </div>
+
+    <div class="stat-section">
+      <h2>💥 Live Hits</h2>
+      <div class="section-note">Current hit leaders in live games. Tap to expand the live boxscore.</div>
+      <div id="liveHits" class="loading">Loading...</div>
+    </div>
+  </section>
+
   <div class="stat-layout">
     <div class="stat-column">
-      <section class="tab-panel" data-tab="live">
-        <div class="column-pill">Live Action</div>
-
-        <div class="stat-section">
-          <h2>🔥 Live Strikeouts</h2>
-          <div class="section-note">Pitchers in games happening right now.</div>
-          <div id="liveKs" class="loading">Loading...</div>
-        </div>
-
-        <div class="stat-section">
-          <h2>💥 Live Hits</h2>
-          <div class="section-note">Current hit leaders in live games.</div>
-          <div id="liveHits" class="loading">Loading...</div>
-        </div>
-      </section>
-
       <section class="tab-panel" data-tab="arms">
         <div class="column-pill">Pitching + K Watch</div>
 
@@ -1511,15 +1143,16 @@
 </div>
 
 <script>
-const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
-
 let profileStore = [];
 let pitchCodeMapCache = null;
+
+const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 
 let appState = {
   selectedTeamId: "all",
   scoreGames: [],
   todaysTeams: [],
+  liveGames: [],
   liveKs: [],
   liveHits: [],
   prevKs: [],
@@ -1579,7 +1212,6 @@ async function getPitchCodeMap(){
     pitchCodeMapCache = map;
     return map;
   } catch(err) {
-    console.warn("Pitch code map failed, using fallback parser", err);
     pitchCodeMapCache = {};
     return pitchCodeMapCache;
   }
@@ -1588,7 +1220,6 @@ async function getPitchCodeMap(){
 function fallbackSwingStatus(event){
   const text = ((event.details && (event.details.description || event.details.event)) || "").toLowerCase();
   const code = event.details ? event.details.code : "";
-
   const swingCodes = ["S","W","T","M","F","L","X","D","E"];
   const missCodes = ["S","W","T","M"];
 
@@ -1651,7 +1282,6 @@ async function computePitcherWhiffForGame(gamePk, pitcherId, pitchMap){
 
   try {
     const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
-
     let swings = 0;
     let misses = 0;
 
@@ -1679,7 +1309,6 @@ async function computePitcherWhiffForGame(gamePk, pitcherId, pitchMap){
       whiffPct: swings > 0 ? ((misses / swings) * 100).toFixed(1) : "0.0"
     };
   } catch(err) {
-    console.warn("Pitcher whiff calculation failed for game", gamePk, err);
     return {swings:0, misses:0, whiffPct:"0.0"};
   }
 }
@@ -1848,6 +1477,7 @@ async function loadScoreTicker(){
   });
 
   appState.scoreGames = games;
+  appState.liveGames = games.filter(g => g.status.abstractGameState === "Live");
   collectTodayTeams(games);
 }
 
@@ -1880,6 +1510,49 @@ function registerProfile(row,label){
   const id = profileStore.length;
   profileStore.push({row,label});
   return id;
+}
+
+function liveBoxscoreDetails(row, type){
+  const s = row.liveStats || {};
+
+  if(type === "batter"){
+    return (
+      '<div class="details-header">Live boxscore</div>' +
+      '<div class="details-grid">' +
+        statChip("At Bats", s.atBats) +
+        statChip("Hits", s.hits) +
+        statChip("Runs", s.runs) +
+        statChip("RBI", s.rbi) +
+        statChip("Walks", s.baseOnBalls) +
+        statChip("Strikeouts", s.strikeOuts) +
+        statChip("HR", s.homeRuns) +
+        statChip("Total Bases", s.totalBases) +
+      '</div>'
+    );
+  }
+
+  return (
+    '<div class="details-header">Live boxscore</div>' +
+    '<div class="details-grid">' +
+      statChip("IP", s.inningsPitched) +
+      statChip("Ks", s.strikeOuts) +
+      statChip("Hits Allowed", s.hits) +
+      statChip("Runs", s.runs) +
+      statChip("ER", s.earnedRuns) +
+      statChip("Walks", s.baseOnBalls) +
+      statChip("Pitches", s.numberOfPitches) +
+      statChip("Strikes", s.strikes) +
+    '</div>'
+  );
+}
+
+function statChip(name, value){
+  return (
+    '<div class="detail-chip">' +
+      '<div class="detail-name">' + h(name) + '</div>' +
+      '<div class="detail-stat">' + h(val(value)) + '</div>' +
+    '</div>'
+  );
 }
 
 function makeCard(row,label,colorClass,detailsHtml){
@@ -1920,6 +1593,63 @@ function makeCard(row,label,colorClass,detailsHtml){
   return '<div class="card ' + colorClass + ' ' + tier(label,row.value) + (row.leader ? ' leader' : '') + '">' + top + '</div>';
 }
 
+function detailsHtml(row, detailsType){
+  if(detailsType === "players" && row.players){
+    return (
+      '<div class="details-header">Player hit breakdown</div>' +
+      '<div class="details-grid">' +
+        row.players.map(p =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(p.name) + '</div>' +
+            '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
+          '</div>'
+        ).join("") +
+      '</div>'
+    );
+  }
+
+  if(detailsType === "logs" && row.logs){
+    return (
+      '<div class="details-header">Recent game log</div>' +
+      '<div class="details-grid">' +
+        row.logs.map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.game) + '</div>' +
+            '<div class="detail-sub">' + h(g.date) + '</div>' +
+            '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+          '</div>'
+        ).join("") +
+      '</div>'
+    );
+  }
+
+  if(detailsType === "pitcherlogs" && row.logs){
+    return (
+      '<div class="details-header">Recent strikeout + whiff log</div>' +
+      '<div class="details-grid">' +
+        row.logs.map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.opponent) + '</div>' +
+            '<div class="detail-sub">' + h(g.date) + '</div>' +
+            '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+            '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
+          '</div>'
+        ).join("") +
+      '</div>'
+    );
+  }
+
+  if(detailsType === "livebatter"){
+    return liveBoxscoreDetails(row, "batter");
+  }
+
+  if(detailsType === "livepitcher"){
+    return liveBoxscoreDetails(row, "pitcher");
+  }
+
+  return "";
+}
+
 function render(id,rows,label,colorClass,detailsType){
   rows = (rows || []).slice(0,5).map((row,index) => ({...row, leader:index === 0}));
 
@@ -1928,57 +1658,27 @@ function render(id,rows,label,colorClass,detailsType){
     return;
   }
 
-  document.getElementById(id).innerHTML = rows.map(row => {
-    let details = "";
+  document.getElementById(id).innerHTML = rows.map(row =>
+    makeCard(row,label,colorClass,detailsHtml(row,detailsType))
+  ).join("");
+}
 
-    if(detailsType === "players" && row.players){
-      details =
-        '<div class="details-header">Player hit breakdown</div>' +
-        '<div class="details-grid">' +
-          row.players.map(p =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(p.name) + '</div>' +
-              '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
+function renderCustomCards(id, items){
+  if(!items.length){
+    document.getElementById(id).innerHTML = '<div class="card ks">No featured players right now.</div>';
+    return;
+  }
 
-    if(detailsType === "logs" && row.logs){
-      details =
-        '<div class="details-header">Recent game log</div>' +
-        '<div class="details-grid">' +
-          row.logs.map(g =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(g.game) + '</div>' +
-              '<div class="detail-sub">' + h(g.date) + '</div>' +
-              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
-
-    if(detailsType === "pitcherlogs" && row.logs){
-      details =
-        '<div class="details-header">Recent strikeout + whiff log</div>' +
-        '<div class="details-grid">' +
-          row.logs.map(g =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(g.opponent) + '</div>' +
-              '<div class="detail-sub">' + h(g.date) + '</div>' +
-              '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
-              '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
-
-    return makeCard(row,label,colorClass,details);
-  }).join("");
+  document.getElementById(id).innerHTML = items.slice(0,8).map(item =>
+    makeCard(item.row, item.label, item.colorClass, detailsHtml(item.row, item.detailsType))
+  ).join("");
 }
 
 function profileDetails(row){
   let html = "";
+
+  if(row.liveStats && row.kind === "batter") html += liveBoxscoreDetails(row, "batter");
+  if(row.liveStats && row.kind === "pitcher") html += liveBoxscoreDetails(row, "pitcher");
 
   if(row.whiffPct !== undefined){
     html +=
@@ -1993,16 +1693,7 @@ function profileDetails(row){
   }
 
   if(row.players && row.players.length){
-    html +=
-      '<div class="details-header">Player hit breakdown</div>' +
-      '<div class="details-grid">' +
-        row.players.map(p =>
-          '<div class="detail-chip">' +
-            '<div class="detail-name">' + h(p.name) + '</div>' +
-            '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
-          '</div>'
-        ).join("") +
-      '</div>';
+    html += detailsHtml(row, "players");
   }
 
   if(row.logs && row.logs.length){
@@ -2196,9 +1887,9 @@ function renderTop3(){
     items.push({
       rank: "1",
       title: pitcherSpot.pitcher.name + " strikeout spot",
-      copy: pitcherSpot.pitcher.name + " carries a " + pitcherSpot.pitcher.whiffPct + "% Whiff rate into a matchup with " +
-            pitcherSpot.opponentTeamTrend.name + ", who struck out " + pitcherSpot.opponentTeamTrend.value +
-            " times last game and posted a " + pitcherSpot.opponentTeamTrend.whiffPct + "% Whiff rate."
+      copy: pitcherSpot.pitcher.name + " Whiff%: " + pitcherSpot.pitcher.whiffPct + "% · " +
+            pitcherSpot.opponentTeamTrend.name + " last game: " + pitcherSpot.opponentTeamTrend.value +
+            " strikeouts and " + pitcherSpot.opponentTeamTrend.whiffPct + "% Whiff."
     });
   }
 
@@ -2225,11 +1916,7 @@ function renderTop3(){
       copy = thirdChoice.name + " has " + thirdChoice.value + " strikeouts in live action.";
     }
 
-    items.push({
-      rank: String(items.length + 1),
-      title,
-      copy
-    });
+    items.push({ rank: String(items.length + 1), title, copy });
   }
 
   const html = items.slice(0,3).map(item =>
@@ -2256,79 +1943,37 @@ function renderBaseballPulse(){
 
   if(liveKs.length){
     const p = liveKs[0];
-    cards.push(pulseCard(
-      "👑",
-      "Live K Leader",
-      p.name + " · " + p.value + " Ks",
-      p.team + " · " + p.status,
-      "Live now"
-    ));
+    cards.push(pulseCard("👑","Live K Leader",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live now"));
   }
 
   if(liveHits.length){
     const hit = liveHits[0];
-    cards.push(pulseCard(
-      "💥",
-      "Live Hit Leader",
-      hit.name + " · " + hit.value + " hits",
-      hit.team + " · " + hit.status,
-      "Live now"
-    ));
+    cards.push(pulseCard("💥","Live Hit Leader",hit.name + " · " + hit.value + " hits",hit.team + " · " + hit.status,"Live now"));
   }
 
   if(hotPitchers.length){
     const p = hotPitchers[0];
-    cards.push(pulseCard(
-      "🌊",
-      "Pitcher To Watch",
-      p.name,
-      p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%",
-      "K watch"
-    ));
+    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%","K watch"));
   }
 
   if(hotHitters.length){
     const hit = hotHitters[0];
-    cards.push(pulseCard(
-      "🔥",
-      "Hot Bat",
-      hit.name + " · " + hit.value + " hits",
-      hit.team + " · Last 4 completed game days",
-      "Hot bat"
-    ));
+    cards.push(pulseCard("🔥","Hot Bat",hit.name + " · " + hit.value + " hits",hit.team + " · Last 4 completed game days","Hot bat"));
   }
 
   if(streakingHitters.length){
     const s = streakingHitters[0];
-    cards.push(pulseCard(
-      "💗",
-      "Best Hit Streak",
-      s.name,
-      s.team + " · hit in " + s.value + " straight games",
-      "Streaking"
-    ));
+    cards.push(pulseCard("💗","Best Hit Streak",s.name,s.team + " · hit in " + s.value + " straight games","Streaking"));
   }
 
   const kTeam = prevKs.find(t => Number(t.value) >= 7);
   if(kTeam){
-    cards.push(pulseCard(
-      "🟠",
-      "Team Strikeout Alert",
-      kTeam.name + " · " + kTeam.value + " Ks",
-      "Whiff%: " + (kTeam.whiffPct || "0.0") + "%",
-      "Team trend"
-    ));
+    cards.push(pulseCard("🟠","Team Strikeout Alert",kTeam.name + " · " + kTeam.value + " Ks","Whiff%: " + (kTeam.whiffPct || "0.0") + "%","Team trend"));
   }
 
   const hitTeam = prevHits[0];
   if(hitTeam){
-    cards.push(pulseCard(
-      "🟣",
-      "Team Hits Leader",
-      hitTeam.name + " · " + hitTeam.value + " hits",
-      hitTeam.status + " · previous completed game day",
-      "Team hits"
-    ));
+    cards.push(pulseCard("🟣","Team Hits Leader",hitTeam.name + " · " + hitTeam.value + " hits",hitTeam.status + " · previous completed game day","Team hits"));
   }
 
   if(!cards.length){
@@ -2338,6 +1983,32 @@ function renderBaseballPulse(){
   }
 
   document.getElementById("pulseCards").innerHTML = cards.slice(0,6).join("");
+}
+
+function renderFeaturedPlayers(){
+  const items = [];
+
+  filterRows(appState.liveKs).slice(0,3).forEach(row => {
+    items.push({ row, label:"Live Pitcher Boxscore", colorClass:"ks", detailsType:"livepitcher" });
+  });
+
+  filterRows(appState.liveHits).slice(0,3).forEach(row => {
+    items.push({ row, label:"Live Hitter Boxscore", colorClass:"hits", detailsType:"livebatter" });
+  });
+
+  filterRows(appState.hotPitchers).slice(0,3).forEach(row => {
+    items.push({ row, label:"Hot Pitcher Ks", colorClass:"hotpitcher", detailsType:"pitcherlogs" });
+  });
+
+  filterRows(appState.hotHitters).slice(0,3).forEach(row => {
+    items.push({ row, label:"Hot Bat Hits", colorClass:"hot", detailsType:"logs" });
+  });
+
+  filterRows(appState.streakingHitters).slice(0,3).forEach(row => {
+    items.push({ row, label:"Hit Streak", colorClass:"streak", detailsType:"logs" });
+  });
+
+  renderCustomCards("featuredPlayers", items);
 }
 
 function renderGameOfNight(){
@@ -2361,14 +2032,47 @@ function renderGameOfNight(){
     '<div class="game-night-sub">' + h(status) + '</div>';
 }
 
+function renderLiveEvents(){
+  const games = (appState.liveGames || []).filter(gameMatchesFilter);
+
+  if(!games.length){
+    document.getElementById("liveGamesPanel").innerHTML =
+      '<div class="card ks">No live games right now for this filter.</div>';
+    return;
+  }
+
+  document.getElementById("liveGamesPanel").innerHTML = games.map(game => {
+    const away = teamName(game.teams.away.team);
+    const home = teamName(game.teams.home.team);
+
+    return (
+      '<div class="card ks">' +
+        '<div class="main-row">' +
+          '<img class="logo" src="' + logo(game.teams.away.team.id) + '">' +
+          '<div class="num-wrap">' +
+            '<div class="num">' + h(scoreValue(game,"away")) + '-' + h(scoreValue(game,"home")) + '</div>' +
+            '<div class="stat-label">Score</div>' +
+          '</div>' +
+          '<div class="info">' +
+            '<div class="name">' + h(away) + ' @ ' + h(home) + '</div>' +
+            '<div class="team">' + h(tickerStatus(game)) + '</div>' +
+            '<div class="label">Live Event</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join("");
+}
+
 function renderAllData(){
   profileStore = [];
 
   renderTeamFilters();
   renderScoreTicker(appState.scoreGames);
+  renderLiveEvents();
 
-  render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks",null);
-  render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits",null);
+  render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","livepitcher");
+  render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","livebatter");
 
   render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs");
   render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
@@ -2383,6 +2087,7 @@ function renderAllData(){
   renderQuickLook();
   renderTop3();
   renderBaseballPulse();
+  renderFeaturedPlayers();
   renderGameOfNight();
 }
 
@@ -2430,7 +2135,9 @@ async function loadLiveStats(){
             team:team.name,
             game:gameText,
             status:statusText,
-            teamId:team.id
+            teamId:team.id,
+            kind:"pitcher",
+            liveStats:pitching
           });
         }
 
@@ -2441,7 +2148,9 @@ async function loadLiveStats(){
             team:team.name,
             game:gameText,
             status:statusText,
-            teamId:team.id
+            teamId:team.id,
+            kind:"batter",
+            liveStats:batting
           });
         }
       });
@@ -2706,7 +2415,7 @@ async function loadHotPitchersToday(){
         logs.push({
           date: split.date,
           opponent: split.opponent ? split.opponent.name : "Opponent",
-          ks: ks,
+          ks,
           whiffPct: whiff.whiffPct,
           swings: whiff.swings,
           misses: whiff.misses
