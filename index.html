@@ -12,7 +12,6 @@
       --bg: #020617;
       --panel: rgba(2,6,23,.78);
       --panel2: rgba(15,23,42,.78);
-      --line: rgba(134,239,172,.24);
       --green: #22c55e;
       --mint: #86efac;
       --lime: #bef264;
@@ -27,7 +26,6 @@
       --purple1: #a855f7;
       --purple2: #7e22ce;
       --green1: #22c55e;
-      --green2: #166534;
       --blue1: #14b8a6;
       --blue2: #0f766e;
     }
@@ -37,9 +35,9 @@
       font-family: Inter, Arial, sans-serif;
       color: white;
       background:
-        radial-gradient(circle at 15% 10%, rgba(34,197,94,.25), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(250,204,21,.12), transparent 20%),
-        radial-gradient(circle at 50% 100%, rgba(239,68,68,.10), transparent 35%),
+        radial-gradient(circle at 15% 10%, rgba(34,197,94,.22), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(250,204,21,.10), transparent 20%),
+        radial-gradient(circle at 50% 100%, rgba(239,68,68,.08), transparent 35%),
         #020617;
       padding: 16px;
       min-height: 100vh;
@@ -52,7 +50,7 @@
       inset: 0;
       background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
       background-size: 28px 28px;
-      opacity: .5;
+      opacity: .45;
       pointer-events: none;
     }
 
@@ -66,8 +64,8 @@
       position: sticky;
       top: 10px;
       z-index: 20;
-      background: rgba(2,6,23,.84);
-      border: 1px solid rgba(34,197,94,.25);
+      background: rgba(2,6,23,.86);
+      border: 1px solid rgba(34,197,94,.24);
       box-shadow: 0 0 35px rgba(34,197,94,.12);
       backdrop-filter: blur(18px);
       border-radius: 30px;
@@ -270,7 +268,7 @@
       margin-left: 4px;
     }
 
-    .filter-wrap, .helper-box, .top3-box, .game-night {
+    .filter-wrap, .helper-box, .top3-box, .game-night, .how-card, .live-now-strip {
       background: rgba(2,6,23,.70);
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 26px;
@@ -329,59 +327,8 @@
       box-shadow: 0 0 18px rgba(34,197,94,.10);
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 8px;
-    }
-
-    .helper-box summary {
-      list-style: none;
-      cursor: pointer;
-      color: #dcfce7;
-      font-weight: 950;
-      font-size: 16px;
-    }
-
-    .helper-box summary::-webkit-details-marker { display: none; }
-
-    .helper-box p {
-      margin: 10px 0 0;
-      color: var(--soft);
-      line-height: 1.45;
-      font-size: 14px;
-    }
-
-    .helper-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .helper-chip, .detail-chip {
-      background: rgba(15,23,42,.75);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 18px;
-      padding: 10px;
-    }
-
-    .helper-chip-title {
-      font-size: 13px;
-      font-weight: 900;
-      color: #bbf7d0;
-      margin-bottom: 5px;
-    }
-
-    .helper-chip-copy {
-      color: var(--soft);
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
     .hero-wrap {
-      margin: 18px 0 22px;
+      margin: 18px 0 16px;
     }
 
     .hero-card {
@@ -509,6 +456,125 @@
       margin-top: 4px;
       font-size: 12px;
       color: var(--soft);
+      line-height: 1.35;
+    }
+
+    .live-now-strip {
+      margin: 0 0 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .live-now-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .live-now-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #dcfce7;
+      font-weight: 950;
+      font-size: 15px;
+    }
+
+    .live-now-count {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .live-now-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .live-now-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .helper-box summary {
+      list-style: none;
+      cursor: pointer;
+      color: #dcfce7;
+      font-weight: 950;
+      font-size: 16px;
+    }
+
+    .helper-box summary::-webkit-details-marker { display: none; }
+
+    .helper-box p, .how-card p {
+      margin: 10px 0 0;
+      color: var(--soft);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .helper-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .helper-chip, .detail-chip {
+      background: rgba(15,23,42,.75);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .helper-chip-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #bbf7d0;
+      margin-bottom: 5px;
+    }
+
+    .helper-chip-copy {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .how-title {
+      font-size: 18px;
+      color: #dcfce7;
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .how-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .how-step {
+      padding: 10px;
+      border-radius: 18px;
+      background: rgba(15,23,42,.75);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--soft);
+      font-size: 13px;
       line-height: 1.35;
     }
 
@@ -675,7 +741,7 @@
       z-index: 0;
     }
 
-    .quick-tag, .pulse-tag, .label {
+    .quick-tag, .pulse-tag, .label, .time-badge {
       display: inline-block;
       padding: 5px 9px;
       border-radius: 999px;
@@ -686,6 +752,30 @@
       font-weight: 950;
       text-transform: uppercase;
       letter-spacing: .06em;
+    }
+
+    .time-badge {
+      margin-bottom: 8px;
+      background: rgba(255,255,255,.09);
+    }
+
+    .time-badge.live {
+      background: rgba(34,197,94,.18);
+      border-color: rgba(34,197,94,.28);
+      color: #dcfce7;
+      animation: liveTickerGlow 2.1s ease-in-out infinite;
+    }
+
+    .time-badge.today {
+      background: rgba(250,204,21,.16);
+      border-color: rgba(250,204,21,.24);
+      color: #fef9c3;
+    }
+
+    .time-badge.last {
+      background: rgba(148,163,184,.14);
+      border-color: rgba(148,163,184,.18);
+      color: #e2e8f0;
     }
 
     .quick-tag { margin-bottom: 10px; }
@@ -1428,7 +1518,7 @@
 
           <div>
             <h1>Diamond Pulse</h1>
-            <div class="sub">A live baseball companion for tonight’s action</div>
+            <div class="sub">Your quick glance at tonight’s baseball action</div>
             <div id="lastUpdated" class="refresh">Loading live data...</div>
           </div>
         </div>
@@ -1458,44 +1548,59 @@
   </div>
 
   <section class="tab-panel active" data-tab="pulse">
-    <div class="info-grid">
-      <details class="helper-box" open>
-        <summary>🧢 New to Baseball? Quick Helper</summary>
-        <p>
-          This page is made to be easy to scan. Hot bats = hitters doing damage lately. Team strikeout alerts show lineups
-          that swung and missed a lot last game. Whiff% tells you how often swings turned into misses.
-        </p>
-        <div class="helper-grid">
-          <div class="helper-chip">
-            <div class="helper-chip-title">Strikeouts (K)</div>
-            <div class="helper-chip-copy">How many batters a pitcher struck out.</div>
-          </div>
-          <div class="helper-chip">
-            <div class="helper-chip-title">Whiff%</div>
-            <div class="helper-chip-copy">How often hitters swung and missed.</div>
-          </div>
-          <div class="helper-chip">
-            <div class="helper-chip-title">Hot Bats</div>
-            <div class="helper-chip-copy">Hitters who have been stacking hits lately.</div>
-          </div>
-          <div class="helper-chip">
-            <div class="helper-chip-title">Hit Streaks</div>
-            <div class="helper-chip-copy">Players who keep getting at least one hit every game.</div>
-          </div>
-        </div>
-      </details>
+    <div id="tonightsHero" class="hero-wrap">
+      <div class="loading">Loading tonight's pulse...</div>
+    </div>
 
+    <div id="liveNowStrip" class="live-now-strip">
+      <div class="loading">Checking live games...</div>
+    </div>
+
+    <div class="info-grid">
       <div class="top3-box">
         <div class="top3-title">🏆 Top 3 to Watch Tonight</div>
         <div id="top3List">
           <div class="loading">Loading top storylines...</div>
         </div>
       </div>
+
+      <div class="how-card">
+        <div class="how-title">How to Use Diamond Pulse</div>
+        <p>Start here, then tap deeper only when something catches your eye.</p>
+        <div class="how-list">
+          <div class="how-step">1. Check <strong>Tonight’s Pulse</strong> for the main game or player story.</div>
+          <div class="how-step">2. Use <strong>Top 3</strong> for the quickest things to watch.</div>
+          <div class="how-step">3. Tap any card to expand boxscores, logs, and pitcher details.</div>
+          <div class="how-step">4. Use the tabs for Live, Hitters, Pitchers, and Recap.</div>
+        </div>
+      </div>
     </div>
 
-    <div id="tonightsHero" class="hero-wrap">
-      <div class="loading">Loading tonight's pulse...</div>
-    </div>
+    <details class="helper-box">
+      <summary>🧢 New to Baseball? Quick Helper</summary>
+      <p>
+        Hot bats = hitters doing damage lately. Team strikeout alerts show lineups that swung and missed a lot last game.
+        Missed Swing Rate is the same idea as Whiff% — how often swings turned into misses.
+      </p>
+      <div class="helper-grid">
+        <div class="helper-chip">
+          <div class="helper-chip-title">Strikeouts (K)</div>
+          <div class="helper-chip-copy">How many batters a pitcher struck out.</div>
+        </div>
+        <div class="helper-chip">
+          <div class="helper-chip-title">Missed Swing Rate</div>
+          <div class="helper-chip-copy">How often hitters swung and missed.</div>
+        </div>
+        <div class="helper-chip">
+          <div class="helper-chip-title">Hot Bats</div>
+          <div class="helper-chip-copy">Hitters who have been stacking hits lately.</div>
+        </div>
+        <div class="helper-chip">
+          <div class="helper-chip-title">Hit Streaks</div>
+          <div class="helper-chip-copy">Players who keep getting at least one hit every game.</div>
+        </div>
+      </div>
+    </details>
 
     <h2>⚡ Tonight’s Quick Look</h2>
     <div class="section-note">Fast storylines for tonight’s board.</div>
@@ -1503,15 +1608,15 @@
       <div class="loading">Loading quick look...</div>
     </div>
 
-    <h2>⚡ Baseball Pulse</h2>
-    <div class="section-note">The main things happening right now or worth watching tonight. Tap any card to expand.</div>
-    <div id="pulseCards" class="pulse-grid">
-      <div class="loading">Loading pulse...</div>
-    </div>
-
     <h2>⭐ Featured Players</h2>
     <div class="section-note">Every featured player opens into a boxscore or recent log.</div>
     <div id="featuredPlayers" class="loading">Loading featured players...</div>
+
+    <h2>⚡ Baseball Pulse</h2>
+    <div class="section-note">More story cards. Tap any card to expand.</div>
+    <div id="pulseCards" class="pulse-grid">
+      <div class="loading">Loading pulse...</div>
+    </div>
 
     <h2>🎯 Game of the Night</h2>
     <div id="gameOfNight" class="game-night">Loading game of the night...</div>
@@ -1539,65 +1644,59 @@
     </div>
   </section>
 
-  <div class="stat-layout">
-    <div class="stat-column">
-      <section class="tab-panel" data-tab="arms">
-        <div class="column-pill">Pitching + K Watch</div>
+  <section class="tab-panel" data-tab="hitters">
+    <div class="column-pill">Hitters</div>
 
-        <div class="stat-section">
-          <h2>🌊 Hot Pitchers</h2>
-          <div class="section-note">Probable starters today with 8+ Ks in each of their last 2 starts, plus Whiff%.</div>
-          <div id="hotPitchers" class="loading">Loading...</div>
-        </div>
-
-        <div class="stat-section">
-          <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
-          <div class="section-note">Lineups with the most strikeouts in their last completed game, plus Whiff% and opposing pitcher stats.</div>
-          <div id="armsPrevKs" class="loading">Loading...</div>
-        </div>
-      </section>
+    <div class="stat-section">
+      <h2>🔥 Hot Bats</h2>
+      <div class="section-note">Hitters with 5+ hits over the last 4 completed game days.</div>
+      <div id="hotHitters" class="loading">Loading...</div>
     </div>
 
-    <div class="stat-column">
-      <section class="tab-panel" data-tab="bats">
-        <div class="column-pill">Hitting + Hot Bats</div>
-
-        <div class="stat-section">
-          <h2>🔥 Hot Bats</h2>
-          <div class="section-note">Hitters with 5+ hits over the last 4 completed game days.</div>
-          <div id="hotHitters" class="loading">Loading...</div>
-        </div>
-
-        <div class="stat-section">
-          <h2>💗 Hit Streaks</h2>
-          <div class="section-note">Players with hits in 3+ straight completed games.</div>
-          <div id="streakingHitters" class="loading">Loading...</div>
-        </div>
-
-        <div class="stat-section">
-          <h2>📈 Previous Game Day — Teams With Most Hits</h2>
-          <div class="section-note">Tap a team to see the player hit breakdown.</div>
-          <div id="batsPrevHits" class="loading">Loading...</div>
-        </div>
-      </section>
-
-      <section class="tab-panel" data-tab="recap">
-        <div class="column-pill">Yesterday’s Recap</div>
-
-        <div class="stat-section">
-          <h2>📊 Team Strikeouts</h2>
-          <div class="section-note">Previous completed game day with Whiff% and opposing pitcher stats included.</div>
-          <div id="recapKs" class="loading">Loading...</div>
-        </div>
-
-        <div class="stat-section">
-          <h2>📈 Team Hits</h2>
-          <div class="section-note">Tap to see player details.</div>
-          <div id="recapHits" class="loading">Loading...</div>
-        </div>
-      </section>
+    <div class="stat-section">
+      <h2>💗 Hit Streaks</h2>
+      <div class="section-note">Players with hits in 3+ straight completed games.</div>
+      <div id="streakingHitters" class="loading">Loading...</div>
     </div>
-  </div>
+
+    <div class="stat-section">
+      <h2>📈 Previous Game Day — Teams With Most Hits</h2>
+      <div class="section-note">Tap a team to see the player hit breakdown.</div>
+      <div id="batsPrevHits" class="loading">Loading...</div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-tab="pitchers">
+    <div class="column-pill">Pitchers</div>
+
+    <div class="stat-section">
+      <h2>🌊 Hot Pitchers</h2>
+      <div class="section-note">Probable starters today with 8+ Ks in each of their last 2 starts, plus Missed Swing Rate.</div>
+      <div id="hotPitchers" class="loading">Loading...</div>
+    </div>
+
+    <div class="stat-section">
+      <h2>📊 Previous Game Day — Teams Struck Out Most</h2>
+      <div class="section-note">Lineups with the most strikeouts in their last completed game, plus opposing pitcher stats.</div>
+      <div id="armsPrevKs" class="loading">Loading...</div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-tab="recap">
+    <div class="column-pill">Yesterday’s Recap</div>
+
+    <div class="stat-section">
+      <h2>📊 Team Strikeouts</h2>
+      <div class="section-note">Previous completed game day with Missed Swing Rate and opposing pitcher stats included.</div>
+      <div id="recapKs" class="loading">Loading...</div>
+    </div>
+
+    <div class="stat-section">
+      <h2>📈 Team Hits</h2>
+      <div class="section-note">Tap to see player details.</div>
+      <div id="recapHits" class="loading">Loading...</div>
+    </div>
+  </section>
 
   <div class="footer-note">
     Unofficial fan dashboard using public baseball data. Not affiliated with MLB.
@@ -1607,8 +1706,8 @@
 <nav class="mobile-tabs">
   <button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button>
   <button class="tab-btn" data-tab-target="live">📡 Live</button>
-  <button class="tab-btn" data-tab-target="bats">🔥 Bats</button>
-  <button class="tab-btn" data-tab-target="arms">🌊 Arms</button>
+  <button class="tab-btn" data-tab-target="hitters">🔥 Hitters</button>
+  <button class="tab-btn" data-tab-target="pitchers">🌊 Pitchers</button>
   <button class="tab-btn" data-tab-target="recap">📊 Recap</button>
 </nav>
 
@@ -1959,10 +2058,25 @@ async function loadScoreTicker(){
 }
 
 function statLabel(label){
-  if(label.includes("Whiff")) return "Whiff";
+  if(label.includes("Missed Swing")) return "Miss";
   if(label.includes("Ks") || label.includes("Strikeout") || label.includes("Pitcher")) return "Ks";
   if(label.includes("Streak")) return "Games";
   return "Hits";
+}
+
+function timeBadgeFor(label){
+  if(label.includes("Live")) return {text:"LIVE NOW", cls:"live"};
+  if(label.includes("Hot Pitcher")) return {text:"TODAY / LAST 2 STARTS", cls:"today"};
+  if(label.includes("Hot Bat")) return {text:"LAST 4 GAMES", cls:"last"};
+  if(label.includes("Hit Streak")) return {text:"STREAK", cls:"last"};
+  if(label.includes("Team Ks")) return {text:"LAST GAME", cls:"last"};
+  if(label.includes("Team Hits")) return {text:"LAST GAME", cls:"last"};
+  return {text:"TODAY", cls:"today"};
+}
+
+function timeBadgeHtml(label){
+  const b = timeBadgeFor(label);
+  return '<div class="time-badge ' + b.cls + '">' + h(b.text) + '</div>';
 }
 
 function tier(label,value){
@@ -2001,7 +2115,7 @@ function meterToneFromLabel(label){
 }
 
 function meterMaxForLabel(label){
-  if(label.includes("Whiff")) return 40;
+  if(label.includes("Missed Swing")) return 40;
   if(label.includes("Hot Pitcher")) return 20;
   if(label.includes("Pitcher Ks")) return 12;
   if(label.includes("Team Ks")) return 12;
@@ -2032,14 +2146,14 @@ function buildMeter(label, value, overrideText){
   );
 }
 
-function buildWhiffMeter(whiffPct){
+function buildMissedSwingMeter(whiffPct){
   const value = Number(whiffPct || 0);
   const width = Math.max(8, Math.min(100, (value / 40) * 100));
 
   return (
     '<div class="meter yellow">' +
       '<div class="meter-top">' +
-        '<span>Whiff meter</span>' +
+        '<span>Missed swing rate</span>' +
         '<span>' + h(value.toFixed ? value.toFixed(1) : value) + '%</span>' +
       '</div>' +
       '<div class="meter-bar">' +
@@ -2113,7 +2227,7 @@ function makeCard(row,label,detailsHtml){
 
   let meters = buildMeter(label, row.value);
   if((label.includes("Hot Pitcher") || label.includes("Team Ks")) && row.whiffPct !== undefined){
-    meters += buildWhiffMeter(row.whiffPct);
+    meters += buildMissedSwingMeter(row.whiffPct);
   }
 
   const top =
@@ -2125,6 +2239,7 @@ function makeCard(row,label,detailsHtml){
         '<div class="stat-label">' + h(statLabel(label)) + '</div>' +
       '</div>' +
       '<div class="info">' +
+        timeBadgeHtml(label) +
         '<div class="name">' + h(row.name) + icon + '</div>' +
         '<div class="team">' + h(row.team || "") + '</div>' +
         '<div class="game">' + h(row.game || "") + '</div>' +
@@ -2206,14 +2321,14 @@ function detailsHtml(row, detailsType){
 
   if(detailsType === "pitcherlogs" && row.logs){
     return (
-      '<div class="details-header">Recent strikeout + whiff log</div>' +
+      '<div class="details-header">Recent strikeout + missed swing log</div>' +
       '<div class="details-grid">' +
         row.logs.map(g =>
           '<div class="detail-chip">' +
             '<div class="detail-name">' + h(g.opponent) + '</div>' +
             '<div class="detail-sub">' + h(g.date) + '</div>' +
             '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
-            '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
+            '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Miss</div>' +
           '</div>'
         ).join("") +
       '</div>'
@@ -2230,10 +2345,10 @@ function detailsHtml(row, detailsType){
 
   if(detailsType === "teamks"){
     return (
-      '<div class="details-header">Team strikeout + whiff detail</div>' +
+      '<div class="details-header">Team strikeout + missed swing detail</div>' +
       '<div class="details-grid">' +
         statChip("Team Strikeouts", row.value) +
-        statChip("Whiff%", (row.whiffPct || "0.0") + "%") +
+        statChip("Missed Swing Rate", (row.whiffPct || "0.0") + "%") +
         statChip("Misses", row.misses || 0) +
         statChip("Swings", row.swings || 0) +
         statChip("Pitching Team", row.opposingPitcherTeam || "") +
@@ -2249,7 +2364,7 @@ function render(id,rows,label,detailsType){
   rows = (rows || []).slice(0,5).map((row,index) => ({...row, leader:index === 0}));
 
   if(!rows.length){
-    document.getElementById(id).innerHTML = '<div class="card neutral">No data right now.</div>';
+    document.getElementById(id).innerHTML = emptyStateFor(id, label);
     return;
   }
 
@@ -2258,9 +2373,29 @@ function render(id,rows,label,detailsType){
   ).join("");
 }
 
+function emptyStateFor(id, label){
+  if(id === "liveKs" || id === "liveHits" || id === "liveGamesPanel"){
+    return '<div class="card neutral">No live games right now. Once games begin, live stats and scoreboards will appear here.</div>';
+  }
+
+  if(label.includes("Hot Pitcher")){
+    return '<div class="card neutral">No hot pitchers found today. This section only shows probable starters with 8+ strikeouts in each of their last 2 starts.</div>';
+  }
+
+  if(label.includes("Hot Bat")){
+    return '<div class="card neutral">No Hot Bats found yet. This section looks for hitters with 5+ hits over the last 4 completed game days.</div>';
+  }
+
+  if(label.includes("Hit Streak")){
+    return '<div class="card neutral">No 3-game hit streaks found yet.</div>';
+  }
+
+  return '<div class="card neutral">No data right now. Check back once boxscores update.</div>';
+}
+
 function renderCustomCards(id, items){
   if(!items.length){
-    document.getElementById(id).innerHTML = '<div class="card neutral">No featured players right now.</div>';
+    document.getElementById(id).innerHTML = '<div class="card neutral">No featured players right now. Live leaders, Hot Bats, Hit Streaks, and Pitcher Watch cards will appear here when available.</div>';
     return;
   }
 
@@ -2277,10 +2412,10 @@ function profileDetails(row){
 
   if(row.whiffPct !== undefined){
     html +=
-      '<div class="details-header">Swing-and-miss detail</div>' +
+      '<div class="details-header">Missed swing detail</div>' +
       '<div class="details-grid">' +
         '<div class="detail-chip">' +
-          '<div class="detail-name">Whiff percentage</div>' +
+          '<div class="detail-name">Missed Swing Rate</div>' +
           '<div class="detail-sub">' + h(row.misses || 0) + ' misses on ' + h(row.swings || 0) + ' swings</div>' +
           '<div class="detail-stat">' + h(row.whiffPct) + '%</div>' +
         '</div>' +
@@ -2304,7 +2439,7 @@ function profileDetails(row){
             '<div class="detail-name">' + h(g.game || g.opponent || "Game") + '</div>' +
             '<div class="detail-sub">' + h(g.date || "") + '</div>' +
             '<div class="detail-stat">' + h(g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
-            (g.whiffPct !== undefined ? '<div class="detail-stat">' + h(g.whiffPct) + '% Whiff</div>' : '') +
+            (g.whiffPct !== undefined ? '<div class="detail-stat">' + h(g.whiffPct) + '% Miss</div>' : '') +
           '</div>'
         ).join("") +
       '</div>';
@@ -2331,7 +2466,7 @@ function openProfile(id){
       '</div>' +
     '</div>' +
     '<div class="profile-stat">' + h(val(row.value)) + ' ' + h(statLabel(label)) + '</div>' +
-    (row.whiffPct !== undefined ? '<div class="profile-stat">' + h(row.whiffPct) + '% Whiff</div>' : '') +
+    (row.whiffPct !== undefined ? '<div class="profile-stat">' + h(row.whiffPct) + '% Miss</div>' : '') +
     (row.extra ? '<div class="profile-sub" style="margin-bottom:12px;">' + h(row.extra) + '</div>' : '') +
     '<div class="label">' + h(label) + '</div>' +
     '<div style="margin-top:14px;">' + profileDetails(row) + '</div>';
@@ -2357,6 +2492,7 @@ function pulseCard(options){
     wm +
     '<div class="pulse-icon">' + options.icon + '</div>' +
     '<div class="pulse-title">' + h(options.title) + '</div>' +
+    timeBadgeHtml(options.label || options.title) +
     '<div class="pulse-main">' + h(options.main) + '</div>' +
     '<div class="pulse-sub">' + h(options.sub) + '</div>' +
     meterHtml +
@@ -2374,11 +2510,12 @@ function pulseCard(options){
   return '<div class="pulse-card ' + tone + '">' + top + '</div>';
 }
 
-function quickCard(tag, headline, copy, tone){
+function quickCard(tag, headline, copy, tone, badgeLabel){
   tone = tone || "green";
   return (
     '<div class="quick-card ' + tone + '">' +
       '<div class="quick-tag">' + h(tag) + '</div>' +
+      (badgeLabel ? timeBadgeHtml(badgeLabel) : '') +
       '<div class="quick-headline">' + h(headline) + '</div>' +
       '<div class="quick-copy">' + h(copy) + '</div>' +
     '</div>'
@@ -2449,8 +2586,8 @@ function renderHero(){
     isLive = bestGame.status.abstractGameState === "Live";
     matchup = away + " " + scoreValue(bestGame,"away") + " @ " + home + " " + scoreValue(bestGame,"home");
     sub = isLive
-      ? "Game of the night right now · " + tickerStatus(bestGame)
-      : "Most interesting board spot tonight · " + tickerStatus(bestGame);
+      ? "Best live game right now · " + tickerStatus(bestGame)
+      : "Main board spot tonight · " + tickerStatus(bestGame);
 
     chips += '<div class="hero-chip">' + h(away + " @ " + home) + '</div>';
     chips += '<div class="hero-chip">' + h(tickerStatus(bestGame)) + '</div>';
@@ -2470,7 +2607,7 @@ function renderHero(){
       '<div class="hero-angle">' +
         '<div class="hero-angle-label">Pitcher watch</div>' +
         '<div class="hero-angle-main">' + h(p.name + " vs " + p.opponent) + '</div>' +
-        '<div class="hero-angle-sub">' + h("Last 2 starts: " + p.value + " total Ks · Whiff%: " + (p.whiffPct || "0.0") + "%") + '</div>' +
+        '<div class="hero-angle-sub">' + h("Last 2 starts: " + p.value + " total Ks · Missed Swing Rate: " + (p.whiffPct || "0.0") + "%") + '</div>' +
       '</div>';
   }
 
@@ -2507,6 +2644,39 @@ function renderHero(){
     '</div>';
 }
 
+function renderLiveNowStrip(){
+  const games = (appState.liveGames || []).filter(gameMatchesFilter);
+
+  if(!games.length){
+    document.getElementById("liveNowStrip").innerHTML =
+      '<div class="live-now-top">' +
+        '<div class="live-now-title">📡 Live Now</div>' +
+        '<div class="live-now-count">No live games right now</div>' +
+      '</div>' +
+      '<div class="live-now-list">' +
+        '<div class="live-now-pill">Today’s games will appear here once they start.</div>' +
+        '<div class="live-now-pill">Use Pitchers, Hitters, or Recap for pregame and previous-game trends.</div>' +
+      '</div>';
+    return;
+  }
+
+  document.getElementById("liveNowStrip").innerHTML =
+    '<div class="live-now-top">' +
+      '<div class="live-now-title"><span class="score-dot"></span> Live Now</div>' +
+      '<div class="live-now-count">' + games.length + ' active game' + (games.length === 1 ? '' : 's') + '</div>' +
+    '</div>' +
+    '<div class="live-now-list">' +
+      games.slice(0,6).map(game =>
+        '<div class="live-now-pill">' +
+          h(teamName(game.teams.away.team)) + ' ' + h(scoreValue(game,"away")) +
+          ' @ ' +
+          h(teamName(game.teams.home.team)) + ' ' + h(scoreValue(game,"home")) +
+          ' · ' + h(tickerStatus(game)) +
+        '</div>'
+      ).join("") +
+    '</div>';
+}
+
 function renderQuickLook(){
   const cards = [];
   const bestGame = chooseGameOfNightData();
@@ -2525,7 +2695,8 @@ function renderQuickLook(){
       bestGame.status.abstractGameState === "Live"
         ? "Status: " + tickerStatus(bestGame)
         : "Start time: " + tickerStatus(bestGame),
-      "green"
+      "green",
+      bestGame.status.abstractGameState === "Live" ? "Live" : "Today"
     ));
   }
 
@@ -2537,9 +2708,10 @@ function renderQuickLook(){
       "Pitcher to Watch",
       p.name + " vs " + p.opponent,
       opp
-        ? "Pitcher Whiff%: " + (p.whiffPct || "0.0") + "% · " + opp.name + " had " + opp.value + " strikeouts last game and a " + (opp.whiffPct || "0.0") + "% Whiff rate."
-        : "Last 2 games: " + p.value + " total strikeouts · Whiff%: " + (p.whiffPct || "0.0") + "%",
-      "yellow"
+        ? "Pitcher Missed Swing Rate: " + (p.whiffPct || "0.0") + "% · " + opp.name + " had " + opp.value + " strikeouts last game."
+        : "Last 2 games: " + p.value + " total strikeouts · Missed Swing Rate: " + (p.whiffPct || "0.0") + "%",
+      "yellow",
+      "Hot Pitcher"
     ));
   }
 
@@ -2551,7 +2723,8 @@ function renderQuickLook(){
       liveHits[0] === hotBat
         ? hotBat.team + " · " + hotBat.value + " hit" + (hotBat.value === 1 ? "" : "s") + " live"
         : hotBat.team + " · " + hotBat.value + " hits over the last 4 completed game days",
-      "red"
+      "red",
+      liveHits[0] === hotBat ? "Live" : "Hot Bat"
     ));
   }
 
@@ -2561,7 +2734,8 @@ function renderQuickLook(){
       "Hit Streak Watch",
       streak.name,
       streak.team + " · " + streak.value + " straight completed games with a hit",
-      "purple"
+      "purple",
+      "Hit Streak"
     ));
   } else {
     const troubleTeam = prevKs.find(t => Number(t.value) >= 7) || prevKs[0];
@@ -2569,8 +2743,9 @@ function renderQuickLook(){
       cards.push(quickCard(
         "Team Strikeout Watch",
         troubleTeam.name,
-        troubleTeam.value + " strikeouts last game · Whiff%: " + (troubleTeam.whiffPct || "0.0") + "%",
-        "yellow"
+        troubleTeam.value + " strikeouts last game · Missed Swing Rate: " + (troubleTeam.whiffPct || "0.0") + "%",
+        "yellow",
+        "Team Ks"
       ));
     }
   }
@@ -2589,9 +2764,9 @@ function renderTop3(){
   if(pitcherSpot){
     items.push({
       title: pitcherSpot.pitcher.name + " strikeout spot",
-      copy: pitcherSpot.pitcher.name + " Whiff%: " + pitcherSpot.pitcher.whiffPct + "% · " +
+      copy: pitcherSpot.pitcher.name + " Missed Swing Rate: " + pitcherSpot.pitcher.whiffPct + "% · " +
             pitcherSpot.opponentTeamTrend.name + " last game: " + pitcherSpot.opponentTeamTrend.value +
-            " strikeouts and " + pitcherSpot.opponentTeamTrend.whiffPct + "% Whiff."
+            " strikeouts and " + pitcherSpot.opponentTeamTrend.whiffPct + "% missed swing rate."
     });
   }
 
@@ -2667,6 +2842,7 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "👑",
       title: "Live K Leader",
+      label: "Live",
       main: p.name + " · " + p.value + " Ks",
       sub: p.team + " · " + p.status,
       tag: "Live now",
@@ -2682,6 +2858,7 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "💥",
       title: "Live Hit Leader",
+      label: "Live",
       main: hit.name + " · " + hit.value + " hits",
       sub: hit.team + " · " + hit.status,
       tag: "Live now",
@@ -2697,13 +2874,14 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "🌊",
       title: "Pitcher To Watch",
+      label: "Hot Pitcher",
       main: p.name,
-      sub: p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%",
+      sub: p.status + " · Missed Swing Rate: " + (p.whiffPct || "0.0") + "%",
       tag: "K watch",
       detailHtml: detailsHtml(p, "pitcherlogs"),
       teamId: p.teamId,
       tone: "yellow",
-      meterHtml: buildMeter("Hot Pitcher Ks", p.value) + buildWhiffMeter(p.whiffPct)
+      meterHtml: buildMeter("Hot Pitcher Ks", p.value) + buildMissedSwingMeter(p.whiffPct)
     }));
   }
 
@@ -2712,6 +2890,7 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "🔥",
       title: "Hot Bat",
+      label: "Hot Bat",
       main: hit.name + " · " + hit.value + " hits",
       sub: hit.team + " · Last 4 completed game days",
       tag: "Hot bat",
@@ -2727,6 +2906,7 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "💗",
       title: "Best Hit Streak",
+      label: "Hit Streak",
       main: s.name,
       sub: s.team + " · hit in " + s.value + " straight games",
       tag: "Streaking",
@@ -2742,13 +2922,14 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "🟠",
       title: "Team Strikeout Alert",
+      label: "Team Ks",
       main: kTeam.name + " · " + kTeam.value + " Ks",
-      sub: "Whiff%: " + (kTeam.whiffPct || "0.0") + "%",
+      sub: "Missed Swing Rate: " + (kTeam.whiffPct || "0.0") + "%",
       tag: "Team trend",
       detailHtml: detailsHtml(kTeam, "teamks"),
       teamId: kTeam.teamId,
       tone: "yellow",
-      meterHtml: buildMeter("Team Ks", kTeam.value) + buildWhiffMeter(kTeam.whiffPct)
+      meterHtml: buildMeter("Team Ks", kTeam.value) + buildMissedSwingMeter(kTeam.whiffPct)
     }));
   }
 
@@ -2757,6 +2938,7 @@ function renderBaseballPulse(){
     cards.push(pulseCard({
       icon: "🟣",
       title: "Team Hits Leader",
+      label: "Team Hits",
       main: hitTeam.name + " · " + hitTeam.value + " hits",
       sub: hitTeam.status + " · previous completed game day",
       tag: "Team hits",
@@ -2769,7 +2951,7 @@ function renderBaseballPulse(){
 
   if(!cards.length){
     document.getElementById("pulseCards").innerHTML =
-      '<div class="loading">No pulse yet for this filter. Check back once games start or after boxscores load.</div>';
+      '<div class="loading">No pulse yet. Live cards and player trends will appear when games or boxscores update.</div>';
     return;
   }
 
@@ -2807,7 +2989,7 @@ function renderGameOfNight(){
 
   if(!target){
     document.getElementById("gameOfNight").innerHTML =
-      '<div class="game-night-title">Game of the Night</div><div class="game-night-main">No games found</div><div class="game-night-sub">Try switching back to All Teams.</div>';
+      '<div class="game-night-title">Game of the Night</div><div class="game-night-main">No games found</div><div class="game-night-sub">Games will appear once today’s schedule loads.</div>';
     return;
   }
 
@@ -2839,7 +3021,7 @@ function renderLiveEvents(){
 
   if(!games.length){
     document.getElementById("liveGamesPanel").innerHTML =
-      '<div class="card neutral">No live games right now for this filter.</div>';
+      '<div class="card neutral">No live games right now. Today’s games will appear here once they start.</div>';
     return;
   }
 
@@ -2917,7 +3099,7 @@ function renderAllData(){
   renderScoreTicker(appState.scoreGames);
   renderLiveEvents();
 
-  render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","livepitcher");
+  render("liveKs",filterRows(appState.liveKs),"Live Pitcher Ks","livepitcher");
   render("liveHits",filterRows(appState.liveHits),"Live Player Hits","livebatter");
 
   render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","pitcherlogs");
@@ -2931,6 +3113,7 @@ function renderAllData(){
   render("recapHits",filterRows(appState.prevHits),"Team Hits","players");
 
   renderHero();
+  renderLiveNowStrip();
   renderQuickLook();
   renderTop3();
   renderBaseballPulse();
@@ -3124,7 +3307,7 @@ async function loadPreviousGameDayStats(){
         misses: whiff.misses,
         opposingPitcherTeam: opponent.name,
         opposingPitchers,
-        extra: teamKs + " team strikeouts · Whiff%: " + whiff.whiffPct + "%"
+        extra: teamKs + " team strikeouts · Missed Swing Rate: " + whiff.whiffPct + "%"
       });
 
       prevHits.push({
@@ -3333,7 +3516,7 @@ async function loadHotPitchersToday(){
         whiffPct: totalWhiffPct,
         swings: totalSwings,
         misses: totalMisses,
-        extra: "Probable starter today · Whiff%: " + totalWhiffPct + "% (" + totalMisses + "/" + totalSwings + ")",
+        extra: "Probable starter today · Missed Swing Rate: " + totalWhiffPct + "% (" + totalMisses + "/" + totalSwings + ")",
         logs
       });
     }
