@@ -554,6 +554,7 @@
     summary {
       list-style: none;
       cursor: pointer;
+      position: relative;
     }
 
     summary::-webkit-details-marker { display: none; }
@@ -656,17 +657,9 @@
       box-shadow: 0 0 0 1px rgba(190,242,100,.3), 0 0 36px rgba(190,242,100,.38), var(--shadow);
     }
 
-    .elite {
-      box-shadow: 0 0 36px rgba(190,242,100,.55), var(--shadow);
-    }
-
-    .good {
-      box-shadow: 0 0 28px rgba(34,197,94,.45), var(--shadow);
-    }
-
-    .bad {
-      box-shadow: 0 0 28px rgba(250,204,21,.45), var(--shadow);
-    }
+    .elite { box-shadow: 0 0 36px rgba(190,242,100,.55), var(--shadow); }
+    .good { box-shadow: 0 0 28px rgba(34,197,94,.45), var(--shadow); }
+    .bad { box-shadow: 0 0 28px rgba(250,204,21,.45), var(--shadow); }
 
     .details {
       position: relative;
@@ -1027,7 +1020,7 @@
     </div>
 
     <h2>⚡ Baseball Pulse</h2>
-    <div class="section-note">Additional storylines from live and recent games.</div>
+    <div class="section-note">Additional storylines from live and recent games. Tap any card to expand.</div>
     <div id="pulseCards" class="pulse-grid">
       <div class="loading">Loading pulse...</div>
     </div>
@@ -1647,6 +1640,18 @@ function detailsHtml(row, detailsType){
     return liveBoxscoreDetails(row, "pitcher");
   }
 
+  if(detailsType === "teamks"){
+    return (
+      '<div class="details-header">Team strikeout + whiff detail</div>' +
+      '<div class="details-grid">' +
+        statChip("Strikeouts", row.value) +
+        statChip("Whiff%", (row.whiffPct || "0.0") + "%") +
+        statChip("Misses", row.misses || 0) +
+        statChip("Swings", row.swings || 0) +
+      '</div>'
+    );
+  }
+
   return "";
 }
 
@@ -1748,16 +1753,26 @@ function closeProfileFromBackdrop(event){
   if(event.target.id === "profileModal") closeProfile();
 }
 
-function pulseCard(icon,title,main,sub,tag){
-  return (
-    '<div class="pulse-card">' +
-      '<div class="pulse-icon">' + icon + '</div>' +
-      '<div class="pulse-title">' + h(title) + '</div>' +
-      '<div class="pulse-main">' + h(main) + '</div>' +
-      '<div class="pulse-sub">' + h(sub) + '</div>' +
-      '<div class="pulse-tag">' + h(tag) + '</div>' +
-    '</div>'
-  );
+function pulseCard(icon,title,main,sub,tag,detailHtml){
+  const hasDetails = detailHtml && detailHtml.trim().length > 0;
+
+  const top =
+    '<div class="pulse-icon">' + icon + '</div>' +
+    '<div class="pulse-title">' + h(title) + '</div>' +
+    '<div class="pulse-main">' + h(main) + '</div>' +
+    '<div class="pulse-sub">' + h(sub) + '</div>' +
+    '<div class="pulse-tag">' + h(tag) + (hasDetails ? ' · tap to expand' : '') + '</div>';
+
+  if(hasDetails){
+    return (
+      '<details class="pulse-card">' +
+        '<summary>' + top + '</summary>' +
+        '<div class="details">' + detailHtml + '</div>' +
+      '</details>'
+    );
+  }
+
+  return '<div class="pulse-card">' + top + '</div>';
 }
 
 function quickCard(tag, headline, copy){
@@ -1943,37 +1958,88 @@ function renderBaseballPulse(){
 
   if(liveKs.length){
     const p = liveKs[0];
-    cards.push(pulseCard("👑","Live K Leader",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live now"));
+    cards.push(pulseCard(
+      "👑",
+      "Live K Leader",
+      p.name + " · " + p.value + " Ks",
+      p.team + " · " + p.status,
+      "Live now",
+      detailsHtml(p, "livepitcher")
+    ));
   }
 
   if(liveHits.length){
     const hit = liveHits[0];
-    cards.push(pulseCard("💥","Live Hit Leader",hit.name + " · " + hit.value + " hits",hit.team + " · " + hit.status,"Live now"));
+    cards.push(pulseCard(
+      "💥",
+      "Live Hit Leader",
+      hit.name + " · " + hit.value + " hits",
+      hit.team + " · " + hit.status,
+      "Live now",
+      detailsHtml(hit, "livebatter")
+    ));
   }
 
   if(hotPitchers.length){
     const p = hotPitchers[0];
-    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%","K watch"));
+    cards.push(pulseCard(
+      "🌊",
+      "Pitcher To Watch",
+      p.name,
+      p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%",
+      "K watch",
+      detailsHtml(p, "pitcherlogs")
+    ));
   }
 
   if(hotHitters.length){
     const hit = hotHitters[0];
-    cards.push(pulseCard("🔥","Hot Bat",hit.name + " · " + hit.value + " hits",hit.team + " · Last 4 completed game days","Hot bat"));
+    cards.push(pulseCard(
+      "🔥",
+      "Hot Bat",
+      hit.name + " · " + hit.value + " hits",
+      hit.team + " · Last 4 completed game days",
+      "Hot bat",
+      detailsHtml(hit, "logs")
+    ));
   }
 
   if(streakingHitters.length){
     const s = streakingHitters[0];
-    cards.push(pulseCard("💗","Best Hit Streak",s.name,s.team + " · hit in " + s.value + " straight games","Streaking"));
+    cards.push(pulseCard(
+      "💗",
+      "Best Hit Streak",
+      s.name,
+      s.team + " · hit in " + s.value + " straight games",
+      "Streaking",
+      detailsHtml(s, "logs")
+    ));
   }
 
   const kTeam = prevKs.find(t => Number(t.value) >= 7);
+
   if(kTeam){
-    cards.push(pulseCard("🟠","Team Strikeout Alert",kTeam.name + " · " + kTeam.value + " Ks","Whiff%: " + (kTeam.whiffPct || "0.0") + "%","Team trend"));
+    cards.push(pulseCard(
+      "🟠",
+      "Team Strikeout Alert",
+      kTeam.name + " · " + kTeam.value + " Ks",
+      "Whiff%: " + (kTeam.whiffPct || "0.0") + "%",
+      "Team trend",
+      detailsHtml(kTeam, "teamks")
+    ));
   }
 
   const hitTeam = prevHits[0];
+
   if(hitTeam){
-    cards.push(pulseCard("🟣","Team Hits Leader",hitTeam.name + " · " + hitTeam.value + " hits",hitTeam.status + " · previous completed game day","Team hits"));
+    cards.push(pulseCard(
+      "🟣",
+      "Team Hits Leader",
+      hitTeam.name + " · " + hitTeam.value + " hits",
+      hitTeam.status + " · previous completed game day",
+      "Team hits",
+      detailsHtml(hitTeam, "players")
+    ));
   }
 
   if(!cards.length){
@@ -2075,13 +2141,13 @@ function renderAllData(){
   render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","livebatter");
 
   render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs");
-  render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks");
 
   render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs");
   render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs");
   render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
-  render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks");
   render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
   renderQuickLook();
