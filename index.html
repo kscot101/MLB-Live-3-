@@ -10,7 +10,7 @@
 
     :root {
       --bg: #020617;
-      --panel: rgba(2, 6, 23, 0.78);
+      --panel: rgba(2, 6, 23, 0.82);
       --text: #f0fdf4;
       --muted: #a7f3d0;
       --bright: #bbf7d0;
@@ -27,36 +27,50 @@
       font-family: Inter, Arial, sans-serif;
       color: white;
       background:
-        radial-gradient(circle at 15% 10%, rgba(34,197,94,.35), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(16,185,129,.22), transparent 25%),
-        radial-gradient(circle at 50% 100%, rgba(20,184,166,.18), transparent 35%),
+        radial-gradient(circle at 15% 10%, rgba(34,197,94,.28), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(16,185,129,.18), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(20,184,166,.14), transparent 35%),
         #020617;
       padding: 16px;
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
     }
 
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(34,197,94,.18) 1px, transparent 1px);
+      background-image: radial-gradient(circle, rgba(34,197,94,.14) 1px, transparent 1px);
       background-size: 28px 28px;
-      opacity: .28;
+      opacity: .24;
       pointer-events: none;
+      z-index: 0;
+    }
+
+    .field-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: .46;
+      pointer-events: none;
+      filter: drop-shadow(0 0 12px rgba(34,197,94,.3));
     }
 
     .app {
       max-width: 1180px;
       margin: 0 auto;
       position: relative;
+      z-index: 1;
     }
 
     .header {
       position: sticky;
       top: 10px;
       z-index: 10;
-      background: rgba(2,6,23,.78);
+      background: rgba(2,6,23,.84);
       border: 1px solid rgba(34,197,94,.35);
       box-shadow: 0 0 35px rgba(34,197,94,.22);
       backdrop-filter: blur(18px);
@@ -198,7 +212,7 @@
 
     .score-strip {
       margin-top: 14px;
-      background: rgba(2,6,23,.7);
+      background: rgba(2,6,23,.74);
       border: 1px solid rgba(134,239,172,.22);
       border-radius: 999px;
       padding: 8px;
@@ -262,7 +276,7 @@
       white-space: nowrap;
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(15,23,42,.75);
+      background: rgba(15,23,42,.78);
       border: 1px solid rgba(134,239,172,.18);
       color: #d1fae5;
       font-size: 13px;
@@ -275,13 +289,8 @@
       box-shadow: 0 0 16px rgba(34,197,94,.16);
     }
 
-    .ticker-final {
-      opacity: .78;
-    }
-
-    .ticker-preview {
-      opacity: .9;
-    }
+    .ticker-final { opacity: .78; }
+    .ticker-preview { opacity: .9; }
 
     .ticker-score {
       color: #f0fdf4;
@@ -298,7 +307,7 @@
 
     .filter-wrap {
       margin: 16px 0 20px;
-      background: rgba(2,6,23,.72);
+      background: rgba(2,6,23,.78);
       border: 1px solid rgba(34,197,94,.22);
       border-radius: 26px;
       padding: 12px;
@@ -327,7 +336,7 @@
       align-items: center;
       gap: 7px;
       border: 1px solid rgba(134,239,172,.18);
-      background: rgba(15,23,42,.75);
+      background: rgba(15,23,42,.78);
       color: #d1fae5;
       border-radius: 999px;
       padding: 7px 11px;
@@ -356,7 +365,7 @@
     .helper-box,
     .watchlist-box,
     .feed-box {
-      background: rgba(2,6,23,.72);
+      background: rgba(2,6,23,.78);
       border: 1px solid rgba(34,197,94,.24);
       border-radius: 26px;
       padding: 14px;
@@ -372,9 +381,7 @@
       font-size: 16px;
     }
 
-    .helper-box summary::-webkit-details-marker {
-      display: none;
-    }
+    .helper-box summary::-webkit-details-marker { display: none; }
 
     .helper-box p {
       margin: 10px 0 0;
@@ -393,7 +400,7 @@
     .helper-chip,
     .watch-chip,
     .feed-item {
-      background: rgba(15,23,42,.75);
+      background: rgba(15,23,42,.78);
       border: 1px solid rgba(134,239,172,.15);
       border-radius: 18px;
       padding: 10px;
@@ -451,7 +458,7 @@
     }
 
     .key {
-      background: rgba(2,6,23,.72);
+      background: rgba(2,6,23,.78);
       border: 1px solid rgba(34,197,94,.28);
       box-shadow: inset 0 0 25px rgba(34,197,94,.08);
       border-radius: 26px;
@@ -477,11 +484,21 @@
       overflow: hidden;
       background:
         radial-gradient(circle at top left, rgba(190,242,100,.2), transparent 38%),
-        linear-gradient(135deg, rgba(2,44,34,.94), rgba(6,78,59,.90));
+        linear-gradient(135deg, rgba(2,44,34,.96), rgba(6,78,59,.92));
       border: 1px solid rgba(134,239,172,.28);
       border-radius: 28px;
       padding: 16px;
       box-shadow: var(--shadow), 0 0 26px rgba(34,197,94,.15);
+    }
+
+    .pulse-card {
+      padding: 0;
+    }
+
+    .pulse-card summary {
+      padding: 16px;
+      cursor: pointer;
+      position: relative;
     }
 
     .quick-card::before,
@@ -556,6 +573,11 @@
       margin-bottom: 5px;
     }
 
+    .pulse-details {
+      position: relative;
+      padding: 0 16px 16px;
+    }
+
     .stat-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -564,9 +586,7 @@
       margin-top: 18px;
     }
 
-    .stat-column {
-      min-width: 0;
-    }
+    .stat-column { min-width: 0; }
 
     .column-pill {
       display: inline-block;
@@ -582,13 +602,8 @@
       letter-spacing: .06em;
     }
 
-    .stat-section {
-      min-width: 0;
-    }
-
-    .stat-section h2 {
-      margin-top: 22px;
-    }
+    .stat-section { min-width: 0; }
+    .stat-section h2 { margin-top: 22px; }
 
     .card {
       position: relative;
@@ -625,14 +640,8 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    summary {
-      list-style: none;
-      cursor: pointer;
-    }
-
-    summary::-webkit-details-marker {
-      display: none;
-    }
+    summary { list-style: none; cursor: pointer; }
+    summary::-webkit-details-marker { display: none; }
 
     .main-row {
       position: relative;
@@ -678,9 +687,7 @@
       text-transform: uppercase;
     }
 
-    .info {
-      min-width: 0;
-    }
+    .info { min-width: 0; }
 
     .name {
       font-size: 20px;
@@ -800,7 +807,7 @@
     }
 
     .detail-chip {
-      background: rgba(15,23,42,.7);
+      background: rgba(15,23,42,.78);
       border: 1px solid rgba(134,239,172,.16);
       border-radius: 18px;
       padding: 10px;
@@ -875,7 +882,7 @@
     }
 
     .loading {
-      background: rgba(2,6,23,.72);
+      background: rgba(2,6,23,.78);
       border: 1px solid rgba(34,197,94,.24);
       border-radius: 26px;
       padding: 16px;
@@ -1064,7 +1071,6 @@
     body.stadium-mode .card,
     body.stadium-mode .pulse-card,
     body.stadium-mode .quick-card {
-      padding: 22px;
       border-radius: 34px;
     }
 
@@ -1098,6 +1104,10 @@
     @media (max-width: 720px) {
       body {
         padding: 10px 10px 86px;
+      }
+
+      .field-bg {
+        opacity: .34;
       }
 
       .app {
@@ -1279,6 +1289,118 @@
 </head>
 
 <body>
+<svg class="field-bg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <filter id="bgGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="orbGlow" x="-250%" y="-250%" width="600%" height="600%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <linearGradient id="pathGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="50%" stop-color="#bef264"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="700" fill="transparent"/>
+
+  <path d="M120 240 Q500 10 880 240" stroke="rgba(134,239,172,.22)" stroke-width="1.5" fill="none"/>
+  <path d="M30 520 L210 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
+  <path d="M970 520 L790 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
+  <path d="M120 620 L500 610 L880 620" stroke="rgba(134,239,172,.12)" stroke-width="1" fill="none"/>
+
+  <!-- Full baseball diamond path: HOME -> 1ST -> 2ND -> 3RD -> HOME -->
+  <path
+    d="M500 610 L780 370 L500 160 L220 370 L500 610"
+    stroke="rgba(134,239,172,.18)"
+    stroke-width="18"
+    fill="none"
+    filter="url(#bgGlow)"
+  />
+
+  <path
+    d="M500 610 L780 370 L500 160 L220 370 L500 610"
+    stroke="url(#pathGrad)"
+    stroke-width="3.5"
+    fill="none"
+    stroke-linecap="round"
+    filter="url(#bgGlow)"
+  />
+
+  <path
+    d="M500 610 L780 370 L500 160 L220 370 L500 610"
+    stroke="#bef264"
+    stroke-width="1.5"
+    stroke-dasharray="40 340"
+    fill="none"
+    opacity=".75"
+    stroke-linecap="round"
+  >
+    <animate attributeName="stroke-dashoffset" values="0;-760" dur="7s" repeatCount="indefinite"/>
+  </path>
+
+  <g opacity=".42">
+    <circle cx="500" cy="360" r="42" stroke="rgba(134,239,172,.38)" stroke-width="1" fill="none"/>
+    <circle cx="500" cy="610" r="68" stroke="rgba(134,239,172,.32)" stroke-width="1" fill="none"/>
+    <circle cx="500" cy="610" r="100" stroke="rgba(134,239,172,.18)" stroke-width="1" fill="none"/>
+    <path d="M250 370 Q500 250 750 370" stroke="rgba(134,239,172,.14)" stroke-width="1" fill="none"/>
+  </g>
+
+  <g fill="rgba(2,6,23,.75)" stroke="#86efac" stroke-width="2" filter="url(#bgGlow)">
+    <rect x="762" y="352" width="36" height="36" transform="rotate(45 780 370)"/>
+    <rect x="482" y="142" width="36" height="36" transform="rotate(45 500 160)"/>
+    <rect x="202" y="352" width="36" height="36" transform="rotate(45 220 370)"/>
+    <path d="M476 592 L524 592 L524 626 L500 648 L476 626 Z" fill="rgba(2,6,23,.82)" stroke="#bef264" stroke-width="3"/>
+  </g>
+
+  <circle cx="780" cy="370" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
+    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="1.75s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="500" cy="160" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
+    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="3.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="220" cy="370" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
+    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="5.25s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="500" cy="610" r="20" fill="rgba(190,242,100,.22)" filter="url(#orbGlow)">
+    <animate attributeName="opacity" values=".25;.65;.25" dur="7s" begin="0s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ONE moving light rounding the bases: HOME -> 1ST -> 2ND -> 3RD -> HOME -->
+  <circle r="8" fill="#ffffff" filter="url(#orbGlow)">
+    <animateMotion
+      dur="7s"
+      repeatCount="indefinite"
+      path="M500 610 L780 370 L500 160 L220 370 L500 610"
+      rotate="auto"
+    />
+  </circle>
+
+  <circle r="24" fill="rgba(190,242,100,.16)" filter="url(#orbGlow)">
+    <animateMotion
+      dur="7s"
+      repeatCount="indefinite"
+      path="M500 610 L780 370 L500 160 L220 370 L500 610"
+      rotate="auto"
+    />
+  </circle>
+</svg>
+
 <div class="app">
   <div class="header">
     <div class="top-row">
@@ -1409,7 +1531,7 @@
     </div>
 
     <h2>⚡ Baseball Pulse</h2>
-    <div class="section-note">Additional storylines from live and recent games.</div>
+    <div class="section-note">Tap any Pulse card to see the stats behind it.</div>
     <div id="pulseCards" class="pulse-grid">
       <div class="loading">Loading pulse...</div>
     </div>
@@ -2017,55 +2139,74 @@ function render(id,rows,label,colorClass,detailsType){
   }
 
   document.getElementById(id).innerHTML = rows.map(row => {
-    let details = "";
-
-    if(detailsType === "players" && row.players){
-      details =
-        '<div class="details-header">Player hit breakdown</div>' +
-        '<div class="details-grid">' +
-          row.players.map(p =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(p.name) + '</div>' +
-              '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
-              hitDots(p.hits) +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
-
-    if(detailsType === "logs" && row.logs){
-      details =
-        '<div class="details-header">Recent game log</div>' +
-        '<div class="details-grid">' +
-          row.logs.map(g =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(g.game) + '</div>' +
-              '<div class="detail-sub">' + h(g.date) + '</div>' +
-              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
-              hitDots(g.hits) +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
-
-    if(detailsType === "pitcherlogs" && row.logs){
-      details =
-        '<div class="details-header">Recent strikeout + whiff log</div>' +
-        '<div class="details-grid">' +
-          row.logs.map(g =>
-            '<div class="detail-chip">' +
-              '<div class="detail-name">' + h(g.opponent) + '</div>' +
-              '<div class="detail-sub">' + h(g.date) + '</div>' +
-              '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
-              '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
-              kBar(g.ks) +
-            '</div>'
-          ).join("") +
-        '</div>';
-    }
-
+    let details = buildDetails(row, detailsType);
     return makeCard(row,label,colorClass,details);
   }).join("");
+}
+
+function buildDetails(row, detailsType){
+  let details = "";
+
+  if(detailsType === "players" && row.players){
+    details =
+      '<div class="details-header">Player hit breakdown</div>' +
+      '<div class="details-grid">' +
+        row.players.map(p =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(p.name) + '</div>' +
+            '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
+            hitDots(p.hits) +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  if(detailsType === "logs" && row.logs){
+    details =
+      '<div class="details-header">Recent game log</div>' +
+      '<div class="details-grid">' +
+        row.logs.map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.game) + '</div>' +
+            '<div class="detail-sub">' + h(g.date) + '</div>' +
+            '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+            hitDots(g.hits) +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  if(detailsType === "pitcherlogs" && row.logs){
+    details =
+      '<div class="details-header">Recent strikeout + whiff log</div>' +
+      '<div class="details-grid">' +
+        row.logs.map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.opponent) + '</div>' +
+            '<div class="detail-sub">' + h(g.date) + '</div>' +
+            '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+            '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
+            kBar(g.ks) +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  if(detailsType === "teamks"){
+    details =
+      '<div class="details-header">Swing-and-miss detail</div>' +
+      '<div class="details-grid">' +
+        '<div class="detail-chip">' +
+          '<div class="detail-name">' + h(row.name) + '</div>' +
+          '<div class="detail-sub">' + h(row.status || "") + '</div>' +
+          '<div class="detail-stat">' + h(row.value) + ' Ks</div>' +
+          '<div class="detail-stat">' + h(row.whiffPct || "0.0") + '% Whiff</div>' +
+          '<div class="detail-sub">' + h(row.misses || 0) + ' misses on ' + h(row.swings || 0) + ' swings</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  return details;
 }
 
 function profileDetails(row){
@@ -2152,15 +2293,18 @@ function closeProfileFromBackdrop(event){
   if(event.target.id === "profileModal") closeProfile();
 }
 
-function pulseCard(icon,title,main,sub,tag){
+function pulseCard(icon,title,main,sub,tag,detailsHtml){
   return (
-    '<div class="pulse-card">' +
-      '<div class="pulse-icon">' + icon + '</div>' +
-      '<div class="pulse-title">' + h(title) + '</div>' +
-      '<div class="pulse-main">' + h(main) + '</div>' +
-      '<div class="pulse-sub">' + h(sub) + '</div>' +
-      '<div class="pulse-tag">' + h(tag) + '</div>' +
-    '</div>'
+    '<details class="pulse-card">' +
+      '<summary>' +
+        '<div class="pulse-icon">' + icon + '</div>' +
+        '<div class="pulse-title">' + h(title) + '</div>' +
+        '<div class="pulse-main">' + h(main) + '</div>' +
+        '<div class="pulse-sub">' + h(sub) + '</div>' +
+        '<div class="pulse-tag">' + h(tag) + ' · tap to expand</div>' +
+      '</summary>' +
+      '<div class="pulse-details">' + detailsHtml + '</div>' +
+    '</details>'
   );
 }
 
@@ -2360,79 +2504,139 @@ function renderBaseballPulse(){
 
   if(liveKs.length){
     const p = liveKs[0];
-    cards.push(pulseCard(
-      "👑",
-      "Live K Leader",
-      p.name + " · " + p.value + " Ks",
-      p.team + " · " + p.status,
-      "Live now"
-    ));
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Live strikeout stats</div>' +
+        '<div class="details-grid">' +
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(p.name) + '</div>' +
+            '<div class="detail-sub">' + h(p.team) + ' · ' + h(p.game) + '</div>' +
+            '<div class="detail-stat">' + h(p.value) + ' Ks</div>' +
+            '<div class="detail-sub">' + h(p.status) + '</div>' +
+            kBar(p.value) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("👑","Live K Leader",p.name + " · " + p.value + " Ks",p.team + " · " + p.status,"Live now",details));
   }
 
   if(liveHits.length){
-    const hit = liveHits[0];
-    cards.push(pulseCard(
-      "💥",
-      "Live Hit Leader",
-      hit.name + " · " + hit.value + " hits",
-      hit.team + " · " + hit.status,
-      "Live now"
-    ));
+    const p = liveHits[0];
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Live hit stats</div>' +
+        '<div class="details-grid">' +
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(p.name) + '</div>' +
+            '<div class="detail-sub">' + h(p.team) + ' · ' + h(p.game) + '</div>' +
+            '<div class="detail-stat">' + h(p.value) + ' H</div>' +
+            '<div class="detail-sub">' + h(p.status) + '</div>' +
+            hitDots(p.value) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("💥","Live Hit Leader",p.name + " · " + p.value + " hits",p.team + " · " + p.status,"Live now",details));
   }
 
   if(hotPitchers.length){
     const p = hotPitchers[0];
-    cards.push(pulseCard(
-      "🌊",
-      "Pitcher To Watch",
-      p.name,
-      p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%",
-      "K watch"
-    ));
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Last two starts</div>' +
+        '<div class="details-grid">' +
+          (p.logs || []).map(g =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(g.opponent) + '</div>' +
+              '<div class="detail-sub">' + h(g.date) + '</div>' +
+              '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+              '<div class="detail-stat">' + h(g.whiffPct || "0.0") + '% Whiff</div>' +
+              kBar(g.ks) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("🌊","Pitcher To Watch",p.name,p.status + " · Whiff%: " + (p.whiffPct || "0.0") + "%","K watch",details));
   }
 
   if(hotHitters.length){
-    const hit = hotHitters[0];
-    cards.push(pulseCard(
-      "🔥",
-      "Hot Bat",
-      hit.name + " · " + hit.value + " hits",
-      hit.team + " · Last 4 completed game days",
-      "Hot bat"
-    ));
+    const p = hotHitters[0];
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Recent hit log</div>' +
+        '<div class="details-grid">' +
+          (p.logs || []).map(g =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(g.game) + '</div>' +
+              '<div class="detail-sub">' + h(g.date) + '</div>' +
+              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+              hitDots(g.hits) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("🔥","Hot Bat",p.name + " · " + p.value + " hits",p.team + " · Last 4 completed game days","Hot bat",details));
   }
 
   if(streakingHitters.length){
-    const s = streakingHitters[0];
-    cards.push(pulseCard(
-      "💗",
-      "Best Hit Streak",
-      s.name,
-      s.team + " · hit in " + s.value + " straight games",
-      "Streaking"
-    ));
+    const p = streakingHitters[0];
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Hit streak log</div>' +
+        '<div class="details-grid">' +
+          (p.logs || []).map(g =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(g.game) + '</div>' +
+              '<div class="detail-sub">' + h(g.date) + '</div>' +
+              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+              hitDots(g.hits) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("💗","Best Hit Streak",p.name,p.team + " · hit in " + p.value + " straight games","Streaking",details));
   }
 
   const kTeam = prevKs.find(t => Number(t.value) >= 7);
   if(kTeam){
-    cards.push(pulseCard(
-      "🟠",
-      "Team Strikeout Alert",
-      kTeam.name + " · " + kTeam.value + " Ks",
-      "Whiff%: " + (kTeam.whiffPct || "0.0") + "%",
-      "Team trend"
-    ));
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Team strikeout detail</div>' +
+        '<div class="details-grid">' +
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(kTeam.name) + '</div>' +
+            '<div class="detail-sub">' + h(kTeam.status) + ' · ' + h(kTeam.game) + '</div>' +
+            '<div class="detail-stat">' + h(kTeam.value) + ' Ks</div>' +
+            '<div class="detail-stat">' + h(kTeam.whiffPct || "0.0") + '% Whiff</div>' +
+            '<div class="detail-sub">' + h(kTeam.misses || 0) + ' misses on ' + h(kTeam.swings || 0) + ' swings</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("🟠","Team Strikeout Alert",kTeam.name + " · " + kTeam.value + " Ks","Whiff%: " + (kTeam.whiffPct || "0.0") + "%","Team trend",details));
   }
 
   const hitTeam = prevHits[0];
   if(hitTeam){
-    cards.push(pulseCard(
-      "🟣",
-      "Team Hits Leader",
-      hitTeam.name + " · " + hitTeam.value + " hits",
-      hitTeam.status + " · previous completed game day",
-      "Team hits"
-    ));
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Player hit breakdown</div>' +
+        '<div class="details-grid">' +
+          (hitTeam.players || []).map(p =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(p.name) + '</div>' +
+              '<div class="detail-stat">' + h(p.hits) + ' H</div>' +
+              hitDots(p.hits) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("🟣","Team Hits Leader",hitTeam.name + " · " + hitTeam.value + " hits",hitTeam.status + " · previous completed game day","Team hits",details));
   }
 
   if(!cards.length){
@@ -2597,13 +2801,13 @@ function renderAllData(){
   render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits",null);
 
   render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs");
-  render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks");
 
   render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs");
   render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs");
   render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
-  render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks",null);
+  render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks");
   render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
   renderQuickLook();
