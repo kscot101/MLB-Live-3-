@@ -305,13 +305,21 @@
       margin-left: 4px;
     }
 
-    .filter-wrap {
-      margin: 16px 0 20px;
+    .filter-wrap,
+    .helper-box,
+    .watchlist-box,
+    .feed-box {
       background: rgba(2,6,23,.78);
-      border: 1px solid rgba(34,197,94,.22);
+      border: 1px solid rgba(34,197,94,.24);
       border-radius: 26px;
+      padding: 14px;
+      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
+      margin-bottom: 18px;
+    }
+
+    .filter-wrap {
+      margin: 16px 0 14px;
       padding: 12px;
-      box-shadow: inset 0 0 20px rgba(34,197,94,.06);
     }
 
     .filter-title {
@@ -362,15 +370,50 @@
       box-shadow: 0 0 18px rgba(34,197,94,.16);
     }
 
-    .helper-box,
-    .watchlist-box,
-    .feed-box {
-      background: rgba(2,6,23,.78);
-      border: 1px solid rgba(34,197,94,.24);
-      border-radius: 26px;
-      padding: 14px;
-      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
-      margin-bottom: 18px;
+    .desktop-tabs {
+      position: sticky;
+      top: 128px;
+      z-index: 9;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0 18px;
+      padding: 10px;
+      background: rgba(2,6,23,.82);
+      border: 1px solid rgba(134,239,172,.24);
+      border-radius: 24px;
+      box-shadow: 0 0 28px rgba(34,197,94,.14);
+      backdrop-filter: blur(14px);
+    }
+
+    .mobile-tabs {
+      display: none;
+    }
+
+    .tab-btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 11px 8px;
+      background: transparent;
+      color: #a7f3d0;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: rgba(34,197,94,.18);
+      color: #f0fdf4;
+      box-shadow: inset 0 0 16px rgba(34,197,94,.08), 0 0 18px rgba(34,197,94,.10);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
     }
 
     .helper-box summary {
@@ -399,7 +442,9 @@
 
     .helper-chip,
     .watch-chip,
-    .feed-item {
+    .feed-item,
+    .game-mini-card,
+    .detail-chip {
       background: rgba(15,23,42,.78);
       border: 1px solid rgba(134,239,172,.15);
       border-radius: 18px;
@@ -503,7 +548,8 @@
 
     .quick-card::before,
     .pulse-card::before,
-    .game-night::before {
+    .game-night::before,
+    .card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -579,10 +625,7 @@
     }
 
     .stat-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 20px;
-      align-items: start;
+      display: block;
       margin-top: 18px;
     }
 
@@ -616,16 +659,6 @@
         0 18px 42px rgba(0,0,0,.38),
         0 0 28px rgba(34,197,94,.14);
       animation: bubbleIn .35s ease both;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 10% 50%, rgba(255,255,255,.24), transparent 16%),
-        linear-gradient(135deg, rgba(255,255,255,.16), transparent 35%);
-      pointer-events: none;
     }
 
     .card:hover, .pulse-card:hover, .quick-card:hover {
@@ -754,6 +787,7 @@
     .hotpitcher { background: linear-gradient(135deg, #042f2e, #14b8a6); }
     .prevks { background: linear-gradient(135deg, #1c1917, #15803d); }
     .prevhits { background: linear-gradient(135deg, #022c22, #4ade80); }
+    .edgecard { background: linear-gradient(135deg, #064e3b, #65a30d); }
 
     .leader {
       border: 2px solid #bef264;
@@ -804,15 +838,6 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-    }
-
-    .detail-chip {
-      background: rgba(15,23,42,.78);
-      border: 1px solid rgba(134,239,172,.16);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: inset 0 0 18px rgba(34,197,94,.06);
-      min-width: 0;
     }
 
     .detail-name {
@@ -917,7 +942,7 @@
 
     .profile-panel,
     .game-panel {
-      width: min(680px, 100%);
+      width: min(720px, 100%);
       max-height: 88vh;
       overflow-y: auto;
       background:
@@ -1008,13 +1033,6 @@
       gap: 10px;
     }
 
-    .game-mini-card {
-      background: rgba(15,23,42,.72);
-      border: 1px solid rgba(134,239,172,.15);
-      border-radius: 18px;
-      padding: 12px;
-    }
-
     .game-mini-title {
       color: #f0fdf4;
       font-weight: 950;
@@ -1040,32 +1058,24 @@
       margin-top: 8px;
     }
 
-    .mobile-tabs {
-      display: none;
-    }
-
-    .tab-panel {
-      display: block;
-    }
-
-    body.stadium-mode .header {
-      position: relative;
-    }
+    body.stadium-mode .header { position: relative; }
 
     body.stadium-mode .key,
     body.stadium-mode .section-note,
     body.stadium-mode .filter-wrap,
-    body.stadium-mode .helper-box {
+    body.stadium-mode .helper-box,
+    body.stadium-mode .desktop-tabs {
       display: none;
     }
 
     body.stadium-mode .pulse-grid,
-    body.stadium-mode .quick-grid {
+    body.stadium-mode .quick-grid,
+    body.stadium-mode .stat-layout {
       grid-template-columns: 1fr;
     }
 
-    body.stadium-mode .stat-layout {
-      grid-template-columns: 1fr;
+    body.stadium-mode .tab-panel {
+      display: block;
     }
 
     body.stadium-mode .card,
@@ -1074,17 +1084,9 @@
       border-radius: 34px;
     }
 
-    body.stadium-mode .num {
-      font-size: 48px;
-    }
-
-    body.stadium-mode .name {
-      font-size: 26px;
-    }
-
-    body.stadium-mode h2 {
-      font-size: 28px;
-    }
+    body.stadium-mode .num { font-size: 48px; }
+    body.stadium-mode .name { font-size: 26px; }
+    body.stadium-mode h2 { font-size: 28px; }
 
     @media (max-width: 920px) {
       .helper-grid,
@@ -1094,25 +1096,14 @@
       }
     }
 
-    @media (max-width: 820px) {
-      .stat-layout {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-    }
-
     @media (max-width: 720px) {
       body {
         padding: 10px 10px 86px;
       }
 
-      .field-bg {
-        opacity: .34;
-      }
+      .field-bg { opacity: .34; }
 
-      .app {
-        max-width: 100%;
-      }
+      .app { max-width: 100%; }
 
       .header {
         top: 6px;
@@ -1120,17 +1111,10 @@
         padding: 14px;
       }
 
-      .top-row {
-        display: block;
-      }
+      .top-row { display: block; }
+      .stadium-toggle { margin-top: 10px; }
 
-      .stadium-toggle {
-        margin-top: 10px;
-      }
-
-      .brand-wrap {
-        gap: 10px;
-      }
+      .brand-wrap { gap: 10px; }
 
       .brand-watermark {
         width: 84px;
@@ -1150,25 +1134,22 @@
         height: 55px;
       }
 
-      h1 {
-        font-size: 26px;
-      }
+      h1 { font-size: 26px; }
+      h2 { font-size: 20px; margin-top: 28px; }
 
-      h2 {
-        font-size: 20px;
-        margin-top: 28px;
-      }
-
-      .key {
+      .desktop-tabs {
         display: none;
       }
+
+      .key { display: none; }
 
       .quick-grid,
       .pulse-grid,
       .helper-grid,
       .watch-grid,
       .feed-list,
-      .game-mini-grid {
+      .game-mini-grid,
+      .details-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1178,9 +1159,7 @@
         border-radius: 24px;
       }
 
-      .score-strip {
-        border-radius: 22px;
-      }
+      .score-strip { border-radius: 22px; }
 
       .ticker-item {
         font-size: 12px;
@@ -1202,24 +1181,12 @@
         height: 46px;
       }
 
-      .num-wrap {
-        padding: 8px 3px;
-      }
-
-      .num {
-        font-size: 30px;
-      }
-
-      .name {
-        font-size: 17px;
-      }
+      .num-wrap { padding: 8px 3px; }
+      .num { font-size: 30px; }
+      .name { font-size: 17px; }
 
       .team, .game, .status, .extra {
         font-size: 12px;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
       }
 
       .details {
@@ -1227,13 +1194,8 @@
         padding: 10px;
       }
 
-      .tab-panel {
-        display: none;
-      }
-
-      .tab-panel.active {
-        display: block;
-      }
+      .tab-panel { display: none; }
+      .tab-panel.active { display: block; }
 
       .mobile-tabs {
         position: fixed;
@@ -1242,8 +1204,8 @@
         right: 10px;
         bottom: 10px;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
         background: rgba(2,6,23,.88);
         border: 1px solid rgba(134,239,172,.24);
         box-shadow: 0 0 32px rgba(34,197,94,.18);
@@ -1253,37 +1215,14 @@
       }
 
       .tab-btn {
-        border: 0;
-        border-radius: 16px;
-        padding: 8px 4px;
-        background: transparent;
-        color: #a7f3d0;
-        font-size: 11px;
-        font-weight: 950;
-        cursor: pointer;
+        padding: 8px 3px;
+        font-size: 10px;
       }
 
-      .tab-btn.active {
-        background: rgba(34,197,94,.18);
-        color: #f0fdf4;
-        box-shadow: inset 0 0 16px rgba(34,197,94,.08);
-      }
-
-      body.stadium-mode .mobile-tabs {
-        display: none;
-      }
-
-      body.stadium-mode .tab-panel {
-        display: block;
-      }
-
-      body.stadium-mode .num {
-        font-size: 40px;
-      }
-
-      body.stadium-mode .name {
-        font-size: 22px;
-      }
+      body.stadium-mode .mobile-tabs { display: none; }
+      body.stadium-mode .tab-panel { display: block; }
+      body.stadium-mode .num { font-size: 40px; }
+      body.stadium-mode .name { font-size: 22px; }
     }
   </style>
 </head>
@@ -1315,13 +1254,11 @@
   </defs>
 
   <rect width="1000" height="700" fill="transparent"/>
-
   <path d="M120 240 Q500 10 880 240" stroke="rgba(134,239,172,.22)" stroke-width="1.5" fill="none"/>
   <path d="M30 520 L210 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
   <path d="M970 520 L790 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
   <path d="M120 620 L500 610 L880 620" stroke="rgba(134,239,172,.12)" stroke-width="1" fill="none"/>
 
-  <!-- Full baseball diamond path: HOME -> 1ST -> 2ND -> 3RD -> HOME -->
   <path
     d="M500 610 L780 370 L500 160 L220 370 L500 610"
     stroke="rgba(134,239,172,.18)"
@@ -1381,7 +1318,6 @@
     <animate attributeName="opacity" values=".25;.65;.25" dur="7s" begin="0s" repeatCount="indefinite"/>
   </circle>
 
-  <!-- ONE moving light rounding the bases: HOME -> 1ST -> 2ND -> 3RD -> HOME -->
   <circle r="8" fill="#ffffff" filter="url(#orbGlow)">
     <animateMotion
       dur="7s"
@@ -1475,6 +1411,15 @@
     </div>
   </div>
 
+  <nav class="desktop-tabs">
+    <button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button>
+    <button class="tab-btn" data-tab-target="live">📡 Live</button>
+    <button class="tab-btn" data-tab-target="bats">🔥 Bats</button>
+    <button class="tab-btn" data-tab-target="arms">🌊 Arms</button>
+    <button class="tab-btn" data-tab-target="edge">🧬 The Edge</button>
+    <button class="tab-btn" data-tab-target="recap">📊 Recap</button>
+  </nav>
+
   <section class="tab-panel active" data-tab="pulse">
     <details class="helper-box" open>
       <summary>🧢 New to Baseball? Quick Helper</summary>
@@ -1505,7 +1450,7 @@
 
     <div class="key">
       ⚡ Quick Look = easy storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot Bats · 💗 Hit Streaks<br>
-      🌊 Hot pitchers with Whiff% · 🟠 Team strikeout trouble + Whiff% · ⭐ Follow players
+      🌊 Hot pitchers with Whiff% · 🧬 Head-to-head edges · 🟠 Team strikeout trouble + Whiff% · ⭐ Follow players
     </div>
 
     <h2>⚡ Tonight’s Quick Look</h2>
@@ -1573,6 +1518,22 @@
           <div id="armsPrevKs" class="loading">Loading...</div>
         </div>
       </section>
+
+      <section class="tab-panel" data-tab="edge">
+        <div class="column-pill">The Edge</div>
+
+        <div class="stat-section">
+          <h2>🧬 Pitcher H2H Edge</h2>
+          <div class="section-note">Probable starters with 8+ Ks in 2+ past games against today’s opponent.</div>
+          <div id="pitcherH2H" class="loading">Loading H2H edges...</div>
+        </div>
+
+        <div class="stat-section">
+          <h2>💣 Batter vs Starter Edge</h2>
+          <div class="section-note">Batters with 4+ hits or 2+ HR against today’s probable starting pitcher.</div>
+          <div id="batterH2H" class="loading">Loading H2H edges...</div>
+        </div>
+      </section>
     </div>
 
     <div class="stat-column">
@@ -1626,6 +1587,7 @@
   <button class="tab-btn" data-tab-target="live">📡 Live</button>
   <button class="tab-btn" data-tab-target="bats">🔥 Bats</button>
   <button class="tab-btn" data-tab-target="arms">🌊 Arms</button>
+  <button class="tab-btn" data-tab-target="edge">🧬 Edge</button>
   <button class="tab-btn" data-tab-target="recap">📊 Recap</button>
 </nav>
 
@@ -1645,9 +1607,12 @@
 
 <script>
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
+const H2H_YEARS_BACK = 8;
+const H2H_CACHE_VERSION = 3;
 
 let profileStore = [];
 let pitchCodeMapCache = null;
+let gameFeedCache = {};
 
 let appState = {
   selectedTeamId: "all",
@@ -1660,6 +1625,8 @@ let appState = {
   hotHitters: [],
   streakingHitters: [],
   hotPitchers: [],
+  pitcherH2H: [],
+  batterH2H: [],
   followedPlayers: []
 };
 
@@ -1686,11 +1653,22 @@ function nyDate(offsetDays = 0){
   return y + "-" + m + "-" + d;
 }
 
+function currentSeason(){
+  return Number(nyDate(0).slice(0,4));
+}
+
 async function getJson(url){
   const sep = url.includes("?") ? "&" : "?";
   const res = await fetch(url + sep + "_=" + Date.now(), {cache:"no-store"});
   if(!res.ok) throw new Error("Fetch failed: " + url);
   return await res.json();
+}
+
+async function getGameFeed(gamePk){
+  if(gameFeedCache[gamePk]) return gameFeedCache[gamePk];
+  const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
+  gameFeedCache[gamePk] = live;
+  return live;
 }
 
 function loadFollowedPlayers(){
@@ -1826,11 +1804,33 @@ function getSplitGamePk(split){
   return match ? match[1] : null;
 }
 
+function normalizeName(name){
+  return String(name || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function opponentNameFromSplit(split){
+  return (split.opponent && (split.opponent.name || split.opponent.teamName)) || "";
+}
+
+function opponentIdFromSplit(split){
+  return split.opponent && (split.opponent.id || (split.opponent.team && split.opponent.team.id));
+}
+
+function sameOpponent(split, opponentId, opponentName){
+  const splitId = opponentIdFromSplit(split);
+  if(splitId && String(splitId) === String(opponentId)) return true;
+
+  const a = normalizeName(opponentNameFromSplit(split));
+  const b = normalizeName(opponentName);
+
+  return a && b && (a === b || a.includes(b) || b.includes(a));
+}
+
 async function computePitcherWhiffForGame(gamePk, pitcherId, pitchMap){
   if(!gamePk) return {swings:0, misses:0, whiffPct:"0.0"};
 
   try {
-    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
+    const live = await getGameFeed(gamePk);
 
     let swings = 0;
     let misses = 0;
@@ -1861,6 +1861,295 @@ async function computePitcherWhiffForGame(gamePk, pitcherId, pitchMap){
   } catch(err) {
     return {swings:0, misses:0, whiffPct:"0.0"};
   }
+}
+
+async function getTodaysProbables(){
+  const today = nyDate(0);
+  const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher");
+  let probables = [];
+
+  (schedule.dates || []).forEach(date => {
+    date.games.forEach(game => {
+      ["away","home"].forEach(side => {
+        const team = game.teams[side].team;
+        const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
+        const probable = game.teams[side].probablePitcher;
+
+        if(probable && probable.id){
+          probables.push({
+            id: probable.id,
+            name: probable.fullName,
+            personId: probable.id,
+            team: team.name,
+            teamId: team.id,
+            opponent: opponent.name,
+            opponentId: opponent.id,
+            game: gameLabel(game),
+            todayGamePk: game.gamePk
+          });
+        }
+      });
+    });
+  });
+
+  return probables;
+}
+
+async function fetchPitcherGameLogs(pitcherId, yearsBack = H2H_YEARS_BACK){
+  const season = currentSeason();
+  let all = [];
+
+  for(let year = season; year >= season - yearsBack; year--){
+    try {
+      const stats = await getJson("https://statsapi.mlb.com/api/v1/people/" + pitcherId + "/stats?stats=gameLog&group=pitching&season=" + year);
+      const splits = (((stats.stats || [])[0] || {}).splits || []);
+      splits.forEach(split => all.push(split));
+    } catch(err) {}
+  }
+
+  return all.sort((a,b) => new Date(b.date) - new Date(a.date));
+}
+
+async function getActiveRosterIdSet(teamId){
+  try {
+    const data = await getJson("https://statsapi.mlb.com/api/v1/teams/" + teamId + "/roster?rosterType=active");
+    const ids = new Set();
+
+    (data.roster || []).forEach(row => {
+      if(row.person && row.person.id) ids.add(String(row.person.id));
+    });
+
+    return ids;
+  } catch(err) {
+    return new Set();
+  }
+}
+
+function gameShortLabelFromLive(live){
+  try {
+    return live.gameData.teams.away.abbreviation + " @ " + live.gameData.teams.home.abbreviation;
+  } catch(err) {
+    return "Game";
+  }
+}
+
+function isHitType(type, eventText){
+  const t = String(type || "").toLowerCase();
+  const e = String(eventText || "").toLowerCase();
+
+  return ["single","double","triple","home_run"].includes(t) ||
+         e === "single" ||
+         e === "double" ||
+         e === "triple" ||
+         e.includes("home run");
+}
+
+function isHrType(type, eventText){
+  const t = String(type || "").toLowerCase();
+  const e = String(eventText || "").toLowerCase();
+
+  return t === "home_run" || e.includes("home run");
+}
+
+function h2hCacheKey(){
+  return "diamondPulseH2HEdge_" + nyDate(0);
+}
+
+function loadH2HCache(){
+  try {
+    const cache = JSON.parse(localStorage.getItem(h2hCacheKey()) || "null");
+    if(!cache) return null;
+    if(cache.version !== H2H_CACHE_VERSION) return null;
+    if(cache.date !== nyDate(0)) return null;
+    return cache;
+  } catch(err) {
+    return null;
+  }
+}
+
+function saveH2HCache(){
+  try {
+    localStorage.setItem(h2hCacheKey(), JSON.stringify({
+      version: H2H_CACHE_VERSION,
+      date: nyDate(0),
+      pitcherH2H: appState.pitcherH2H || [],
+      batterH2H: appState.batterH2H || []
+    }));
+  } catch(err) {}
+}
+
+async function loadHeadToHeadEdges(){
+  const cache = loadH2HCache();
+
+  if(cache){
+    appState.pitcherH2H = cache.pitcherH2H || [];
+    appState.batterH2H = cache.batterH2H || [];
+    renderAllData();
+    return;
+  }
+
+  let pitcherEdges = [];
+  let batterEdges = [];
+  let probables = [];
+
+  try {
+    probables = await getTodaysProbables();
+  } catch(err) {
+    renderAllData();
+    return;
+  }
+
+  for(const pitcher of probables){
+    const logs = await fetchPitcherGameLogs(pitcher.id, H2H_YEARS_BACK);
+    const vsOpponent = logs.filter(split => sameOpponent(split, pitcher.opponentId, pitcher.opponent));
+
+    const qualifyingKs = vsOpponent
+      .filter(split => Number(split.stat && split.stat.strikeOuts || 0) >= 8)
+      .map(split => ({
+        date: split.date,
+        gamePk: getSplitGamePk(split),
+        game: pitcher.team + " vs " + pitcher.opponent,
+        ip: split.stat.inningsPitched || "0.0",
+        hits: Number(split.stat.hits || 0),
+        er: Number(split.stat.earnedRuns || 0),
+        bb: Number(split.stat.baseOnBalls || 0),
+        ks: Number(split.stat.strikeOuts || 0),
+        pitches: Number(split.stat.pitchesThrown || 0)
+      }));
+
+    if(qualifyingKs.length >= 2){
+      const bestKs = Math.max(...qualifyingKs.map(g => g.ks));
+      const totalKs = qualifyingKs.reduce((sum,g) => sum + g.ks, 0);
+
+      pitcherEdges.push({
+        value: bestKs,
+        displayValue: bestKs,
+        displayLabel: "Best K",
+        name: pitcher.name,
+        personId: pitcher.personId,
+        team: pitcher.team,
+        teamId: pitcher.teamId,
+        opponent: pitcher.opponent,
+        opponentId: pitcher.opponentId,
+        game: "Today vs " + pitcher.opponent,
+        todayGamePk: pitcher.todayGamePk,
+        status: qualifyingKs.length + " games with 8+ Ks vs " + pitcher.opponent,
+        extra: "Total in qualifying games: " + totalKs + " Ks",
+        qualifiedGames: qualifyingKs.length,
+        bestKs,
+        totalKs,
+        logs: qualifyingKs.sort((a,b) => new Date(b.date) - new Date(a.date))
+      });
+    }
+
+    const activeIds = await getActiveRosterIdSet(pitcher.opponentId);
+    const batterMap = {};
+
+    for(const split of vsOpponent){
+      const gamePk = getSplitGamePk(split);
+      if(!gamePk) continue;
+
+      let live;
+      try {
+        live = await getGameFeed(gamePk);
+      } catch(err) {
+        continue;
+      }
+
+      const plays = (((live.liveData || {}).plays || {}).allPlays || []);
+      const gameLabelText = gameShortLabelFromLive(live);
+
+      plays.forEach(play => {
+        const playPitcherId = play.matchup && play.matchup.pitcher && play.matchup.pitcher.id;
+        if(String(playPitcherId) !== String(pitcher.id)) return;
+
+        const batter = play.matchup && play.matchup.batter;
+        if(!batter || !batter.id) return;
+
+        if(activeIds.size && !activeIds.has(String(batter.id))) return;
+
+        const eventType = play.result && play.result.eventType;
+        const eventText = play.result && play.result.event;
+
+        const hit = isHitType(eventType, eventText);
+        const hr = isHrType(eventType, eventText);
+
+        if(!hit && !hr) return;
+
+        if(!batterMap[batter.id]){
+          batterMap[batter.id] = {
+            personId: batter.id,
+            name: batter.fullName,
+            team: pitcher.opponent,
+            teamId: pitcher.opponentId,
+            opponent: pitcher.team,
+            opponentId: pitcher.teamId,
+            pitcherName: pitcher.name,
+            pitcherId: pitcher.id,
+            todayGamePk: pitcher.todayGamePk,
+            hits: 0,
+            hr: 0,
+            logsByGame: {}
+          };
+        }
+
+        const row = batterMap[batter.id];
+        row.hits += hit ? 1 : 0;
+        row.hr += hr ? 1 : 0;
+
+        if(!row.logsByGame[gamePk]){
+          row.logsByGame[gamePk] = {
+            date: split.date,
+            game: gameLabelText,
+            pitcher: pitcher.name,
+            hits: 0,
+            hr: 0
+          };
+        }
+
+        row.logsByGame[gamePk].hits += hit ? 1 : 0;
+        row.logsByGame[gamePk].hr += hr ? 1 : 0;
+      });
+    }
+
+    Object.values(batterMap).forEach(batter => {
+      if(batter.hits >= 4 || batter.hr >= 2){
+        const hrQualified = batter.hr >= 2;
+
+        batterEdges.push({
+          value: hrQualified ? batter.hr : batter.hits,
+          displayValue: hrQualified ? batter.hr : batter.hits,
+          displayLabel: hrQualified ? "HR" : "Hits",
+          name: batter.name,
+          personId: batter.personId,
+          team: batter.team,
+          teamId: batter.teamId,
+          opponent: batter.opponent,
+          opponentId: batter.opponentId,
+          pitcherName: batter.pitcherName,
+          pitcherId: batter.pitcherId,
+          todayGamePk: batter.todayGamePk,
+          game: "Today vs " + batter.pitcherName,
+          status: batter.hits + " H · " + batter.hr + " HR vs " + batter.pitcherName,
+          extra: batter.hits + " H · " + batter.hr + " HR vs " + batter.pitcherName,
+          hits: batter.hits,
+          hr: batter.hr,
+          logs: Object.values(batter.logsByGame)
+            .filter(g => g.hits > 0 || g.hr > 0)
+            .sort((a,b) => new Date(b.date) - new Date(a.date))
+        });
+      }
+    });
+  }
+
+  pitcherEdges.sort((a,b) => b.qualifiedGames - a.qualifiedGames || b.bestKs - a.bestKs);
+  batterEdges.sort((a,b) => b.hr - a.hr || b.hits - a.hits);
+
+  appState.pitcherH2H = pitcherEdges;
+  appState.batterH2H = batterEdges;
+
+  saveH2HCache();
+  renderAllData();
 }
 
 function setActiveTab(tab){
@@ -1899,7 +2188,10 @@ function setTeamFilter(teamId){
 
 function filterRows(rows){
   if(appState.selectedTeamId === "all") return rows || [];
-  return (rows || []).filter(row => String(row.teamId) === String(appState.selectedTeamId));
+  return (rows || []).filter(row =>
+    String(row.teamId) === String(appState.selectedTeamId) ||
+    String(row.opponentId) === String(appState.selectedTeamId)
+  );
 }
 
 function gameMatchesFilter(game){
@@ -2041,6 +2333,7 @@ async function loadScoreTicker(){
 }
 
 function statLabel(label){
+  if(label.includes("H2H")) return "Edge";
   if(label.includes("Whiff")) return "Whiff";
   if(label.includes("Ks") || label.includes("Strikeout") || label.includes("Pitcher")) return "Ks";
   if(label.includes("Streak")) return "Games";
@@ -2049,6 +2342,7 @@ function statLabel(label){
 
 function tier(label,value){
   value = Number(value);
+  if(label.includes("H2H")) return "elite";
   if(label.includes("Pitcher Ks") && value >= 10) return "elite";
   if(label.includes("Pitcher Ks") && value >= 7) return "good";
   if(label.includes("Live Player Hits") && value >= 4) return "elite";
@@ -2072,13 +2366,15 @@ function registerProfile(row,label){
 }
 
 function makeCard(row,label,colorClass,detailsHtml){
-  const value = Number(row.value || 0);
+  const displayValue = row.displayValue !== undefined ? row.displayValue : row.value;
+  const displayLabel = row.displayLabel || statLabel(label);
   const profileId = registerProfile(row,label);
   const followed = row.personId && isFollowed(row.personId);
   const icon = label.includes("Hot Pitcher") ? " 🌊" :
                label.includes("Hit Streak") ? " 💗" :
                label.includes("Hot Bat") ? " 🔥" :
-               label.includes("Team Ks") && value >= 7 ? " 🔥" : "";
+               label.includes("H2H") ? " 🧬" :
+               label.includes("Team Ks") && Number(row.value) >= 7 ? " 🔥" : "";
 
   const followButton = row.personId
     ? '<button class="follow-btn ' + (followed ? "active" : "") + '" onclick="event.preventDefault(); event.stopPropagation(); toggleFollowFromProfile(' + profileId + ')">' + (followed ? "Following" : "Follow") + '</button>'
@@ -2088,8 +2384,8 @@ function makeCard(row,label,colorClass,detailsHtml){
     '<div class="main-row">' +
       '<img class="logo" src="' + logo(row.teamId) + '">' +
       '<div class="num-wrap">' +
-        '<div class="num">' + h(val(row.value)) + '</div>' +
-        '<div class="stat-label">' + h(statLabel(label)) + '</div>' +
+        '<div class="num">' + h(val(displayValue)) + '</div>' +
+        '<div class="stat-label">' + h(displayLabel) + '</div>' +
       '</div>' +
       '<div class="info">' +
         '<div class="name">' + h(row.name) + icon + '</div>' +
@@ -2206,6 +2502,41 @@ function buildDetails(row, detailsType){
       '</div>';
   }
 
+  if(detailsType === "pitcherh2h"){
+    details =
+      '<div class="details-header">H2H qualifying starts</div>' +
+      '<div class="details-grid">' +
+        (row.logs || []).map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.date) + '</div>' +
+            '<div class="detail-sub">' + h(g.game) + '</div>' +
+            '<div class="detail-stat">' + h(g.ip) + ' IP</div>' +
+            '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+            '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+            '<div class="detail-stat">' + h(g.er) + ' ER</div>' +
+            '<div class="detail-stat">' + h(g.bb) + ' BB</div>' +
+            kBar(g.ks) +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
+  if(detailsType === "batterh2h"){
+    details =
+      '<div class="details-header">Games vs today’s probable starter</div>' +
+      '<div class="details-grid">' +
+        (row.logs || []).map(g =>
+          '<div class="detail-chip">' +
+            '<div class="detail-name">' + h(g.date) + '</div>' +
+            '<div class="detail-sub">' + h(g.game) + '</div>' +
+            '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+            '<div class="detail-stat">' + h(g.hr) + ' HR</div>' +
+            hitDots(g.hits) +
+          '</div>'
+        ).join("") +
+      '</div>';
+  }
+
   return details;
 }
 
@@ -2244,11 +2575,14 @@ function profileDetails(row){
       '<div class="details-grid">' +
         row.logs.map(g =>
           '<div class="detail-chip">' +
-            '<div class="detail-name">' + h(g.game || g.opponent || "Game") + '</div>' +
+            '<div class="detail-name">' + h(g.game || g.opponent || g.date || "Game") + '</div>' +
             '<div class="detail-sub">' + h(g.date || "") + '</div>' +
-            '<div class="detail-stat">' + h(g.hits !== undefined ? g.hits + " H" : g.ks + " K") + '</div>' +
+            (g.ip !== undefined ? '<div class="detail-stat">' + h(g.ip) + ' IP</div>' : '') +
+            (g.ks !== undefined ? '<div class="detail-stat">' + h(g.ks) + ' K</div>' : '') +
+            (g.hits !== undefined ? '<div class="detail-stat">' + h(g.hits) + ' H</div>' : '') +
+            (g.hr !== undefined ? '<div class="detail-stat">' + h(g.hr) + ' HR</div>' : '') +
             (g.whiffPct !== undefined ? '<div class="detail-stat">' + h(g.whiffPct) + '% Whiff</div>' : '') +
-            (g.hits !== undefined ? hitDots(g.hits) : kBar(g.ks)) +
+            (g.hits !== undefined ? hitDots(g.hits) : g.ks !== undefined ? kBar(g.ks) : '') +
           '</div>'
         ).join("") +
       '</div>';
@@ -2264,6 +2598,8 @@ function openProfile(id){
   const row = item.row;
   const label = item.label;
   const followed = row.personId && isFollowed(row.personId);
+  const displayValue = row.displayValue !== undefined ? row.displayValue : row.value;
+  const displayLabel = row.displayLabel || statLabel(label);
 
   document.getElementById("profileContent").innerHTML =
     '<div class="profile-head">' +
@@ -2275,7 +2611,7 @@ function openProfile(id){
         '<div class="profile-sub">' + h(row.status || "") + '</div>' +
       '</div>' +
     '</div>' +
-    '<div class="profile-stat">' + h(val(row.value)) + ' ' + h(statLabel(label)) + '</div>' +
+    '<div class="profile-stat">' + h(val(displayValue)) + ' ' + h(displayLabel) + '</div>' +
     (row.whiffPct !== undefined ? '<div class="profile-stat">' + h(row.whiffPct) + '% Whiff</div>' : '') +
     (row.extra ? '<div class="profile-sub" style="margin-bottom:12px;">' + h(row.extra) + '</div>' : '') +
     '<div class="label">' + h(label) + '</div>' +
@@ -2351,6 +2687,9 @@ function chooseGameOfNightData(){
 }
 
 function getPitcherKSpot(){
+  const h2h = filterRows(appState.pitcherH2H)[0];
+  if(h2h) return { pitcher: h2h, h2h: true };
+
   const hotPitchers = filterRows(appState.hotPitchers);
   const prevKs = appState.prevKs || [];
 
@@ -2373,6 +2712,7 @@ function renderQuickLook(){
   const hotPitchers = filterRows(appState.hotPitchers);
   const hotHitters = filterRows(appState.hotHitters);
   const streaking = filterRows(appState.streakingHitters);
+  const batterEdge = filterRows(appState.batterH2H)[0];
   const prevKs = filterRows(appState.prevKs);
 
   if(bestGame){
@@ -2390,25 +2730,32 @@ function renderQuickLook(){
   const pitcherSpot = getPitcherKSpot() || (hotPitchers.length ? { pitcher: hotPitchers[0] } : null);
   if(pitcherSpot && pitcherSpot.pitcher){
     const p = pitcherSpot.pitcher;
-    const opp = pitcherSpot.opponentTeamTrend;
     cards.push(quickCard(
-      "Pitcher to Watch",
+      pitcherSpot.h2h ? "Pitcher H2H Edge" : "Pitcher to Watch",
       p.name + " vs " + p.opponent,
-      opp
-        ? "Pitcher Whiff%: " + (p.whiffPct || "0.0") + "% · " + opp.name + " had " + opp.value + " strikeouts last game and a " + (opp.whiffPct || "0.0") + "% Whiff rate."
+      pitcherSpot.h2h
+        ? p.qualifiedGames + " games with 8+ Ks vs " + p.opponent + " · Best: " + p.bestKs + " Ks"
         : "Last 2 games: " + p.value + " total strikeouts · Whiff%: " + (p.whiffPct || "0.0") + "%"
     ));
   }
 
-  const hotBat = liveHits[0] || hotHitters[0];
-  if(hotBat){
+  if(batterEdge){
     cards.push(quickCard(
-      "Hot Bat",
-      hotBat.name,
-      liveHits[0] === hotBat
-        ? hotBat.team + " · " + hotBat.value + " hit" + (hotBat.value === 1 ? "" : "s") + " live"
-        : hotBat.team + " · " + hotBat.value + " hits over the last 4 completed game days"
+      "Batter H2H Edge",
+      batterEdge.name + " vs " + batterEdge.pitcherName,
+      batterEdge.hits + " H · " + batterEdge.hr + " HR vs today’s probable starter"
     ));
+  } else {
+    const hotBat = liveHits[0] || hotHitters[0];
+    if(hotBat){
+      cards.push(quickCard(
+        "Hot Bat",
+        hotBat.name,
+        liveHits[0] === hotBat
+          ? hotBat.team + " · " + hotBat.value + " hit" + (hotBat.value === 1 ? "" : "s") + " live"
+          : hotBat.team + " · " + hotBat.value + " hits over the last 4 completed game days"
+      ));
+    }
   }
 
   const streak = streaking[0];
@@ -2440,8 +2787,18 @@ function renderJustHappened(){
   const prevKs = filterRows(appState.prevKs);
   const hotHitters = filterRows(appState.hotHitters);
   const hotPitchers = filterRows(appState.hotPitchers);
+  const pitcherH2H = filterRows(appState.pitcherH2H);
+  const batterH2H = filterRows(appState.batterH2H);
 
   let items = [];
+
+  pitcherH2H.slice(0,2).forEach(p => {
+    items.push(feedItem("🧬", p.name + " H2H edge", p.qualifiedGames + " games with 8+ Ks vs " + p.opponent));
+  });
+
+  batterH2H.slice(0,2).forEach(b => {
+    items.push(feedItem("💣", b.name + " batter H2H edge", b.hits + " H · " + b.hr + " HR vs " + b.pitcherName));
+  });
 
   liveKs.filter(p => Number(p.value) >= 6).slice(0,3).forEach(p => {
     items.push(feedItem("👑", p.name + " has " + p.value + " Ks", p.team + " · " + p.status));
@@ -2497,10 +2854,57 @@ function renderBaseballPulse(){
   const hotPitchers = filterRows(appState.hotPitchers);
   const hotHitters = filterRows(appState.hotHitters);
   const streakingHitters = filterRows(appState.streakingHitters);
+  const pitcherH2H = filterRows(appState.pitcherH2H);
+  const batterH2H = filterRows(appState.batterH2H);
   const prevKs = filterRows(appState.prevKs);
   const prevHits = filterRows(appState.prevHits);
 
   let cards = [];
+
+  if(pitcherH2H.length){
+    const p = pitcherH2H[0];
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">H2H qualifying starts</div>' +
+        '<div class="details-grid">' +
+          (p.logs || []).map(g =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(g.date) + '</div>' +
+              '<div class="detail-sub">' + h(g.game) + '</div>' +
+              '<div class="detail-stat">' + h(g.ip) + ' IP</div>' +
+              '<div class="detail-stat">' + h(g.ks) + ' K</div>' +
+              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+              '<div class="detail-stat">' + h(g.er) + ' ER</div>' +
+              '<div class="detail-stat">' + h(g.bb) + ' BB</div>' +
+              kBar(g.ks) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("🧬","Pitcher H2H Edge",p.name,p.qualifiedGames + " games with 8+ Ks vs " + p.opponent,"H2H edge",details));
+  }
+
+  if(batterH2H.length){
+    const b = batterH2H[0];
+    const details =
+      '<div class="details">' +
+        '<div class="details-header">Batter vs starter games</div>' +
+        '<div class="details-grid">' +
+          (b.logs || []).map(g =>
+            '<div class="detail-chip">' +
+              '<div class="detail-name">' + h(g.date) + '</div>' +
+              '<div class="detail-sub">' + h(g.game) + '</div>' +
+              '<div class="detail-stat">' + h(g.hits) + ' H</div>' +
+              '<div class="detail-stat">' + h(g.hr) + ' HR</div>' +
+              hitDots(g.hits) +
+            '</div>'
+          ).join("") +
+        '</div>' +
+      '</div>';
+
+    cards.push(pulseCard("💣","Batter H2H Edge",b.name,b.hits + " H · " + b.hr + " HR vs " + b.pitcherName,"H2H edge",details));
+  }
 
   if(liveKs.length){
     const p = liveKs[0];
@@ -2686,6 +3090,10 @@ function computeWatchFactor(game){
   const hasHotPitcher = appState.hotPitchers.some(p => ids.includes(String(p.teamId)) || ids.includes(String(p.opponentId)));
   if(hasHotPitcher) score += 10;
 
+  const hasEdge = appState.pitcherH2H.some(p => ids.includes(String(p.teamId)) || ids.includes(String(p.opponentId))) ||
+                  appState.batterH2H.some(p => ids.includes(String(p.teamId)) || ids.includes(String(p.opponentId)));
+  if(hasEdge) score += 12;
+
   const liveK = appState.liveKs.some(p => String(p.gamePk) === String(game.gamePk) && Number(p.value) >= 6);
   if(liveK) score += 10;
 
@@ -2714,6 +3122,8 @@ function openGameHub(gamePk){
   const gameKs = appState.liveKs.filter(p => String(p.gamePk) === String(gamePk)).slice(0,3);
   const gameHits = appState.liveHits.filter(p => String(p.gamePk) === String(gamePk)).slice(0,3);
   const gamePitchers = appState.hotPitchers.filter(p => ids.includes(String(p.teamId)) || ids.includes(String(p.opponentId))).slice(0,2);
+  const gamePitcherEdges = appState.pitcherH2H.filter(p => String(p.todayGamePk) === String(gamePk)).slice(0,3);
+  const gameBatterEdges = appState.batterH2H.filter(p => String(p.todayGamePk) === String(gamePk)).slice(0,3);
   const gamePrevKs = appState.prevKs.filter(t => ids.includes(String(t.teamId))).slice(0,2);
   const gamePrevHits = appState.prevHits.filter(t => ids.includes(String(t.teamId))).slice(0,2);
 
@@ -2726,6 +3136,26 @@ function openGameHub(gamePk){
         '<div class="watch-factor">Watch Factor: ' + h(factor) + '/100</div>' +
       '</div>' +
     '</div>';
+
+  html += '<div class="game-section"><div class="game-section-title">Head-to-Head Edge</div><div class="game-mini-grid">';
+
+  if(gamePitcherEdges.length){
+    gamePitcherEdges.forEach(p => {
+      html += gameMiniCard(p.name + " vs " + p.opponent, p.qualifiedGames + " games with 8+ Ks · Best: " + p.bestKs + " Ks");
+    });
+  }
+
+  if(gameBatterEdges.length){
+    gameBatterEdges.forEach(b => {
+      html += gameMiniCard(b.name + " vs " + b.pitcherName, b.hits + " H · " + b.hr + " HR");
+    });
+  }
+
+  if(!gamePitcherEdges.length && !gameBatterEdges.length){
+    html += gameMiniCard("No H2H edge found", "Past matchup edges will show here when they qualify.");
+  }
+
+  html += '</div></div>';
 
   html += '<div class="game-section"><div class="game-section-title">Live Leaders</div><div class="game-mini-grid">';
 
@@ -2807,6 +3237,9 @@ function renderAllData(){
   render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs");
   render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
+  render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h");
+  render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h");
+
   render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks");
   render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players");
 
@@ -2839,7 +3272,7 @@ async function loadLiveStats(){
   });
 
   for(const game of liveGames){
-    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+    const live = await getGameFeed(game.gamePk);
 
     const awayTeam = live.gameData.teams.away;
     const homeTeam = live.gameData.teams.home;
@@ -2919,7 +3352,7 @@ async function loadPreviousGameDayStats(){
   let prevKs = [], prevHits = [];
 
   for(const game of previous.games){
-    const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+    const live = await getGameFeed(game.gamePk);
     const box = live.liveData.boxscore;
     const whiffStats = computeTeamWhiffStats(live, pitchMap);
 
@@ -3085,42 +3518,13 @@ async function loadHotHitters(){
 }
 
 async function loadHotPitchersToday(){
-  const today = nyDate(0);
-  const season = Number(today.slice(0,4));
   const pitchMap = await getPitchCodeMap();
-
-  const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher");
-  let probablePitchers = [];
-
-  (schedule.dates || []).forEach(date => {
-    date.games.forEach(game => {
-      ["away","home"].forEach(side => {
-        const team = game.teams[side].team;
-        const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
-        const probable = game.teams[side].probablePitcher;
-
-        if(probable && probable.id){
-          probablePitchers.push({
-            id: probable.id,
-            name: probable.fullName,
-            personId: probable.id,
-            team: team.name,
-            teamId: team.id,
-            opponent: opponent.name,
-            opponentId: opponent.id,
-            game: gameLabel(game),
-            todayGamePk: game.gamePk
-          });
-        }
-      });
-    });
-  });
-
+  const probables = await getTodaysProbables();
   let hotPitchers = [];
 
-  for(const p of probablePitchers){
-    const stats = await getJson("https://statsapi.mlb.com/api/v1/people/" + p.id + "/stats?stats=gameLog&group=pitching&season=" + season);
-    const splits = (((stats.stats || [])[0] || {}).splits || [])
+  for(const p of probables){
+    const logs = await fetchPitcherGameLogs(p.id, 1);
+    const splits = logs
       .filter(s => s.stat && s.stat.strikeOuts !== undefined)
       .sort((a,b) => new Date(b.date) - new Date(a.date));
 
@@ -3133,7 +3537,7 @@ async function loadHotPitchersToday(){
     if(k1 >= 8 && k2 >= 8){
       let totalSwings = 0;
       let totalMisses = 0;
-      let logs = [];
+      let rowLogs = [];
 
       for(const split of lastTwo){
         const gamePk = getSplitGamePk(split);
@@ -3143,9 +3547,9 @@ async function loadHotPitchersToday(){
         totalSwings += whiff.swings;
         totalMisses += whiff.misses;
 
-        logs.push({
+        rowLogs.push({
           date: split.date,
-          opponent: split.opponent ? split.opponent.name : "Opponent",
+          opponent: opponentNameFromSplit(split) || "Opponent",
           ks: ks,
           whiffPct: whiff.whiffPct,
           swings: whiff.swings,
@@ -3170,7 +3574,7 @@ async function loadHotPitchersToday(){
         swings: totalSwings,
         misses: totalMisses,
         extra: "Probable starter today · Whiff%: " + totalWhiffPct + "% (" + totalMisses + "/" + totalSwings + ")",
-        logs
+        logs: rowLogs
       });
     }
   }
@@ -3191,6 +3595,7 @@ async function loadStaticSectionsOnce(){
 
 async function loadDashboard(){
   try {
+    gameFeedCache = {};
     await loadScoreTicker();
   } catch(err) {
     console.error(err);
@@ -3210,6 +3615,8 @@ appState.followedPlayers = loadFollowedPlayers();
 
 loadDashboard();
 loadStaticSectionsOnce();
+loadHeadToHeadEdges();
+
 setInterval(loadDashboard, 30000);
 setInterval(loadStaticSectionsOnce, 600000);
 </script>
