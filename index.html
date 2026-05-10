@@ -906,6 +906,41 @@
       box-shadow: 0 0 12px rgba(190,242,100,.35);
     }
 
+    .hit-animation-wrap {
+      margin-top: 10px;
+      background: rgba(2,6,23,.45);
+      border: 1px solid rgba(134,239,172,.18);
+      border-radius: 18px;
+      padding: 9px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hit-animation-title {
+      color: #bef264;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .hit-animation-copy {
+      color: #d1fae5;
+      font-size: 12px;
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .mini-hit-diamond {
+      width: 100%;
+      max-width: 230px;
+      height: 135px;
+      display: block;
+      margin: 0 auto;
+      filter: drop-shadow(0 0 10px rgba(34,197,94,.25));
+    }
+
     .loading {
       background: rgba(2,6,23,.78);
       border: 1px solid rgba(34,197,94,.24);
@@ -1219,6 +1254,11 @@
         font-size: 10px;
       }
 
+      .mini-hit-diamond {
+        max-width: 190px;
+        height: 120px;
+      }
+
       body.stadium-mode .mobile-tabs { display: none; }
       body.stadium-mode .tab-panel { display: block; }
       body.stadium-mode .num { font-size: 40px; }
@@ -1498,7 +1538,7 @@
 
         <div class="stat-section">
           <h2>💥 Live Hits</h2>
-          <div class="section-note">Current hit leaders in live games.</div>
+          <div class="section-note">Current hit leaders in live games. Latest hit path is animated on each card.</div>
           <div id="liveHits" class="loading">Loading...</div>
         </div>
       </section>
@@ -1933,22 +1973,115 @@ function gameShortLabelFromLive(live){
   }
 }
 
-function isHitType(type, eventText){
+function hitInfoFromType(type, eventText){
   const t = String(type || "").toLowerCase();
   const e = String(eventText || "").toLowerCase();
 
-  return ["single","double","triple","home_run"].includes(t) ||
-         e === "single" ||
-         e === "double" ||
-         e === "triple" ||
-         e.includes("home run");
+  if(t === "single" || e === "single") return {type:"single", label:"Single", bases:1};
+  if(t === "double" || e === "double") return {type:"double", label:"Double", bases:2};
+  if(t === "triple" || e === "triple") return {type:"triple", label:"Triple", bases:3};
+  if(t === "home_run" || e.includes("home run")) return {type:"home_run", label:"Home Run", bases:4};
+
+  return null;
+}
+
+function isHitType(type, eventText){
+  return !!hitInfoFromType(type,eventText);
 }
 
 function isHrType(type, eventText){
-  const t = String(type || "").toLowerCase();
-  const e = String(eventText || "").toLowerCase();
+  const info = hitInfoFromType(type,eventText);
+  return info && info.type === "home_run";
+}
 
-  return t === "home_run" || e.includes("home run");
+function buildLatestHitMap(live){
+  const map = {};
+  const plays = (((live.liveData || {}).plays || {}).allPlays || []);
+
+  plays.forEach(play => {
+    const batter = play.matchup && play.matchup.batter;
+    if(!batter || !batter.id) return;
+
+    const eventType = play.result && play.result.eventType;
+    const eventText = play.result && play.result.event;
+    const info = hitInfoFromType(eventType,eventText);
+
+    if(!info) return;
+
+    const about = play.about || {};
+    const inning = about.inning ? ((about.halfInning || "") + " " + about.inning).trim() : "";
+    const description = (play.result && (play.result.description || play.result.event)) || info.label;
+
+    map[batter.id] = {
+      lastHitType: info.type,
+      lastHitLabel: info.label,
+      lastHitBases: info.bases,
+      lastHitInning: inning,
+      lastHitDescription: description
+    };
+  });
+
+  return map;
+}
+
+function hitPath(type){
+  if(type === "single") return "M50 105 L88 67";
+  if(type === "double") return "M50 105 L88 67 L50 28";
+  if(type === "triple") return "M50 105 L88 67 L50 28 L12 67";
+  if(type === "home_run") return "M50 105 L88 67 L50 28 L12 67 L50 105";
+  return "M50 105 L88 67";
+}
+
+function hitAnimationSvg(type){
+  const path = hitPath(type);
+  const dur = type === "home_run" ? "2.8s" : type === "triple" ? "2.2s" : type === "double" ? "1.8s" : "1.3s";
+
+  return (
+    '<svg class="mini-hit-diamond" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+      '<defs>' +
+        '<filter id="miniOrbGlow" x="-250%" y="-250%" width="600%" height="600%">' +
+          '<feGaussianBlur stdDeviation="4" result="blur"/>' +
+          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+        '<linearGradient id="miniPathGrad" x1="0" y1="1" x2="1" y2="0">' +
+          '<stop offset="0%" stop-color="#22c55e"/>' +
+          '<stop offset="50%" stop-color="#bef264"/>' +
+          '<stop offset="100%" stop-color="#22c55e"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+
+      '<path d="M50 105 L88 67 L50 28 L12 67 L50 105" fill="none" stroke="rgba(134,239,172,.18)" stroke-width="9" stroke-linejoin="round"/>' +
+      '<path d="M50 105 L88 67 L50 28 L12 67 L50 105" fill="none" stroke="rgba(134,239,172,.34)" stroke-width="2" stroke-linejoin="round"/>' +
+      '<path d="' + path + '" fill="none" stroke="url(#miniPathGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+
+      '<rect x="83" y="62" width="10" height="10" transform="rotate(45 88 67)" fill="rgba(2,6,23,.85)" stroke="#86efac" stroke-width="1.5"/>' +
+      '<rect x="45" y="23" width="10" height="10" transform="rotate(45 50 28)" fill="rgba(2,6,23,.85)" stroke="#86efac" stroke-width="1.5"/>' +
+      '<rect x="7" y="62" width="10" height="10" transform="rotate(45 12 67)" fill="rgba(2,6,23,.85)" stroke="#86efac" stroke-width="1.5"/>' +
+      '<path d="M42 98 L58 98 L58 110 L50 118 L42 110 Z" fill="rgba(2,6,23,.88)" stroke="#bef264" stroke-width="1.8"/>' +
+
+      '<circle r="4" fill="#ffffff" filter="url(#miniOrbGlow)">' +
+        '<animateMotion dur="' + dur + '" repeatCount="indefinite" path="' + path + '" rotate="auto"/>' +
+      '</circle>' +
+      '<circle r="12" fill="rgba(190,242,100,.18)" filter="url(#miniOrbGlow)">' +
+        '<animateMotion dur="' + dur + '" repeatCount="indefinite" path="' + path + '" rotate="auto"/>' +
+      '</circle>' +
+    '</svg>'
+  );
+}
+
+function hitAnimationBlock(row){
+  if(!row || !row.lastHitType) return "";
+
+  return (
+    '<div class="hit-animation-wrap">' +
+      '<div class="hit-animation-title">Latest hit path</div>' +
+      '<div class="hit-animation-copy">' +
+        h(row.lastHitLabel || "Hit") +
+        (row.lastHitInning ? " · " + h(row.lastHitInning) : "") +
+      '</div>' +
+      hitAnimationSvg(row.lastHitType) +
+    '</div>'
+  );
 }
 
 function h2hCacheKey(){
@@ -2070,11 +2203,9 @@ async function loadHeadToHeadEdges(){
 
         const eventType = play.result && play.result.eventType;
         const eventText = play.result && play.result.event;
+        const info = hitInfoFromType(eventType,eventText);
 
-        const hit = isHitType(eventType, eventText);
-        const hr = isHrType(eventType, eventText);
-
-        if(!hit && !hr) return;
+        if(!info) return;
 
         if(!batterMap[batter.id]){
           batterMap[batter.id] = {
@@ -2094,8 +2225,8 @@ async function loadHeadToHeadEdges(){
         }
 
         const row = batterMap[batter.id];
-        row.hits += hit ? 1 : 0;
-        row.hr += hr ? 1 : 0;
+        row.hits += 1;
+        row.hr += info.type === "home_run" ? 1 : 0;
 
         if(!row.logsByGame[gamePk]){
           row.logsByGame[gamePk] = {
@@ -2107,8 +2238,8 @@ async function loadHeadToHeadEdges(){
           };
         }
 
-        row.logsByGame[gamePk].hits += hit ? 1 : 0;
-        row.logsByGame[gamePk].hr += hr ? 1 : 0;
+        row.logsByGame[gamePk].hits += 1;
+        row.logsByGame[gamePk].hr += info.type === "home_run" ? 1 : 0;
       });
     }
 
@@ -2380,6 +2511,8 @@ function makeCard(row,label,colorClass,detailsHtml){
     ? '<button class="follow-btn ' + (followed ? "active" : "") + '" onclick="event.preventDefault(); event.stopPropagation(); toggleFollowFromProfile(' + profileId + ')">' + (followed ? "Following" : "Follow") + '</button>'
     : "";
 
+  const hitBlock = label.includes("Live Player Hits") ? hitAnimationBlock(row) : "";
+
   const top =
     '<div class="main-row">' +
       '<img class="logo" src="' + logo(row.teamId) + '">' +
@@ -2393,6 +2526,7 @@ function makeCard(row,label,colorClass,detailsHtml){
         '<div class="game">' + h(row.game || "") + '</div>' +
         '<div class="status">' + h(row.status || "") + '</div>' +
         (row.extra ? '<div class="extra">' + h(row.extra) + '</div>' : '') +
+        hitBlock +
         '<div>' +
           '<span class="label">' + h(label) + (detailsHtml ? " · tap to expand" : "") + '</span>' +
           '<button class="profile-btn" onclick="event.preventDefault(); event.stopPropagation(); openProfile(' + profileId + ')">Profile</button>' +
@@ -2553,6 +2687,12 @@ function profileDetails(row){
           '<div class="detail-stat">' + h(row.whiffPct) + '%</div>' +
         '</div>' +
       '</div>';
+  }
+
+  if(row.lastHitType){
+    html +=
+      '<div class="details-header">Latest hit path</div>' +
+      hitAnimationBlock(row);
   }
 
   if(row.players && row.players.length){
@@ -2805,7 +2945,8 @@ function renderJustHappened(){
   });
 
   liveHits.filter(p => Number(p.value) >= 2).slice(0,3).forEach(p => {
-    items.push(feedItem("💥", p.name + " has " + p.value + " hits", p.team + " · " + p.status));
+    const hitText = p.lastHitLabel ? " · Latest: " + p.lastHitLabel : "";
+    items.push(feedItem("💥", p.name + " has " + p.value + " hits", p.team + " · " + p.status + hitText));
   });
 
   hotPitchers.slice(0,2).forEach(p => {
@@ -2937,6 +3078,7 @@ function renderBaseballPulse(){
             '<div class="detail-stat">' + h(p.value) + ' H</div>' +
             '<div class="detail-sub">' + h(p.status) + '</div>' +
             hitDots(p.value) +
+            hitAnimationBlock(p) +
           '</div>' +
         '</div>' +
       '</div>';
@@ -3107,6 +3249,10 @@ function gameMiniCard(title, copy){
   return '<div class="game-mini-card"><div class="game-mini-title">' + h(title) + '</div><div class="game-mini-copy">' + h(copy) + '</div></div>';
 }
 
+function gameMiniCardHtml(title, html){
+  return '<div class="game-mini-card"><div class="game-mini-title">' + h(title) + '</div><div class="game-mini-copy">' + html + '</div></div>';
+}
+
 function openGameHub(gamePk){
   const game = appState.scoreGames.find(g => String(g.gamePk) === String(gamePk));
   if(!game) return;
@@ -3167,7 +3313,12 @@ function openGameHub(gamePk){
 
   if(gameHits.length){
     gameHits.forEach(p => {
-      html += gameMiniCard(p.name + " · " + p.value + " hits", p.team + " · " + p.status);
+      const copy =
+        h(p.team + " · " + p.status) +
+        (p.lastHitLabel ? '<br><strong>Latest:</strong> ' + h(p.lastHitLabel) : '') +
+        hitAnimationBlock(p);
+
+      html += gameMiniCardHtml(p.name + " · " + p.value + " hits", copy);
     });
   }
 
@@ -3273,6 +3424,7 @@ async function loadLiveStats(){
 
   for(const game of liveGames){
     const live = await getGameFeed(game.gamePk);
+    const latestHitMap = buildLatestHitMap(live);
 
     const awayTeam = live.gameData.teams.away;
     const homeTeam = live.gameData.teams.home;
@@ -3301,6 +3453,8 @@ async function loadLiveStats(){
         }
 
         if(batting && Number(batting.hits || 0) > 0){
+          const hitInfo = latestHitMap[player.person.id] || {};
+
           liveHits.push({
             value:Number(batting.hits||0),
             name:player.person.fullName,
@@ -3309,7 +3463,12 @@ async function loadLiveStats(){
             game:gameText,
             gamePk:game.gamePk,
             status:statusText,
-            teamId:team.id
+            teamId:team.id,
+            lastHitType: hitInfo.lastHitType,
+            lastHitLabel: hitInfo.lastHitLabel,
+            lastHitBases: hitInfo.lastHitBases,
+            lastHitInning: hitInfo.lastHitInning,
+            lastHitDescription: hitInfo.lastHitDescription
           });
         }
       });
