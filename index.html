@@ -791,7 +791,7 @@
       <aside class="dashboard">
         <div class="dash-top">
           <div class="dash-title">Today’s Top Edges</div>
-          <div class="live">LIVE</div>
+          <div class="live">TODAY</div>
         </div>
 
         <div id="heroEdgeCards">
@@ -802,7 +802,7 @@
                 <div class="edge-player"><span>Diamond Pulse:</span> Checking live edges</div>
                 <div class="market">Updates from today’s MLB schedule</div>
               </div>
-              <div class="edge-value">LIVE</div>
+              <div class="edge-value">TODAY</div>
             </div>
             <div class="meter"><span style="width: 45%;"></span></div>
           </div>
@@ -1080,10 +1080,10 @@ function filterRows(rows){ if(appState.selectedTeamId==="all") return rows||[]; 
 function gameMatchesFilter(game){ if(appState.selectedTeamId==="all") return true; return String(game.teams.away.team.id)===String(appState.selectedTeamId)||String(game.teams.home.team.id)===String(appState.selectedTeamId); }
 function collectTodayTeams(games){ const map={}; games.forEach(game=>["away","home"].forEach(side=>{ const team=game.teams[side].team; map[team.id]={id:team.id,name:team.name,abbreviation:team.abbreviation||team.teamName||team.name}; })); appState.todaysTeams=Object.values(map).sort((a,b)=>a.abbreviation.localeCompare(b.abbreviation)); }
 function renderTeamFilters(){ const teams=appState.todaysTeams||[]; let html='<button class="filter-btn '+(appState.selectedTeamId==="all"?"active":"")+'" data-team-id="all">All Teams</button>'; teams.forEach(team=>{ html += '<button class="filter-btn '+(String(appState.selectedTeamId)===String(team.id)?"active":"")+'" data-team-id="'+h(team.id)+'"><img src="'+logo(team.id)+'"><span>'+h(team.abbreviation)+'</span></button>'; }); const bar=document.getElementById("teamFilters"); bar.innerHTML=html; bar.querySelectorAll(".filter-btn").forEach(btn=>btn.addEventListener("click",()=>setTeamFilter(btn.dataset.teamId))); }
-function tickerStatus(game){ const state=game.status.abstractGameState; const detailed=game.status.detailedState||""; if(state==="Live"){ const line=game.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return line.inningState+" "+line.currentInningOrdinal; return detailed||"Live"; } if(state==="Final") return detailed||"Final"; const dt=new Date(game.gameDate); return dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); }
-function scoreValue(game,side){ const score=game.teams[side].score; if(score===undefined||score===null) return game.status.abstractGameState==="Preview" ? "–" : "0"; return score; }
+function tickerStatus(game){ const detailed=game.status.detailedState||""; if(isActuallyLiveGame(game)){ const line=game.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return line.inningState+" "+line.currentInningOrdinal; return detailed||"Live"; } if(isFinalGame(game)) return detailed||"Final"; if(detailed && !/scheduled/i.test(detailed)) return detailed; const dt=new Date(game.gameDate); return dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); }
+function scoreValue(game,side){ const score=game.teams[side].score; if(score===undefined||score===null) return isActuallyLiveGame(game) || isFinalGame(game) ? "0" : "–"; return score; }
 function scoreNumber(game,side){ const score=Number(game.teams[side].score); return Number.isFinite(score)?score:0; }
-function renderScoreTicker(games){ games=(games||[]).filter(gameMatchesFilter); if(!games.length){ document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">No games found for this filter.</button>'; return; } const items=games.map(game=>{ const state=game.status.abstractGameState; const cls=state==="Live"?"ticker-live":state==="Final"?"ticker-final":"ticker-preview"; const away=teamName(game.teams.away.team), home=teamName(game.teams.home.team); return '<button class="ticker-item '+cls+'" data-game-pk="'+h(game.gamePk)+'"><span>'+h(away)+'</span><span class="ticker-score">'+h(scoreValue(game,"away"))+'</span><span>@</span><span>'+h(home)+'</span><span class="ticker-score">'+h(scoreValue(game,"home"))+'</span><span class="ticker-detail">'+h(tickerStatus(game))+'</span></button>'; }); const track=document.getElementById("scoreTicker"); track.innerHTML=items.concat(items).join(""); track.querySelectorAll("[data-game-pk]").forEach(btn=>btn.addEventListener("click",()=>openGameHub(btn.dataset.gamePk))); }
+function renderScoreTicker(games){ games=(games||[]).filter(gameMatchesFilter); if(!games.length){ document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">No games found for this filter.</button>'; return; } const items=games.map(game=>{ const state=game.status.abstractGameState; const cls=isActuallyLiveGame(game)?"ticker-live":isFinalGame(game)?"ticker-final":"ticker-preview"; const away=teamName(game.teams.away.team), home=teamName(game.teams.home.team); return '<button class="ticker-item '+cls+'" data-game-pk="'+h(game.gamePk)+'"><span>'+h(away)+'</span><span class="ticker-score">'+h(scoreValue(game,"away"))+'</span><span>@</span><span>'+h(home)+'</span><span class="ticker-score">'+h(scoreValue(game,"home"))+'</span><span class="ticker-detail">'+h(tickerStatus(game))+'</span></button>'; }); const track=document.getElementById("scoreTicker"); track.innerHTML=items.concat(items).join(""); track.querySelectorAll("[data-game-pk]").forEach(btn=>btn.addEventListener("click",()=>openGameHub(btn.dataset.gamePk))); }
 async function loadScoreTicker(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today+"&hydrate=linescore"); let games=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>games.push(game))); games.sort((a,b)=>({Live:0,Preview:1,Final:2}[a.status.abstractGameState]??3)-(({Live:0,Preview:1,Final:2}[b.status.abstractGameState]??3))); appState.scoreGames=games; collectTodayTeams(games); }
 function statLabel(label){ if(label.includes("H2H")) return "Edge"; if(label.includes("Whiff")) return "Whiff"; if(label.includes("Ks")||label.includes("Strikeout")||label.includes("Pitcher")) return "Ks"; if(label.includes("Streak")) return "Games"; return "Hits"; }
 function tier(label,value){ value=Number(value); if(label.includes("H2H")) return "elite"; if(label.includes("Pitcher Ks")&&value>=10) return "elite"; if(label.includes("Pitcher Ks")&&value>=7) return "good"; if(label.includes("Live Player Hits")&&value>=4) return "elite"; if(label.includes("Live Player Hits")&&value>=3) return "good"; if(label.includes("Hot Bat")&&value>=8) return "elite"; if(label.includes("Hot Bat")&&value>=5) return "good"; if(label.includes("Hit Streak")&&value>=4) return "elite"; if(label.includes("Hit Streak")&&value>=3) return "good"; if(label.includes("Hot Pitcher")&&value>=18) return "elite"; if(label.includes("Hot Pitcher")&&value>=16) return "good"; if(label.includes("Team Ks")&&value>=7) return "bad"; if(label.includes("Team Hits")&&value>=12) return "elite"; if(label.includes("Team Hits")&&value>=9) return "good"; return ""; }
@@ -1144,18 +1144,65 @@ function openGameHub(gamePk){ const game=appState.scoreGames.find(g=>String(g.ga
 function closeGameHub(){ document.getElementById("gameModal").classList.remove("open"); }
 function closeGameHubFromBackdrop(event){ if(event.target.id==="gameModal") closeGameHub(); }
 
+
+function gameByPk(gamePk){
+  if(!gamePk) return null;
+  return (appState.scoreGames || []).find(game => String(game.gamePk) === String(gamePk)) || null;
+}
+
+function isActuallyLiveGame(game){
+  if(!game || !game.status) return false;
+  const abstractState = String(game.status.abstractGameState || "").toLowerCase();
+  const codedState = String(game.status.codedGameState || "").toUpperCase();
+  const detailed = String(game.status.detailedState || "").toLowerCase();
+
+  if(abstractState !== "live") return false;
+
+  const notLiveWords = ["scheduled", "pre-game", "pre game", "warmup", "postponed", "delayed start", "cancelled", "canceled"];
+  if(notLiveWords.some(word => detailed.includes(word))) return false;
+
+  if(["S", "P", "PW", "D", "DR", "C", "F", "O"].includes(codedState)) return false;
+
+  return true;
+}
+
+function isFinalGame(game){
+  if(!game || !game.status) return false;
+  const abstractState = String(game.status.abstractGameState || "").toLowerCase();
+  const codedState = String(game.status.codedGameState || "").toUpperCase();
+  return abstractState === "final" || ["F", "O"].includes(codedState);
+}
+
+function rowGameStatusLabel(row){
+  const game = gameByPk(row && (row.gamePk || row.todayGamePk));
+  if(!game) return "TODAY";
+  if(isActuallyLiveGame(game)) return "LIVE";
+  if(isFinalGame(game)) return "FINAL";
+
+  const detailed = game.status && game.status.detailedState ? String(game.status.detailedState) : "";
+  if(detailed && !/scheduled/i.test(detailed)) return detailed.toUpperCase();
+
+  const dt = new Date(game.gameDate);
+  if(!isNaN(dt.getTime())) {
+    return dt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+  }
+
+  return "TODAY";
+}
+
 function heroEdgeCard(row, label, percent){
   if(!row) return "";
   const playerLink = row.personId ? ' href="player.html?id='+h(row.personId)+'"' : ' href="#live-dashboard"';
   const playerName = row.name || "Today’s Edge";
   const gameText = row.game || (row.opponent ? "Today vs "+row.opponent : row.team || "MLB matchup");
   const detail = row.status || row.extra || label;
+  const statusLabel = rowGameStatusLabel(row);
   return '<a class="edge-card"'+playerLink+' style="display:block;color:inherit;text-decoration:none;">'
     + '<div class="game-row"><div>'
     + '<div class="teams">'+h(gameText)+'</div>'
     + '<div class="edge-player"><span>Player:</span> '+h(playerName)+'</div>'
     + '<div class="market">'+h(label)+' · '+h(detail)+'</div>'
-    + '</div><div class="edge-value">LIVE</div></div>'
+    + '</div><div class="edge-value">'+h(statusLabel)+'</div></div>'
     + '<div class="meter"><span style="width:'+Math.max(35, Math.min(92, percent || 65))+'%;"></span></div>'
     + '</a>';
 }
@@ -1314,7 +1361,7 @@ function renderEdgeBoard(){
 
 function renderAllData(){ profileStore=[]; renderHeroEdges(); renderEdgeBoard(); renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
-async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
+async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(isActuallyLiveGame(game)) liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
 async function findPreviousCompletedGameDay(){ for(let i=1;i<=10;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(finals.length) return {dateString,games:finals}; } return {dateString:"",games:[]}; }
 async function loadPreviousGameDayStats(){ const previous=await findPreviousCompletedGameDay(); const pitchMap=await getPitchCodeMap(); let prevKs=[], prevHits=[]; for(const game of previous.games){ const live=await getGameFeed(game.gamePk); const box=live.liveData.boxscore; const whiffStats=computeTeamWhiffStats(live,pitchMap); ["away","home"].forEach(side=>{ const team=game.teams[side].team; const opponent=side==="away"?game.teams.home.team:game.teams.away.team; const battingStats=box.teams[side].teamStats.batting; const teamKs=Number(battingStats.strikeOuts||0); const teamHits=Number(battingStats.hits||0); const whiff=whiffStats[team.id]||{swings:0,misses:0,whiffPct:"0.0"}; let players=[]; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(batting&&Number(batting.hits||0)>0) players.push({name:player.person.fullName,personId:player.person.id,team:team.name,teamId:team.id,hits:Number(batting.hits||0)}); }); players.sort((a,b)=>b.hits-a.hits); prevKs.push({value:teamKs,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses,extra:teamKs+" team strikeouts · Whiff%: "+whiff.whiffPct+"%"}); prevHits.push({value:teamHits,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,players}); }); } prevKs.sort((a,b)=>b.value-a.value); prevHits.sort((a,b)=>b.value-a.value); appState.prevKs=prevKs; appState.prevHits=prevHits; renderAllData(); }
 async function loadHotHitters(){ let days=[], hotMap={}, appearanceMap={}; for(let i=1;i<=14&&days.length<4;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(!finals.length) continue; days.push(dateString); for(const game of finals){ const box=await getJson("https://statsapi.mlb.com/api/v1/game/"+game.gamePk+"/boxscore"); ["away","home"].forEach(side=>{ const team=game.teams[side].team; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(!batting) return; const hits=Number(batting.hits||0); const atBats=Number(batting.atBats||0); const plateAppearances=Number(batting.plateAppearances||0); if(atBats<=0&&plateAppearances<=0) return; const id=player.person.id; if(!hotMap[id]) hotMap[id]={value:0,name:player.person.fullName,personId:id,team:team.name,game:"Last 4 completed game days",status:"",teamId:team.id,logs:[],boxscoreGroup:"hitting"}; hotMap[id].value+=hits; hotMap[id].logs.push({date:dateString,game:gameLabel(game),hits}); if(!appearanceMap[id]) appearanceMap[id]={name:player.person.fullName,personId:id,team:team.name,teamId:team.id,logsByDate:{},boxscoreGroup:"hitting"}; appearanceMap[id].logsByDate[dateString]={date:dateString,game:gameLabel(game),hits}; }); }); } } const hotHitters=Object.values(hotMap).filter(hit=>hit.value>=5).sort((a,b)=>b.value-a.value); let streakingHitters=[]; Object.values(appearanceMap).forEach(player=>{ let streak=0, logs=[]; for(const day of days){ const log=player.logsByDate[day]; if(!log) continue; if(log.hits>0){ streak++; logs.push(log); } else break; } if(streak>=3) streakingHitters.push({value:streak,name:player.name,personId:player.personId,team:player.team,game:"Hit in "+streak+" straight completed games",status:"",teamId:player.teamId,logs,boxscoreGroup:"hitting"}); }); streakingHitters.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(hotHitters,"hitting",3); await attachRecentBoxscores(streakingHitters,"hitting",3); appState.hotHitters=hotHitters; appState.streakingHitters=streakingHitters; renderAllData(); }
