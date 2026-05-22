@@ -759,7 +759,7 @@
 
       <div class="nav-links">
         <a href="#live-dashboard">Today’s Edges</a>
-        <a href="#sample-board">Sample Board</a>
+        <a href="#sample-board">Edge Board</a>
         <a href="#model-inputs">Model</a>
         <a href="#live-dashboard">Live Stats</a>
         <a href="#features">Features</a>
@@ -784,7 +784,7 @@
 
         <div class="btn-row">
           <a href="#live-dashboard" class="btn primary">View Today’s Edges</a>
-          <a href="#sample-board" class="btn secondary">See Stat Board</a>
+          <a href="#sample-board" class="btn secondary">See Edge Board</a>
         </div>
       </div>
 
@@ -794,40 +794,18 @@
           <div class="live">LIVE</div>
         </div>
 
-        <div class="edge-card">
-          <div class="game-row">
-            <div>
-              <div class="teams">NYY vs BAL</div>
-              <div class="edge-player"><span>Player:</span> Aaron Judge</div>
-              <div class="market">Hot Bat Watch · Multi-hit trend</div>
+        <div id="heroEdgeCards">
+          <div class="edge-card">
+            <div class="game-row">
+              <div>
+                <div class="teams">Loading today’s matchups...</div>
+                <div class="edge-player"><span>Diamond Pulse:</span> Checking live edges</div>
+                <div class="market">Updates from today’s MLB schedule</div>
+              </div>
+              <div class="edge-value">LIVE</div>
             </div>
-            <div class="edge-value">+6.8%</div>
+            <div class="meter"><span style="width: 45%;"></span></div>
           </div>
-          <div class="meter"><span style="width: 78%;"></span></div>
-        </div>
-
-        <div class="edge-card">
-          <div class="game-row">
-            <div>
-              <div class="teams">LAD vs SF</div>
-              <div class="edge-player"><span>Player:</span> Tyler Glasnow</div>
-              <div class="market">K / Whiff Watch · Starter angle</div>
-            </div>
-            <div class="edge-value">+5.2%</div>
-          </div>
-          <div class="meter"><span style="width: 68%;"></span></div>
-        </div>
-
-        <div class="edge-card">
-          <div class="game-row">
-            <div>
-              <div class="teams">ATL vs PHI</div>
-              <div class="edge-player"><span>Player:</span> Spencer Strider</div>
-              <div class="market">Pitcher H2H Edge · First 5 angle</div>
-            </div>
-            <div class="edge-value">+4.7%</div>
-          </div>
-          <div class="meter"><span style="width: 61%;"></span></div>
         </div>
       </aside>
     </section>
@@ -936,10 +914,11 @@
     <section id="sample-board">
       <div class="container">
         <div class="section-head">
-          <small>Sample Board</small>
-          <h2>Today’s edge board.</h2>
+          <small>Live Edge Board</small>
+          <h2>Today’s Diamond Pulse edges.</h2>
           <p>
-            A clean sample board showing the player, matchup, and edge ideas the dashboard can surface.
+            This board now uses the same live Diamond Pulse edge engine as your dashboard:
+            pitcher H2H, batter vs starter, hot bats, hit streaks, live hits, and K-watch signals.
           </p>
         </div>
 
@@ -949,53 +928,17 @@
               <tr>
                 <th>Game</th>
                 <th>Player</th>
-                <th>Angle</th>
+                <th>Edge Type</th>
                 <th>Signal</th>
                 <th>Context</th>
-                <th>Edge</th>
-                <th>Confidence</th>
+                <th>Rating</th>
+                <th>Open</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody id="edgeBoardRows">
               <tr>
-                <td>Yankees vs Orioles</td>
-                <td>Aaron Judge</td>
-                <td>Hot Bat Watch</td>
-                <td>Multi-hit trend</td>
-                <td>Lineup active</td>
-                <td class="positive">+6.8%</td>
-                <td><span class="tag">High</span></td>
-              </tr>
-
-              <tr>
-                <td>Dodgers vs Giants</td>
-                <td>Tyler Glasnow</td>
-                <td>K / Whiff Watch</td>
-                <td>High whiff matchup</td>
-                <td>Starter confirmed</td>
-                <td class="positive">+5.2%</td>
-                <td><span class="tag">Medium</span></td>
-              </tr>
-
-              <tr>
-                <td>Braves vs Phillies</td>
-                <td>Spencer Strider</td>
-                <td>Pitcher H2H Edge</td>
-                <td>8+ K history</td>
-                <td>Opponent trend</td>
-                <td class="positive">+4.7%</td>
-                <td><span class="tag">Medium</span></td>
-              </tr>
-
-              <tr>
-                <td>Mariners vs Astros</td>
-                <td>Julio Rodríguez</td>
-                <td>Team Hits Watch</td>
-                <td>Recent contact</td>
-                <td>Boxscore trend</td>
-                <td class="warning">Watch</td>
-                <td><span class="tag">Lineup Pending</span></td>
+                <td colspan="7">Loading today’s Diamond Pulse edges...</td>
               </tr>
             </tbody>
           </table>
@@ -1039,7 +982,7 @@
 
         <div class="btn-row" style="justify-content:center;">
           <a href="#" class="btn primary">Open The Live Dashboard</a>
-          <a href="#" class="btn secondary">View Sample Board</a>
+          <a href="#sample-board" class="btn secondary">View Edge Board</a>
         </div>
       </div>
     </section>
@@ -1200,7 +1143,176 @@ function gameMiniPlayerCard(row,title,html){ const follow=followButtonForRow(row
 function openGameHub(gamePk){ const game=appState.scoreGames.find(g=>String(g.gamePk)===String(gamePk)); if(!game) return; const away=game.teams.away.team, home=game.teams.home.team; const ids=[String(away.id),String(home.id)]; const gameKs=appState.liveKs.filter(p=>String(p.gamePk)===String(gamePk)).slice(0,3); const gameHits=appState.liveHits.filter(p=>String(p.gamePk)===String(gamePk)).slice(0,3); const gamePitchers=appState.hotPitchers.filter(p=>ids.includes(String(p.teamId))||ids.includes(String(p.opponentId))).slice(0,2); const gamePitcherEdges=appState.pitcherH2H.filter(p=>String(p.todayGamePk)===String(gamePk)).slice(0,3); const gameBatterEdges=appState.batterH2H.filter(p=>String(p.todayGamePk)===String(gamePk)).slice(0,3); const gamePrevKs=appState.prevKs.filter(t=>ids.includes(String(t.teamId))).slice(0,2); const gamePrevHits=appState.prevHits.filter(t=>ids.includes(String(t.teamId))).slice(0,2); let html='<div class="game-head"><img class="game-logo" src="'+logo(home.id)+'"><div><div class="game-title">'+h(teamName(away))+' '+h(scoreValue(game,"away"))+' @ '+h(teamName(home))+' '+h(scoreValue(game,"home"))+'</div><div class="game-sub">'+h(tickerStatus(game))+'</div><div class="watch-factor">Watch Factor: '+h(computeWatchFactor(game))+'/100</div></div></div>'; html+='<div class="game-section"><div class="game-section-title">Head-to-Head Edge</div><div class="game-mini-grid">'; if(gamePitcherEdges.length) gamePitcherEdges.forEach(p=>html+=gameMiniCard(p.name+" vs "+p.opponent,p.qualifiedGames+" games with 8+ Ks · Best: "+p.bestKs+" Ks")); if(gameBatterEdges.length) gameBatterEdges.forEach(b=>html+=gameMiniCard(b.name+" vs "+b.pitcherName,b.hits+" H · "+b.hr+" HR")); if(!gamePitcherEdges.length&&!gameBatterEdges.length) html+=gameMiniCard("No H2H edge found","Past matchup edges will show here when they qualify."); html+='</div></div><div class="game-section"><div class="game-section-title">Live Leaders</div><div class="game-mini-grid">'; if(gameKs.length) gameKs.forEach(p=>html+=gameMiniCard(p.name+" · "+p.value+" Ks",p.team+" · "+p.status)); if(gameHits.length) gameHits.forEach(p=>{ const copy=h(p.team+" · "+p.status)+(p.lastHitLabel?'<br><strong>Latest:</strong> '+h(p.lastHitLabel):'')+hitAnimationBlock(p)+recentMiniBoxscoresHtml(p,"hitting"); html+=gameMiniCardHtml(p.name+" · "+p.value+" hits",copy); }); if(!gameKs.length&&!gameHits.length) html+=gameMiniCard("No live leaders yet","Live hit and strikeout leaders will show here once the game gets moving."); html+='</div></div><div class="game-section"><div class="game-section-title">Pitcher / Team Watch</div><div class="game-mini-grid">'; if(gamePitchers.length) gamePitchers.forEach(p=>html+=gameMiniCard(p.name,p.status+" · Whiff%: "+(p.whiffPct||"0.0")+"% · "+p.game)); if(gamePrevKs.length) gamePrevKs.forEach(t=>html+=gameMiniCard(t.name+" · "+t.value+" Ks last game","Whiff%: "+(t.whiffPct||"0.0")+"% · "+t.status)); if(!gamePitchers.length&&!gamePrevKs.length) html+=gameMiniCard("No K trends yet","Pitcher and team strikeout trends will appear when available."); html+='</div></div><div class="game-section"><div class="game-section-title">Recent Team Hits</div><div class="game-mini-grid">'; if(gamePrevHits.length) gamePrevHits.forEach(t=>html+=gameMiniCard(t.name+" · "+t.value+" hits last game",t.status+" · tap that team card in Recap for player details")); else html+=gameMiniCard("No team hit trend yet","Previous game team hit leaders will appear when available."); html+='</div></div>'; document.getElementById("gameHubContent").innerHTML=html; document.getElementById("gameModal").classList.add("open"); }
 function closeGameHub(){ document.getElementById("gameModal").classList.remove("open"); }
 function closeGameHubFromBackdrop(event){ if(event.target.id==="gameModal") closeGameHub(); }
-function renderAllData(){ profileStore=[]; renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
+
+function heroEdgeCard(row, label, percent){
+  if(!row) return "";
+  const playerLink = row.personId ? ' href="player.html?id='+h(row.personId)+'"' : ' href="#live-dashboard"';
+  const playerName = row.name || "Today’s Edge";
+  const gameText = row.game || (row.opponent ? "Today vs "+row.opponent : row.team || "MLB matchup");
+  const detail = row.status || row.extra || label;
+  return '<a class="edge-card"'+playerLink+' style="display:block;color:inherit;text-decoration:none;">'
+    + '<div class="game-row"><div>'
+    + '<div class="teams">'+h(gameText)+'</div>'
+    + '<div class="edge-player"><span>Player:</span> '+h(playerName)+'</div>'
+    + '<div class="market">'+h(label)+' · '+h(detail)+'</div>'
+    + '</div><div class="edge-value">LIVE</div></div>'
+    + '<div class="meter"><span style="width:'+Math.max(35, Math.min(92, percent || 65))+'%;"></span></div>'
+    + '</a>';
+}
+
+function renderHeroEdges(){
+  const target = document.getElementById("heroEdgeCards");
+  if(!target) return;
+
+  const edges = [];
+  const pitcherEdge = (appState.pitcherH2H || [])[0];
+  const batterEdge = (appState.batterH2H || [])[0];
+  const liveHit = (appState.liveHits || [])[0];
+  const liveK = (appState.liveKs || [])[0];
+  const hotBat = (appState.hotHitters || [])[0];
+  const hotPitcher = (appState.hotPitchers || [])[0];
+
+  if(pitcherEdge) edges.push(heroEdgeCard(pitcherEdge, "Pitcher H2H Edge", 88));
+  if(batterEdge) edges.push(heroEdgeCard(batterEdge, "Batter vs Starter Edge", 84));
+  if(liveHit) edges.push(heroEdgeCard(liveHit, "Live Hit Leader", 76));
+  if(liveK) edges.push(heroEdgeCard(liveK, "Live Strikeout Leader", 74));
+  if(hotBat) edges.push(heroEdgeCard(hotBat, "Hot Bat Watch", 68));
+  if(hotPitcher) edges.push(heroEdgeCard(hotPitcher, "Pitcher K Watch", 66));
+
+  if(!edges.length){
+    target.innerHTML = '<div class="edge-card"><div class="game-row"><div><div class="teams">Today’s matchups loading...</div><div class="edge-player"><span>Diamond Pulse:</span> Edges update daily</div><div class="market">Probable starters, H2H, live hits, and K trends will appear here.</div></div><div class="edge-value">LIVE</div></div><div class="meter"><span style="width:45%;"></span></div></div>';
+    return;
+  }
+
+  target.innerHTML = edges.slice(0,3).join("");
+}
+
+
+function edgeRating(score){
+  if(score >= 85) return '<span class="tag">Elite</span>';
+  if(score >= 72) return '<span class="tag">Strong</span>';
+  if(score >= 58) return '<span class="tag">Watch</span>';
+  return '<span class="tag">Monitor</span>';
+}
+
+function playerEdgeLink(row, text){
+  if(row && row.personId){
+    return '<a href="player.html?id='+h(row.personId)+'" style="color:inherit;text-decoration:none;font-weight:900;">'+h(text || row.name)+'</a>';
+  }
+  return h(text || (row && row.name) || 'Team');
+}
+
+function edgeBoardRow(row, type, signal, context, score){
+  if(!row) return '';
+  const game = row.game || (row.opponent ? 'Today vs '+row.opponent : row.team || 'Today');
+  const player = playerEdgeLink(row, row.name || 'Today’s Edge');
+  const open = row.personId
+    ? '<a class="tag" href="player.html?id='+h(row.personId)+'">Breakdown</a>'
+    : '<span class="tag">Team</span>';
+
+  return '<tr>'
+    + '<td>'+h(game)+'</td>'
+    + '<td>'+player+'</td>'
+    + '<td>'+h(type)+'</td>'
+    + '<td>'+h(signal)+'</td>'
+    + '<td>'+h(context || row.status || row.extra || '')+'</td>'
+    + '<td class="'+(score >= 58 ? 'positive' : 'warning')+'">'+edgeRating(score)+'</td>'
+    + '<td>'+open+'</td>'
+    + '</tr>';
+}
+
+function renderEdgeBoard(){
+  const target = document.getElementById('edgeBoardRows');
+  if(!target) return;
+
+  const rows = [];
+
+  filterRows(appState.pitcherH2H || []).slice(0,8).forEach(row => {
+    const score = Math.min(96, 76 + Number(row.qualifiedGames || 0) * 4 + Math.min(10, Number(row.bestKs || 0)));
+    rows.push(edgeBoardRow(
+      row,
+      'Pitcher H2H Edge',
+      (row.qualifiedGames || 0)+' qualifying 8+ K games',
+      row.status || ('Best: '+(row.bestKs || row.value || '-')+' Ks vs '+(row.opponent || 'opponent')),
+      score
+    ));
+  });
+
+  filterRows(appState.batterH2H || []).slice(0,8).forEach(row => {
+    const score = Math.min(96, 72 + Number(row.hr || 0) * 8 + Math.min(12, Number(row.hits || 0)));
+    rows.push(edgeBoardRow(
+      row,
+      'Batter vs Starter Edge',
+      (row.hits || 0)+' H · '+(row.hr || 0)+' HR',
+      row.status || ('History vs '+(row.pitcherName || 'today’s starter')),
+      score
+    ));
+  });
+
+  filterRows(appState.hotHitters || []).slice(0,6).forEach(row => {
+    const score = Math.min(88, 52 + Number(row.value || 0) * 5);
+    rows.push(edgeBoardRow(
+      row,
+      'Hot Bat Watch',
+      (row.value || 0)+' hits recently',
+      row.status || 'Recent completed game trend',
+      score
+    ));
+  });
+
+  filterRows(appState.streakingHitters || []).slice(0,6).forEach(row => {
+    const score = Math.min(86, 54 + Number(row.value || 0) * 7);
+    rows.push(edgeBoardRow(
+      row,
+      'Hit Streak',
+      (row.value || 0)+' straight games',
+      row.status || 'Active recent hit streak',
+      score
+    ));
+  });
+
+  filterRows(appState.hotPitchers || []).slice(0,6).forEach(row => {
+    const score = Math.min(90, 55 + Number(row.value || 0) + Math.min(10, Number(row.whiffPct || 0) / 3));
+    rows.push(edgeBoardRow(
+      row,
+      'Pitcher K Watch',
+      (row.value || 0)+' Ks last 2 starts',
+      row.status || ('Whiff%: '+(row.whiffPct || '0.0')+'%'),
+      score
+    ));
+  });
+
+  filterRows(appState.liveHits || []).slice(0,5).forEach(row => {
+    const score = Math.min(82, 50 + Number(row.value || 0) * 9);
+    rows.push(edgeBoardRow(
+      row,
+      'Live Hit Leader',
+      (row.value || 0)+' hits live',
+      row.status || (row.lastHitLabel ? 'Latest: '+row.lastHitLabel : 'Game in progress'),
+      score
+    ));
+  });
+
+  filterRows(appState.liveKs || []).slice(0,5).forEach(row => {
+    const score = Math.min(84, 50 + Number(row.value || 0) * 6);
+    rows.push(edgeBoardRow(
+      row,
+      'Live Strikeout Leader',
+      (row.value || 0)+' Ks live',
+      row.status || 'Game in progress',
+      score
+    ));
+  });
+
+  if(!rows.length){
+    target.innerHTML = '<tr><td colspan="7">Today’s edge board is loading. It will populate from today’s matchups once schedules, probable starters, and recent stats are available.</td></tr>';
+    return;
+  }
+
+  target.innerHTML = rows.slice(0,24).join('');
+}
+
+function renderAllData(){ profileStore=[]; renderHeroEdges(); renderEdgeBoard(); renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
 async function findPreviousCompletedGameDay(){ for(let i=1;i<=10;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(finals.length) return {dateString,games:finals}; } return {dateString:"",games:[]}; }
