@@ -616,6 +616,12 @@
       font-size: 14px;
     }
 
+
+    .account-links{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:800}
+    .account-btn{padding:9px 13px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;font-weight:800}
+    .account-btn.primary{background:var(--green);color:#06101d;border-color:var(--green)}
+    @media(max-width:900px){.account-links{margin-top:10px}.nav{align-items:flex-start;gap:12px;flex-wrap:wrap}}
+
     @media (max-width: 900px) {
       .hero,
       .grid-3 {
@@ -639,6 +645,11 @@
       }
     }
   </style>
+
+  <!-- Supabase login/account support -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+
 </head>
 
 <body>
@@ -766,6 +777,12 @@
       </div>
 
       <a href="#live-dashboard" class="nav-cta">Open Dashboard</a>
+
+      <div class="account-links">
+        <span id="accountStatus">Not signed in</span>
+        <button class="account-btn primary" onclick="signInWithEmailPrompt()">Sign In</button>
+        <button class="account-btn" onclick="signOutUser()">Sign Out</button>
+      </div>
     </nav>
   </header>
 
@@ -1371,6 +1388,49 @@ async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); 
 appState.followedPlayers=loadFollowedPlayers();
 loadDashboard(); loadStaticSectionsOnce(); loadHeadToHeadEdges();
 setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
+</script>
+
+
+<script>
+async function refreshAccountStatus(){
+  if(typeof supabaseClient === "undefined") return;
+  const { data } = await supabaseClient.auth.getUser();
+  const el = document.getElementById("accountStatus");
+  if(!el) return;
+  el.textContent = data && data.user ? data.user.email : "Not signed in";
+}
+
+async function signInWithEmailPrompt(){
+  if(typeof supabaseClient === "undefined"){
+    alert("Supabase is not connected yet. Check supabase.js.");
+    return;
+  }
+  const email = prompt("Enter your email to sign in or create an account:");
+  if(!email) return;
+  const password = prompt("Enter your password:");
+  if(!password) return;
+
+  let result = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if(result.error){
+    result = await supabaseClient.auth.signUp({ email, password });
+    if(result.error){
+      alert(result.error.message);
+      return;
+    }
+    alert("Account created. Check your email if Supabase asks you to confirm it.");
+  }
+
+  refreshAccountStatus();
+}
+
+async function signOutUser(){
+  if(typeof supabaseClient === "undefined") return;
+  await supabaseClient.auth.signOut();
+  refreshAccountStatus();
+}
+
+document.addEventListener("DOMContentLoaded", refreshAccountStatus);
 </script>
 
 </body>
