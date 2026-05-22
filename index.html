@@ -616,12 +616,6 @@
       font-size: 14px;
     }
 
-
-    .account-links{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:800}
-    .account-btn{padding:9px 13px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;font-weight:800}
-    .account-btn.primary{background:var(--green);color:#06101d;border-color:var(--green)}
-    @media(max-width:900px){.account-links{margin-top:10px}.nav{align-items:flex-start;gap:12px;flex-wrap:wrap}}
-
     @media (max-width: 900px) {
       .hero,
       .grid-3 {
@@ -644,12 +638,23 @@
         overflow-x: auto;
       }
     }
-  </style>
+  
+    .auth-button {
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
 
-  <!-- Supabase login/account support -->
+    @media (max-width: 900px) {
+      .auth-nav-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
-
 </head>
 
 <body>
@@ -776,12 +781,11 @@
         <a href="#features">Features</a>
       </div>
 
-      <a href="#live-dashboard" class="nav-cta">Open Dashboard</a>
-
-      <div class="account-links">
-        <span id="accountStatus">Not signed in</span>
-        <button class="account-btn primary" onclick="signInWithEmailPrompt()">Sign In</button>
-        <button class="account-btn" onclick="signOutUser()">Sign Out</button>
+      <div class="auth-nav-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <a href="#live-dashboard" class="nav-cta">Dashboard</a>
+        <button class="nav-cta auth-button" onclick="showSignup()" type="button">Sign Up</button>
+        <button class="nav-cta auth-button" onclick="showLogin()" type="button" id="loginBtn">Log In</button>
+        <button class="nav-cta auth-button" onclick="logoutUser()" type="button" id="logoutBtn" style="display:none;">Log Out</button>
       </div>
     </nav>
   </header>
@@ -1391,46 +1395,178 @@ setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
 </script>
 
 
+<div id="authModal" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:20px;
+">
+  <div style="
+    width:min(420px,100%);
+    background:#0d1b2f;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 24px 70px rgba(0,0,0,.45);
+  ">
+    <h2 id="authTitle" style="margin-top:0;">Log In</h2>
+
+    <label style="display:block;margin-bottom:8px;color:#91a4bd;font-weight:800;">Email</label>
+    <input
+      id="authEmail"
+      type="email"
+      placeholder="you@example.com"
+      autocomplete="email"
+      style="width:100%;margin-bottom:14px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;"
+    />
+
+    <label style="display:block;margin-bottom:8px;color:#91a4bd;font-weight:800;">Password</label>
+    <input
+      id="authPassword"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      style="width:100%;margin-bottom:18px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;"
+    />
+
+    <button id="authSubmit" class="nav-cta" type="button" style="width:100%;border:0;cursor:pointer;">
+      Log In
+    </button>
+
+    <button
+      onclick="closeAuthModal()"
+      type="button"
+      style="width:100%;margin-top:12px;background:none;border:none;color:#91a4bd;cursor:pointer;font-weight:800;"
+    >
+      Cancel
+    </button>
+
+    <p id="authMessage" style="margin:14px 0 0;color:#91a4bd;font-size:13px;line-height:1.4;"></p>
+  </div>
+</div>
+
 <script>
-async function refreshAccountStatus(){
-  if(typeof supabaseClient === "undefined") return;
-  const { data } = await supabaseClient.auth.getUser();
-  const el = document.getElementById("accountStatus");
-  if(!el) return;
-  el.textContent = data && data.user ? data.user.email : "Not signed in";
+let authMode = "login";
+
+function setAuthMessage(message) {
+  const authMessage = document.getElementById("authMessage");
+  if (authMessage) authMessage.innerText = message || "";
 }
 
-async function signInWithEmailPrompt(){
-  if(typeof supabaseClient === "undefined"){
-    alert("Supabase is not connected yet. Check supabase.js.");
+function showLogin() {
+  authMode = "login";
+  setAuthMessage("");
+  document.getElementById("authModal").style.display = "flex";
+  document.getElementById("authTitle").innerText = "Log In";
+  document.getElementById("authSubmit").innerText = "Log In";
+}
+
+function showSignup() {
+  authMode = "signup";
+  setAuthMessage("Create an account to save favorite players and teams.");
+  document.getElementById("authModal").style.display = "flex";
+  document.getElementById("authTitle").innerText = "Create Account";
+  document.getElementById("authSubmit").innerText = "Create Account";
+}
+
+function closeAuthModal() {
+  document.getElementById("authModal").style.display = "none";
+}
+
+async function createUserProfile(user) {
+  if (!user || !window.supabaseClient) return;
+
+  await supabaseClient
+    .from("profiles")
+    .upsert({
+      id: user.id,
+      email: user.email
+    });
+}
+
+document.getElementById("authSubmit").addEventListener("click", async () => {
+  if (!window.supabaseClient && typeof supabaseClient === "undefined") {
+    alert("Supabase is not connected. Check supabase.js.");
     return;
   }
-  const email = prompt("Enter your email to sign in or create an account:");
-  if(!email) return;
-  const password = prompt("Enter your password:");
-  if(!password) return;
 
-  let result = await supabaseClient.auth.signInWithPassword({ email, password });
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
 
-  if(result.error){
-    result = await supabaseClient.auth.signUp({ email, password });
-    if(result.error){
-      alert(result.error.message);
-      return;
-    }
-    alert("Account created. Check your email if Supabase asks you to confirm it.");
+  if (!email || !password) {
+    alert("Enter an email and password.");
+    return;
   }
 
-  refreshAccountStatus();
-}
+  if (authMode === "signup") {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
 
-async function signOutUser(){
-  if(typeof supabaseClient === "undefined") return;
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (data && data.user) {
+      await createUserProfile(data.user);
+    }
+
+    setAuthMessage("Account created. Check your email if Supabase asks for confirmation.");
+    alert("Account created!");
+  } else {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (data && data.user) {
+      await createUserProfile(data.user);
+    }
+
+    alert("Logged in!");
+  }
+
+  closeAuthModal();
+  checkUser();
+});
+
+async function logoutUser() {
+  if (!window.supabaseClient && typeof supabaseClient === "undefined") return;
   await supabaseClient.auth.signOut();
-  refreshAccountStatus();
+  checkUser();
 }
 
-document.addEventListener("DOMContentLoaded", refreshAccountStatus);
+async function checkUser() {
+  if (!window.supabaseClient && typeof supabaseClient === "undefined") return;
+
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  const loginBtn = document.getElementById("loginBtn");
+
+  if (user) {
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    if (loginBtn) loginBtn.style.display = "none";
+  } else {
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (loginBtn) loginBtn.style.display = "inline-block";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", checkUser);
 </script>
 
 </body>
