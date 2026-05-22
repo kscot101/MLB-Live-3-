@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player Breakdown | Diamond Pulse</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #07111f;
+      color: #f4f7fb;
+      padding: 20px;
+    }
+
+    .wrap {
+      max-width: 1050px;
+      margin: auto;
+    }
+
+    a {
+      color: #2ff58a;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .hero,
+    .card {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      padding: 10px;
+      object-fit: contain;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 60px);
+      line-height: 1;
+    }
+
+    .muted {
+      color: #91a4bd;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat {
+      font-size: 34px;
+      font-weight: 900;
+      color: #2ff58a;
+    }
+
+    .label {
+      color: #91a4bd;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .reason {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(47,245,138,0.1);
+      border: 1px solid rgba(47,245,138,0.25);
+      margin-top: 10px;
+      font-weight: 800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      padding: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: left;
+    }
+
+    th {
+      color: #91a4bd;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 800px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <p><a href="index.html">← Back to Diamond Pulse</a></p>
+
+    <section id="playerHero" class="hero">
+      <div class="muted">Loading player...</div>
+    </section>
+
+    <section class="card">
+      <h2>Why This Player Is Highlighted</h2>
+      <div id="reasons"></div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div id="games" class="stat">-</div>
+        <div class="label">Games Found</div>
+      </div>
+
+      <div class="card">
+        <div id="hits" class="stat">-</div>
+        <div class="label">Recent Hits</div>
+      </div>
+
+      <div class="card">
+        <div id="strikeouts" class="stat">-</div>
+        <div class="label">Recent Strikeouts</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Recent Game Log</h2>
+      <div id="gameLog">Loading stats...</div>
+    </section>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const playerId = params.get("id");
+
+    function h(value) {
+      return String(value ?? "").replace(/[&<>"']/g, ch => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[ch]));
+    }
+
+    function currentSeason() {
+      return new Date().getFullYear();
+    }
+
+    async function getJson(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Could not load " + url);
+      return await res.json();
+    }
+
+    async function loadPlayer() {
+      if (!playerId) {
+        document.getElementById("playerHero").innerHTML = "<div>No player ID found.</div>";
+        return;
+      }
+
+      const personUrl = "https://statsapi.mlb.com/api/v1/people/" + playerId + "?hydrate=currentTeam";
+      const statsUrl = "https://statsapi.mlb.com/api/v1/people/" + playerId + "/stats?stats=gameLog&group=hitting,pitching&season=" + currentSeason();
+
+      const personData = await getJson(personUrl);
+      const statsData = await getJson(statsUrl);
+
+      const player = personData.people[0];
+      const team = player.currentTeam || {};
+      const teamLogo = team.id ? "https://www.mlbstatic.com/team-logos/" + team.id + ".svg" : "";
+
+      document.title = player.fullName + " | Diamond Pulse";
+
+      document.getElementById("playerHero").innerHTML = `
+        <img class="logo" src="${teamLogo}" alt="">
+        <div>
+          <h1>${h(player.fullName)}</h1>
+          <p class="muted">${h(team.name || "MLB Player")} · ${h(player.primaryPosition?.name || "")}</p>
+        </div>
+      `;
+
+      const splits = [];
+
+      (statsData.stats || []).forEach(group => {
+        (group.splits || []).forEach(split => {
+          splits.push({
+            date: split.date,
+            opponent: split.opponent?.name || "Opponent",
+            stat: split.stat || {}
+          });
+        });
+      });
+
+      splits.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const recent = splits.slice(0, 8);
+
+      const totalHits = recent.reduce((sum, game) => sum + Number(game.stat.hits || 0), 0);
+      const totalKs = recent.reduce((sum, game) => sum + Number(game.stat.strikeOuts || 0), 0);
+
+      document.getElementById("games").textContent = recent.length;
+      document.getElementById("hits").textContent = totalHits;
+      document.getElementById("strikeouts").textContent = totalKs;
+
+      const reasons = [];
+
+      if (totalHits >= 5) {
+        reasons.push("🔥 Hot Bat: strong recent hit production.");
+      }
+
+      if (totalKs >= 8) {
+        reasons.push("🌊 Strikeout Watch: high recent strikeout activity.");
+      }
+
+      const hitStreak = countHitStreak(recent);
+
+      if (hitStreak >= 3) {
+        reasons.push("💗 Hit Streak: hit in " + hitStreak + " straight recent games.");
+      }
+
+      if (!reasons.length) {
+        reasons.push("📊 This player was selected from the Diamond Pulse board. Recent stats are shown below.");
+      }
+
+      document.getElementById("reasons").innerHTML = reasons
+        .map(reason => `<div class="reason">${h(reason)}</div>`)
+        .join("");
+
+      document.getElementById("gameLog").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Opponent</th>
+              <th>AB</th>
+              <th>H</th>
+              <th>HR</th>
+              <th>RBI</th>
+              <th>K</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recent.map(game => `
+              <tr>
+                <td>${h(game.date)}</td>
+                <td>${h(game.opponent)}</td>
+                <td>${h(game.stat.atBats ?? "-")}</td>
+                <td>${h(game.stat.hits ?? "-")}</td>
+                <td>${h(game.stat.homeRuns ?? "-")}</td>
+                <td>${h(game.stat.rbi ?? "-")}</td>
+                <td>${h(game.stat.strikeOuts ?? "-")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function countHitStreak(games) {
+      let streak = 0;
+
+      for (const game of games) {
+        if (Number(game.stat.hits || 0) > 0) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+
+      return streak;
+    }
+
+    loadPlayer().catch(err => {
+      console.error(err);
+      document.getElementById("gameLog").innerHTML = "Could not load player stats.";
+    });
+  </script>
+</body>
+</html>
