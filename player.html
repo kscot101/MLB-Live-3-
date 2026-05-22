@@ -4,34 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Player Breakdown | Diamond Pulse</title>
-
   <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.1);
+      --text: #f4f7fb;
+      --muted: #91a4bd;
+      --green: #2ff58a;
+      --blue: #3aa7ff;
+      --orange: #ffb347;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
-      background: #07111f;
-      color: #f4f7fb;
+      background:
+        radial-gradient(circle at top left, rgba(47,245,138,0.14), transparent 32%),
+        radial-gradient(circle at top right, rgba(58,167,255,0.12), transparent 34%),
+        var(--bg);
+      color: var(--text);
       padding: 20px;
+      min-height: 100vh;
     }
 
     .wrap {
-      max-width: 1050px;
+      max-width: 1100px;
       margin: auto;
     }
 
     a {
-      color: #2ff58a;
+      color: var(--green);
       text-decoration: none;
       font-weight: 800;
     }
 
     .hero,
     .card {
-      background: rgba(255,255,255,0.055);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 24px;
       padding: 24px;
       margin-bottom: 18px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.24);
     }
 
     .hero {
@@ -54,10 +71,16 @@
       margin: 0;
       font-size: clamp(34px, 6vw, 60px);
       line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
     }
 
     .muted {
-      color: #91a4bd;
+      color: var(--muted);
     }
 
     .grid {
@@ -69,14 +92,16 @@
     .stat {
       font-size: 34px;
       font-weight: 900;
-      color: #2ff58a;
+      color: var(--green);
+      line-height: 1;
     }
 
     .label {
-      color: #91a4bd;
+      color: var(--muted);
       font-size: 13px;
       font-weight: 800;
       text-transform: uppercase;
+      margin-top: 7px;
     }
 
     .reason {
@@ -88,6 +113,12 @@
       font-weight: 800;
     }
 
+    .reason.orange {
+      background: rgba(255,179,71,0.1);
+      border-color: rgba(255,179,71,0.3);
+      color: #ffe0ad;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -97,20 +128,45 @@
     th,
     td {
       padding: 13px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--border);
       text-align: left;
+      font-size: 14px;
     }
 
     th {
-      color: #91a4bd;
+      color: var(--muted);
       font-size: 12px;
       text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(47,245,138,0.1);
+      border: 1px solid rgba(47,245,138,0.22);
+      color: var(--green);
+      font-weight: 900;
+      font-size: 12px;
+      margin-top: 10px;
     }
 
     @media (max-width: 800px) {
+      body { padding: 14px; }
+
       .hero,
       .grid {
         grid-template-columns: 1fr;
+      }
+
+      .logo {
+        width: 76px;
+        height: 76px;
       }
     }
   </style>
@@ -132,7 +188,7 @@
     <section class="grid">
       <div class="card">
         <div id="games" class="stat">-</div>
-        <div class="label">Games Found</div>
+        <div class="label">Recent Games</div>
       </div>
 
       <div class="card">
@@ -155,6 +211,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const playerId = params.get("id");
+    const reasonFromLink = params.get("reason");
 
     function h(value) {
       return String(value ?? "").replace(/[&<>"']/g, ch => ({
@@ -171,9 +228,36 @@
     }
 
     async function getJson(url) {
-      const res = await fetch(url);
+      const sep = url.includes("?") ? "&" : "?";
+      const res = await fetch(url + sep + "_=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("Could not load " + url);
       return await res.json();
+    }
+
+    async function loadStatGroup(group) {
+      const url = "https://statsapi.mlb.com/api/v1/people/" + playerId +
+        "/stats?stats=gameLog&group=" + group + "&season=" + currentSeason();
+
+      try {
+        const data = await getJson(url);
+        const splits = [];
+
+        (data.stats || []).forEach(statBlock => {
+          (statBlock.splits || []).forEach(split => {
+            splits.push({
+              group,
+              date: split.date,
+              opponent: split.opponent?.name || "Opponent",
+              stat: split.stat || {}
+            });
+          });
+        });
+
+        return splits;
+      } catch (err) {
+        console.warn("Could not load " + group + " stats", err);
+        return [];
+      }
     }
 
     async function loadPlayer() {
@@ -183,11 +267,7 @@
       }
 
       const personUrl = "https://statsapi.mlb.com/api/v1/people/" + playerId + "?hydrate=currentTeam";
-      const statsUrl = "https://statsapi.mlb.com/api/v1/people/" + playerId + "/stats?stats=gameLog&group=hitting,pitching&season=" + currentSeason();
-
       const personData = await getJson(personUrl);
-      const statsData = await getJson(statsUrl);
-
       const player = personData.people[0];
       const team = player.currentTeam || {};
       const teamLogo = team.id ? "https://www.mlbstatic.com/team-logos/" + team.id + ".svg" : "";
@@ -199,24 +279,17 @@
         <div>
           <h1>${h(player.fullName)}</h1>
           <p class="muted">${h(team.name || "MLB Player")} · ${h(player.primaryPosition?.name || "")}</p>
+          ${reasonFromLink ? `<div class="pill">${h(reasonFromLink.replaceAll("-", " "))}</div>` : ""}
         </div>
       `;
 
-      const splits = [];
+      const hittingSplits = await loadStatGroup("hitting");
+      const pitchingSplits = await loadStatGroup("pitching");
 
-      (statsData.stats || []).forEach(group => {
-        (group.splits || []).forEach(split => {
-          splits.push({
-            date: split.date,
-            opponent: split.opponent?.name || "Opponent",
-            stat: split.stat || {}
-          });
-        });
-      });
+      const allSplits = hittingSplits.concat(pitchingSplits)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      splits.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      const recent = splits.slice(0, 8);
+      const recent = allSplits.slice(0, 8);
 
       const totalHits = recent.reduce((sum, game) => sum + Number(game.stat.hits || 0), 0);
       const totalKs = recent.reduce((sum, game) => sum + Number(game.stat.strikeOuts || 0), 0);
@@ -227,6 +300,10 @@
 
       const reasons = [];
 
+      if (reasonFromLink) {
+        reasons.push("⭐ Diamond Pulse highlighted this player for: " + reasonFromLink.replaceAll("-", " ") + ".");
+      }
+
       if (totalHits >= 5) {
         reasons.push("🔥 Hot Bat: strong recent hit production.");
       }
@@ -235,7 +312,7 @@
         reasons.push("🌊 Strikeout Watch: high recent strikeout activity.");
       }
 
-      const hitStreak = countHitStreak(recent);
+      const hitStreak = countHitStreak(hittingSplits.slice(0, 8));
 
       if (hitStreak >= 3) {
         reasons.push("💗 Hit Streak: hit in " + hitStreak + " straight recent games.");
@@ -246,36 +323,52 @@
       }
 
       document.getElementById("reasons").innerHTML = reasons
-        .map(reason => `<div class="reason">${h(reason)}</div>`)
+        .map((reason, index) => `<div class="reason ${index === 0 && reasonFromLink ? "orange" : ""}">${h(reason)}</div>`)
         .join("");
 
-      document.getElementById("gameLog").innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Opponent</th>
-              <th>AB</th>
-              <th>H</th>
-              <th>HR</th>
-              <th>RBI</th>
-              <th>K</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${recent.map(game => `
+      document.getElementById("gameLog").innerHTML = buildGameLog(recent);
+    }
+
+    function buildGameLog(games) {
+      if (!games.length) {
+        return "<p class='muted'>No current season game log found yet.</p>";
+      }
+
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td>${h(game.date)}</td>
-                <td>${h(game.opponent)}</td>
-                <td>${h(game.stat.atBats ?? "-")}</td>
-                <td>${h(game.stat.hits ?? "-")}</td>
-                <td>${h(game.stat.homeRuns ?? "-")}</td>
-                <td>${h(game.stat.rbi ?? "-")}</td>
-                <td>${h(game.stat.strikeOuts ?? "-")}</td>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Opponent</th>
+                <th>AB</th>
+                <th>H</th>
+                <th>HR</th>
+                <th>RBI</th>
+                <th>K</th>
+                <th>IP</th>
+                <th>ER</th>
               </tr>
-            `).join("")}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${games.map(game => `
+                <tr>
+                  <td>${h(game.date)}</td>
+                  <td>${h(game.group)}</td>
+                  <td>${h(game.opponent)}</td>
+                  <td>${h(game.stat.atBats ?? "-")}</td>
+                  <td>${h(game.stat.hits ?? "-")}</td>
+                  <td>${h(game.stat.homeRuns ?? "-")}</td>
+                  <td>${h(game.stat.rbi ?? "-")}</td>
+                  <td>${h(game.stat.strikeOuts ?? "-")}</td>
+                  <td>${h(game.stat.inningsPitched ?? "-")}</td>
+                  <td>${h(game.stat.earnedRuns ?? "-")}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
@@ -295,6 +388,7 @@
 
     loadPlayer().catch(err => {
       console.error(err);
+      document.getElementById("playerHero").innerHTML = "<div>Could not load this player.</div>";
       document.getElementById("gameLog").innerHTML = "Could not load player stats.";
     });
   </script>
