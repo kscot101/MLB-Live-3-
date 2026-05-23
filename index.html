@@ -638,22 +638,8 @@
         overflow-x: auto;
       }
     }
-  
-    .auth-button {
-      border: 0;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    @media (max-width: 900px) {
-      .auth-nav-actions {
-        margin-top: 10px;
-        width: 100%;
-        justify-content: flex-start;
-      }
-    }
-</style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
 </head>
 
@@ -781,11 +767,10 @@
         <a href="#features">Features</a>
       </div>
 
-      <div class="auth-nav-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <a href="#live-dashboard" class="nav-cta">Dashboard</a>
-        <button class="nav-cta auth-button" onclick="showSignup()" type="button">Sign Up</button>
-        <button class="nav-cta auth-button" onclick="showLogin()" type="button" id="loginBtn">Log In</button>
-        <button class="nav-cta auth-button" onclick="logoutUser()" type="button" id="logoutBtn" style="display:none;">Log Out</button>
+      <div class="auth-nav" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button type="button" class="nav-cta" onclick="showSignup()">Sign Up</button>
+        <button type="button" class="nav-cta" id="loginBtn" onclick="showLogin()">Log In</button>
+        <button type="button" class="nav-cta" id="logoutBtn" onclick="logoutUser()" style="display:none;">Log Out</button>
       </div>
     </nav>
   </header>
@@ -1395,178 +1380,148 @@ setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
 </script>
 
 
-<div id="authModal" style="
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.72);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-  padding:20px;
-">
-  <div style="
-    width:min(420px,100%);
-    background:#0d1b2f;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:24px;
-    padding:28px;
-    box-shadow:0 24px 70px rgba(0,0,0,.45);
-  ">
-    <h2 id="authTitle" style="margin-top:0;">Log In</h2>
+<div id="authModal" style="position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:99999;padding:18px;">
+  <div style="width:min(430px,100%);background:#0d1b2f;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.55);">
+    <h2 id="authTitle" style="margin:0 0 14px;color:#f4f7fb;">Log In</h2>
+    <p id="authMessage" style="color:#91a4bd;margin:0 0 16px;font-size:14px;"></p>
 
-    <label style="display:block;margin-bottom:8px;color:#91a4bd;font-weight:800;">Email</label>
-    <input
-      id="authEmail"
-      type="email"
-      placeholder="you@example.com"
-      autocomplete="email"
-      style="width:100%;margin-bottom:14px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;"
-    />
+    <input id="authEmail" type="email" placeholder="Email" autocomplete="email" style="width:100%;margin-bottom:12px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;" />
 
-    <label style="display:block;margin-bottom:8px;color:#91a4bd;font-weight:800;">Password</label>
-    <input
-      id="authPassword"
-      type="password"
-      placeholder="Password"
-      autocomplete="current-password"
-      style="width:100%;margin-bottom:18px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;"
-    />
+    <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;margin-bottom:16px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;" />
 
-    <button id="authSubmit" class="nav-cta" type="button" style="width:100%;border:0;cursor:pointer;">
-      Log In
-    </button>
+    <button type="button" id="authSubmit" class="nav-cta" style="width:100%;border:none;cursor:pointer;">Continue</button>
 
-    <button
-      onclick="closeAuthModal()"
-      type="button"
-      style="width:100%;margin-top:12px;background:none;border:none;color:#91a4bd;cursor:pointer;font-weight:800;"
-    >
-      Cancel
-    </button>
-
-    <p id="authMessage" style="margin:14px 0 0;color:#91a4bd;font-size:13px;line-height:1.4;"></p>
+    <button type="button" onclick="closeAuthModal()" style="width:100%;margin-top:12px;background:none;border:none;color:#a7f3d0;cursor:pointer;font-weight:800;">Cancel</button>
   </div>
 </div>
 
 <script>
-let authMode = "login";
+(function () {
+  let authMode = "login";
 
-function setAuthMessage(message) {
-  const authMessage = document.getElementById("authMessage");
-  if (authMessage) authMessage.innerText = message || "";
-}
-
-function showLogin() {
-  authMode = "login";
-  setAuthMessage("");
-  document.getElementById("authModal").style.display = "flex";
-  document.getElementById("authTitle").innerText = "Log In";
-  document.getElementById("authSubmit").innerText = "Log In";
-}
-
-function showSignup() {
-  authMode = "signup";
-  setAuthMessage("Create an account to save favorite players and teams.");
-  document.getElementById("authModal").style.display = "flex";
-  document.getElementById("authTitle").innerText = "Create Account";
-  document.getElementById("authSubmit").innerText = "Create Account";
-}
-
-function closeAuthModal() {
-  document.getElementById("authModal").style.display = "none";
-}
-
-async function createUserProfile(user) {
-  if (!user || !window.supabaseClient) return;
-
-  await supabaseClient
-    .from("profiles")
-    .upsert({
-      id: user.id,
-      email: user.email
-    });
-}
-
-document.getElementById("authSubmit").addEventListener("click", async () => {
-  if (!window.supabaseClient && typeof supabaseClient === "undefined") {
-    alert("Supabase is not connected. Check supabase.js.");
-    return;
+  function hasSupabase() {
+    return typeof supabaseClient !== "undefined" && supabaseClient && supabaseClient.auth;
   }
 
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-
-  if (!email || !password) {
-    alert("Enter an email and password.");
-    return;
+  function setAuthMessage(message) {
+    const authMessage = document.getElementById("authMessage");
+    if (authMessage) authMessage.innerText = message || "";
   }
 
-  if (authMode === "signup") {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password
-    });
+  window.showLogin = function () {
+    authMode = "login";
+    setAuthMessage("");
+    document.getElementById("authModal").style.display = "flex";
+    document.getElementById("authTitle").innerText = "Log In";
+    document.getElementById("authSubmit").innerText = "Log In";
+  };
 
-    if (error) {
-      alert(error.message);
+  window.showSignup = function () {
+    authMode = "signup";
+    setAuthMessage("Create an account to save favorite players and teams.");
+    document.getElementById("authModal").style.display = "flex";
+    document.getElementById("authTitle").innerText = "Create Account";
+    document.getElementById("authSubmit").innerText = "Create Account";
+  };
+
+  window.closeAuthModal = function () {
+    document.getElementById("authModal").style.display = "none";
+  };
+
+  async function createUserProfile(user) {
+    if (!user || !hasSupabase()) return;
+
+    try {
+      await supabaseClient
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          email: user.email
+        });
+    } catch (err) {
+      console.warn("Profile save skipped:", err);
+    }
+  }
+
+  window.logoutUser = async function () {
+    if (!hasSupabase()) {
+      alert("Supabase is not connected. Check supabase.js.");
       return;
     }
 
-    if (data && data.user) {
-      await createUserProfile(data.user);
+    await supabaseClient.auth.signOut();
+    await window.checkUser();
+  };
+
+  window.checkUser = async function () {
+    if (!hasSupabase()) return;
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginBtn = document.getElementById("loginBtn");
+
+    if (user) {
+      if (logoutBtn) logoutBtn.style.display = "inline-block";
+      if (loginBtn) loginBtn.style.display = "none";
+    } else {
+      if (logoutBtn) logoutBtn.style.display = "none";
+      if (loginBtn) loginBtn.style.display = "inline-block";
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const authSubmit = document.getElementById("authSubmit");
+
+    if (authSubmit) {
+      authSubmit.addEventListener("click", async function () {
+        if (!hasSupabase()) {
+          alert("Supabase is not connected. Check supabase.js.");
+          return;
+        }
+
+        const email = document.getElementById("authEmail").value.trim();
+        const password = document.getElementById("authPassword").value;
+
+        if (!email || !password) {
+          alert("Enter an email and password.");
+          return;
+        }
+
+        let result;
+
+        if (authMode === "signup") {
+          result = await supabaseClient.auth.signUp({
+            email,
+            password
+          });
+        } else {
+          result = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+        }
+
+        if (result.error) {
+          alert(result.error.message);
+          return;
+        }
+
+        if (result.data && result.data.user) {
+          await createUserProfile(result.data.user);
+        }
+
+        alert(authMode === "signup" ? "Account created!" : "Logged in!");
+        window.closeAuthModal();
+        await window.checkUser();
+      });
     }
 
-    setAuthMessage("Account created. Check your email if Supabase asks for confirmation.");
-    alert("Account created!");
-  } else {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    if (data && data.user) {
-      await createUserProfile(data.user);
-    }
-
-    alert("Logged in!");
-  }
-
-  closeAuthModal();
-  checkUser();
-});
-
-async function logoutUser() {
-  if (!window.supabaseClient && typeof supabaseClient === "undefined") return;
-  await supabaseClient.auth.signOut();
-  checkUser();
-}
-
-async function checkUser() {
-  if (!window.supabaseClient && typeof supabaseClient === "undefined") return;
-
-  const {
-    data: { user }
-  } = await supabaseClient.auth.getUser();
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  const loginBtn = document.getElementById("loginBtn");
-
-  if (user) {
-    if (logoutBtn) logoutBtn.style.display = "inline-block";
-    if (loginBtn) loginBtn.style.display = "none";
-  } else {
-    if (logoutBtn) logoutBtn.style.display = "none";
-    if (loginBtn) loginBtn.style.display = "inline-block";
-  }
-}
-
-document.addEventListener("DOMContentLoaded", checkUser);
+    window.checkUser();
+  });
+})();
 </script>
 
 </body>
