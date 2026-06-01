@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Pulse Post Generator</title>
+  <style>
+    :root {
+      --bg:#07111f;
+      --panel:rgba(255,255,255,.055);
+      --border:rgba(255,255,255,.12);
+      --text:#f4f7fb;
+      --muted:#91a4bd;
+      --green:#2ff58a;
+      --orange:#ffb347;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(47,245,138,.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(58,167,255,.12), transparent 32%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, Arial, sans-serif;
+      padding:24px;
+    }
+
+    .wrap {
+      max-width:900px;
+      margin:auto;
+    }
+
+    .card {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:24px;
+      margin-bottom:18px;
+      box-shadow:0 18px 50px rgba(0,0,0,.28);
+    }
+
+    h1 {
+      margin:0 0 8px;
+      font-size:clamp(34px, 6vw, 58px);
+      line-height:1;
+      letter-spacing:-2px;
+    }
+
+    p { color:var(--muted); }
+
+    button {
+      border:0;
+      border-radius:999px;
+      background:var(--green);
+      color:#06101d;
+      font-weight:900;
+      padding:12px 18px;
+      cursor:pointer;
+      margin-right:8px;
+      margin-top:8px;
+    }
+
+    button.secondary {
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+
+    textarea, pre {
+      width:100%;
+      min-height:230px;
+      background:#020617;
+      color:#d1fae5;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      font-size:15px;
+      line-height:1.45;
+      white-space:pre-wrap;
+      overflow:auto;
+    }
+
+    .status {
+      color:var(--orange);
+      font-weight:800;
+      margin-top:10px;
+    }
+
+    .small {
+      font-size:13px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Daily Pulse Generator</h1>
+      <p>
+        This private helper page builds a daily Diamond Pulse post from live MLB public data.
+        Do not link this page in your main navigation.
+      </p>
+
+      <button onclick="generateDailyPulse()">Generate Today's Post</button>
+      <button class="secondary" onclick="copyPost()">Copy Post</button>
+      <button class="secondary" onclick="downloadJson()">Download JSON</button>
+
+      <div id="status" class="status">Ready.</div>
+    </div>
+
+    <div class="card">
+      <h2>Post Text</h2>
+      <textarea id="postText" readonly>Click "Generate Today's Post".</textarea>
+    </div>
+
+    <div class="card">
+      <h2>JSON Data</h2>
+      <pre id="jsonOutput">{}</pre>
+      <p class="small">
+        Note: normal Zapier Webhook GET requests do not run this page's JavaScript.
+        For full automation, use Zapier Code, Make, or GitHub Actions to run the same logic server-side.
+      </p>
+    </div>
+  </div>
+
+<script>
+const MLB = "https://statsapi.mlb.com/api/v1";
+
+let dailyPulseData = null;
+
+function nyDate(offsetDays = 0) {
+  const ny = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  ny.setDate(ny.getDate() + offsetDays);
+  return ny.getFullYear() + "-" +
+    String(ny.getMonth() + 1).padStart(2, "0") + "-" +
+    String(ny.getDate()).padStart(2, "0");
+}
+
+function currentSeason() {
+  return Number(nyDate().slice(0, 4));
+}
+
+async function getJson(url) {
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(url + sep + "_=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("Could not load " + url);
+  return await res.json();
+}
+
+function setStatus(text) {
+  document.getElementById("status").textContent = text;
+}
+
+function h(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[ch]));
+}
+
+async function getTodaysGames() {
+  const today = nyDate();
+  const data = await getJson(
+    MLB + "/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher,venue,linescore"
+  );
+
+  const games = [];
+  (data.dates || []).forEach(date => {
+    (date.games || []).forEach(game => games.push(game));
+  });
+
+  return games;
+}
+
+function todaysTeamIds(games) {
+  const ids = new Set();
+  games.forEach(game => {
+    ids.add(String(game.teams.away.team.id));
+    ids.add(String(game.teams.home.team.id));
+  });
+  return ids;
+}
+
+async function findRecentFinalGames(maxDays = 8) {
+  const finals = [];
+
+  for (let i = 1; i <= maxDays && finals.length < 40; i++) {
+    const date = nyDate(-i);
+    const data = await getJson(MLB + "/schedule?sportId=1&date=" + date);
+
+    (data.dates || []).forEach(day => {
+      (day.games || []).forEach(game => {
+        if (game.status && game.status.abstractGameState === "Final") {
+          finals.push({ ...game, date });
+        }
+      });
+    });
+  }
+
+  return finals;
+}
+
+async function getGameFeed(gamePk) {
+  return await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
+}
+
+async function getTopBatter(games) {
+  const ids = todaysTeamIds(games);
+  const finals = await findRecentFinalGames(8);
+  const hitterMap = {};
+
+  for (const game of finals.slice(0, 28)) {
+    try {
+      const feed = await getGameFeed(game.gamePk);
+      const box = feed.liveData.boxscore;
+
+      ["away", "home"].forEach(side => {
+        const team = feed.gameData.teams[side];
+        if (!ids.has(String(team.id))) return;
+
+        Object.values(box.teams[side].players || {}).forEach(player => {
+          const batting = player.stats && player.stats.batting;
+          if (!batting) return;
+
+          const hits = Number(batting.hits || 0);
+          const hr = Number(batting.homeRuns || 0);
+          const rbi = Number(batting.rbi || 0);
+
+          if (hits <= 0 && hr <= 0 && rbi <= 0) return;
+
+          const pid = player.person.id;
+
+          if (!hitterMap[pid]) {
+            hitterMap[pid] = {
+              id: pid,
+              name: player.person.fullName,
+              team: team.name,
+              hits: 0,
+              hr: 0,
+              rbi: 0,
+              gamesWithHit: 0,
+              score: 50
+            };
+          }
+
+          hitterMap[pid].hits += hits;
+          hitterMap[pid].hr += hr;
+          hitterMap[pid].rbi += rbi;
+          if (hits > 0) hitterMap[pid].gamesWithHit += 1;
+        });
+      });
+    } catch (err) {
+      console.warn("Skipping game feed", game.gamePk, err);
+    }
+  }
+
+  const hitters = Object.values(hitterMap).map(h => {
+    h.score = Math.min(99, 50 + h.hits * 4 + h.hr * 8 + h.rbi * 2 + h.gamesWithHit * 3);
+    h.reason = `${h.hits} hits, ${h.hr} HR, ${h.rbi} RBI over recent games`;
+    return h;
+  });
+
+  hitters.sort((a, b) => b.score - a.score);
+  return hitters[0] || null;
+}
+
+async function getPitcherGameLogs(pitcherId) {
+  try {
+    const data = await getJson(
+      MLB + "/people/" + pitcherId + "/stats?stats=gameLog&group=pitching&season=" + currentSeason()
+    );
+
+    const splits = [];
+    (data.stats || []).forEach(block => {
+      (block.splits || []).forEach(split => splits.push(split));
+    });
+
+    return splits.sort((a, b) => new Date(b.date) - new Date(a.date));
+  } catch (err) {
+    return [];
+  }
+}
+
+async function getTopPitcher(games) {
+  const probables = [];
+
+  games.forEach(game => {
+    ["away", "home"].forEach(side => {
+      const team = game.teams[side].team;
+      const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
+      const probable = game.teams[side].probablePitcher;
+
+      if (probable && probable.id) {
+        probables.push({
+          id: probable.id,
+          name: probable.fullName,
+          team: team.name,
+          opponent: opponent.name
+        });
+      }
+    });
+  });
+
+  const scored = [];
+
+  for (const p of probables) {
+    const logs = await getPitcherGameLogs(p.id);
+    const recent = logs.slice(0, 3);
+
+    const ks = recent.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
+    const innings = recent.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
+    const er = recent.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
+
+    const score = Math.min(99, 50 + ks * 3 + Math.max(0, innings - er) * 1.5);
+
+    scored.push({
+      ...p,
+      recentKs: ks,
+      recentInnings: innings.toFixed(1),
+      recentEr: er,
+      score: Math.round(score),
+      reason: `${ks} Ks across last ${recent.length || 0} starts`
+    });
+  }
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0] || null;
+}
+
+function parseInnings(value) {
+  if (!value) return 0;
+  const [whole, part] = String(value).split(".");
+  let innings = Number(whole || 0);
+  if (part === "1") innings += 1 / 3;
+  if (part === "2") innings += 2 / 3;
+  return innings;
+}
+
+async function getTeamStreaks(games) {
+  const ids = todaysTeamIds(games);
+  const data = await getJson(MLB + "/standings?leagueId=103,104&season=" + currentSeason());
+
+  const teams = [];
+
+  (data.records || []).forEach(record => {
+    (record.teamRecords || []).forEach(row => {
+      if (!ids.has(String(row.team.id))) return;
+
+      const code = row.streak?.streakCode || "";
+      const type = code.startsWith("W") ? "win" : code.startsWith("L") ? "loss" : "none";
+      const num = Number(code.slice(1) || 0);
+
+      teams.push({
+        id: row.team.id,
+        name: row.team.name,
+        streak: code || "N/A",
+        type,
+        number: num
+      });
+    });
+  });
+
+  const powerBall = teams
+    .filter(t => t.type === "win")
+    .sort((a, b) => b.number - a.number)[0] || null;
+
+  const coldNote = teams
+    .filter(t => t.type === "loss")
+    .sort((a, b) => b.number - a.number)[0] || null;
+
+  return { powerBall, coldNote };
+}
+
+function gameLabel(game) {
+  return game.teams.away.team.name + " @ " + game.teams.home.team.name;
+}
+
+async function getWeatherWatch(games) {
+  let best = null;
+
+  for (const game of games) {
+    try {
+      const feed = await getGameFeed(game.gamePk);
+      const weather = feed.gameData?.weather;
+
+      if (!weather) continue;
+
+      const temp = weather.temp || weather.temperature || "";
+      const wind = weather.wind || "";
+      const condition = weather.condition || "";
+
+      const text = `${gameLabel(game)} — ${temp ? temp + "°" : ""} ${condition} ${wind}`.trim();
+
+      let score = 0;
+      const windText = String(wind).toLowerCase();
+
+      if (windText.includes("out")) score += 20;
+      if (windText.includes("in")) score += 14;
+      if (Number(temp) >= 80) score += 12;
+      if (Number(temp) <= 55) score += 8;
+
+      if (!best || score > best.score) {
+        best = { game: gameLabel(game), temp, wind, condition, score, text };
+      }
+    } catch (err) {
+      console.warn("No weather for game", game.gamePk);
+    }
+  }
+
+  return best;
+}
+
+function buildPost(data) {
+  const batterLine = data.top_batter
+    ? `🔥 Top Batter Edge\n${data.top_batter.name} (${data.top_batter.score}) — ${data.top_batter.reason}`
+    : `🔥 Top Batter Edge\nNo clear batter edge yet`;
+
+  const pitcherLine = data.top_pitcher
+    ? `🌊 Pitcher Watch\n${data.top_pitcher.name} (${data.top_pitcher.score}) — ${data.top_pitcher.reason}`
+    : `🌊 Pitcher Watch\nNo probable pitcher edge yet`;
+
+  const powerLine = data.power_ball
+    ? `⚡ Power Ball\n${data.power_ball.name} ${data.power_ball.streak}`
+    : `⚡ Power Ball\nNo active win-streak team found`;
+
+  const coldLine = data.cold_note
+    ? `❄️ Cold Note\n${data.cold_note.name} ${data.cold_note.streak}`
+    : `❄️ Cold Note\nNo active cold streak found`;
+
+  const weatherLine = data.weather_watch
+    ? `🌤 Weather Watch\n${data.weather_watch.text}`
+    : `🌤 Weather Watch\nNo major weather edge found yet`;
+
+  return `⚾ THE DIAMOND PULSE DAILY
+
+${batterLine}
+
+${pitcherLine}
+
+${powerLine}
+
+${coldLine}
+
+${weatherLine}
+
+https://thediamondpulse.com`;
+}
+
+async function generateDailyPulse() {
+  try {
+    setStatus("Loading today's MLB schedule...");
+    const games = await getTodaysGames();
+
+    setStatus("Finding top batter edge...");
+    const topBatter = await getTopBatter(games);
+
+    setStatus("Finding top pitcher edge...");
+    const topPitcher = await getTopPitcher(games);
+
+    setStatus("Checking team streaks...");
+    const streaks = await getTeamStreaks(games);
+
+    setStatus("Checking stadium weather...");
+    const weatherWatch = await getWeatherWatch(games);
+
+    dailyPulseData = {
+      date: nyDate(),
+      generated_at: new Date().toISOString(),
+      top_batter: topBatter,
+      top_pitcher: topPitcher,
+      power_ball: streaks.powerBall,
+      cold_note: streaks.coldNote,
+      weather_watch: weatherWatch,
+      site_url: "https://thediamondpulse.com"
+    };
+
+    const post = buildPost(dailyPulseData);
+
+    document.getElementById("postText").value = post;
+    document.getElementById("jsonOutput").textContent = JSON.stringify(dailyPulseData, null, 2);
+
+    setStatus("Daily Pulse post generated.");
+  } catch (err) {
+    console.error(err);
+    setStatus("Error: " + err.message);
+  }
+}
+
+async function copyPost() {
+  const text = document.getElementById("postText").value;
+  await navigator.clipboard.writeText(text);
+  setStatus("Copied post to clipboard.");
+}
+
+function downloadJson() {
+  if (!dailyPulseData) {
+    setStatus("Generate the post first.");
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(dailyPulseData, null, 2)], {
+    type: "application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "daily-pulse.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
