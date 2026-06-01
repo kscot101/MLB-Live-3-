@@ -69,7 +69,7 @@
 
     textarea, pre {
       width:100%;
-      min-height:230px;
+      min-height:260px;
       background:#020617;
       color:#d1fae5;
       border:1px solid var(--border);
@@ -99,8 +99,8 @@
     <div class="card">
       <h1>Daily Pulse Generator</h1>
       <p>
-        Private helper page. It creates a daily Diamond Pulse post where the featured weather game,
-        hitter edge, pitcher watch, Power Ball, and Cold Note are connected when possible.
+        Private helper page. Generates a PropFinder-style Diamond Pulse post with at least
+        three player edges ranked by recent form, matchup context, weather, and team trend.
       </p>
 
       <button onclick="generateDailyPulse()">Generate Today's Post</button>
@@ -119,7 +119,7 @@
       <h2>JSON Data</h2>
       <pre id="jsonOutput">{}</pre>
       <p class="small">
-        This page is intentionally not linked in your main navigation.
+        This page is not linked on the public site. Use it to copy a daily X post or export JSON.
       </p>
     </div>
   </div>
@@ -151,14 +151,22 @@ function setStatus(text) {
   document.getElementById("status").textContent = text;
 }
 
-function gameLabel(game) {
-  return game.teams.away.team.name + " @ " + game.teams.home.team.name;
+function shortName(name) {
+  const parts = String(name || "").trim().split(" ");
+  if (parts.length <= 2) return name;
+  return parts[0] + " " + parts[parts.length - 1];
+}
+
+function shortTeam(team) {
+  return team.abbreviation || team.teamName || team.name || "TEAM";
 }
 
 function shortGameLabel(game) {
-  const away = game.teams.away.team.abbreviation || game.teams.away.team.teamName || game.teams.away.team.name;
-  const home = game.teams.home.team.abbreviation || game.teams.home.team.teamName || game.teams.home.team.name;
-  return away + " @ " + home;
+  return shortTeam(game.teams.away.team) + " @ " + shortTeam(game.teams.home.team);
+}
+
+function gameLabel(game) {
+  return game.teams.away.team.name + " @ " + game.teams.home.team.name;
 }
 
 function parseInnings(value) {
@@ -191,7 +199,7 @@ async function getGameFeed(gamePk) {
 async function findRecentFinalGames(maxDays = 8) {
   const finals = [];
 
-  for (let i = 1; i <= maxDays && finals.length < 45; i++) {
+  for (let i = 1; i <= maxDays && finals.length < 55; i++) {
     const date = nyDate(-i);
     const data = await getJson(MLB + "/schedule?sportId=1&date=" + date);
 
@@ -207,25 +215,125 @@ async function findRecentFinalGames(maxDays = 8) {
   return finals;
 }
 
-function getTeamIdsForGame(game) {
-  return new Set([
-    String(game.teams.away.team.id),
-    String(game.teams.home.team.id)
-  ]);
+async function getTeamStreaks(games) {
+  const todaysIds = new Set();
+  games.forEach(game => {
+    todaysIds.add(String(game.teams.away.team.id));
+    todaysIds.add(String(game.teams.home.team.id));
+  });
+
+  const data = await getJson(MLB + "/standings?leagueId=103,104&season=" + currentSeason());
+  const teams = [];
+
+  (data.records || []).forEach(record => {
+    (record.teamRecords || []).forEach(row => {
+      if (!todaysIds.has(String(row.team.id))) return;
+
+      const code = row.streak?.streakCode || "";
+      const type = code.startsWith("W") ? "win" : code.startsWith("L") ? "loss" : "none";
+      const number = Number(code.slice(1) || 0);
+
+      teams.push({
+        id: row.team.id,
+        name: row.team.name,
+        streak: code || "N/A",
+        type,
+        number
+      });
+    });
+  });
+
+  return {
+    all: teams,
+    powerBall: teams.filter(t => t.type === "win").sort((a, b) => b.number - a.number)[0] || null,
+    coldNote: teams.filter(t => t.type === "loss").sort((a, b) => b.number - a.number)[0] || null
+  };
 }
 
-async function getRecentHittersForGame(game, finals) {
-  const teamIds = getTeamIdsForGame(game);
+function getOpponentTeam(game, teamId) {
+  const away = game.teams.away.team;
+  const home = game.teams.home.team;
+  return String(away.id) === String(teamId) ? home : away;
+}
+
+function getProbableOpponentPitcher(game, hitterTeamId) {
+  const isAwayHitter = String(game.teams.away.team.id) === String(hitterTeamId);
+  const opponentSide = isAwayHitter ? "home" : "away";
+  return game.teams[opponentSide].probablePitcher || null;
+}
+
+function scoreWeatherForHitter(weather) {
+  if (!weather) return { score: 0, note: "" };
+
+  let score = 0;
+  const temp = Number(weather.temp || weather.temperature || 0);
+  const wind = String(weather.wind || "").toLowerCase();
+  const condition = String(weather.condition || "").toLowerCase();
+
+  if (wind.includes("out")) score += 20;
+  if (wind.includes("in")) score -= 16;
+  if (temp >= 80) score += 10;
+  if (temp && temp <= 55) score -= 8;
+  if (condition.includes("clear") || condition.includes("sun")) score += 4;
+
+  let note = "";
+  if (score >= 18) note = "weather boost";
+  else if (score <= -12) note = "weather downgrade";
+  else if (score > 0) note = "slight weather lift";
+  else if (score < 0) note = "slight weather drag";
+
+  return { score, note };
+}
+
+function scoreWeatherForPitcher(weather) {
+  if (!weather) return { score: 0, note: "" };
+
+  let score = 0;
+  const temp = Number(weather.temp || weather.temperature || 0);
+  const wind = String(weather.wind || "").toLowerCase();
+
+  if (wind.includes("in")) score += 18;
+  if (wind.includes("out")) score -= 16;
+  if (temp && temp <= 60) score += 8;
+  if (temp >= 82) score -= 8;
+
+  let note = "";
+  if (score >= 16) note = "pitcher-friendly weather";
+  else if (score <= -12) note = "weather risk";
+  else if (score > 0) note = "slight weather lift";
+  else if (score < 0) note = "slight weather drag";
+
+  return { score, note };
+}
+
+function weatherText(game, weather) {
+  if (!weather) return shortGameLabel(game) + " — weather unavailable";
+
+  const temp = weather.temp || weather.temperature || "?";
+  const condition = weather.condition || "";
+  const wind = weather.wind || "";
+
+  return `${shortGameLabel(game)} — ${temp}° ${condition} ${wind}`.trim();
+}
+
+async function collectHitterEdges(games, finals, streaks) {
+  const gameByTeam = {};
+  games.forEach(game => {
+    gameByTeam[String(game.teams.away.team.id)] = game;
+    gameByTeam[String(game.teams.home.team.id)] = game;
+  });
+
+  const todayIds = new Set(Object.keys(gameByTeam));
   const hitterMap = {};
 
-  for (const finalGame of finals.slice(0, 35)) {
+  for (const finalGame of finals.slice(0, 42)) {
     try {
       const feed = await getGameFeed(finalGame.gamePk);
       const box = feed.liveData.boxscore;
 
       ["away", "home"].forEach(side => {
         const team = feed.gameData.teams[side];
-        if (!teamIds.has(String(team.id))) return;
+        if (!todayIds.has(String(team.id))) return;
 
         Object.values(box.teams[side].players || {}).forEach(player => {
           const batting = player.stats && player.stats.batting;
@@ -234,45 +342,102 @@ async function getRecentHittersForGame(game, finals) {
           const hits = Number(batting.hits || 0);
           const hr = Number(batting.homeRuns || 0);
           const rbi = Number(batting.rbi || 0);
+          const bb = Number(batting.baseOnBalls || 0);
 
-          if (hits <= 0 && hr <= 0 && rbi <= 0) return;
+          if (hits <= 0 && hr <= 0 && rbi <= 0 && bb <= 0) return;
 
           const pid = player.person.id;
 
           if (!hitterMap[pid]) {
             hitterMap[pid] = {
+              type: "batter",
               id: pid,
               name: player.person.fullName,
               team: team.name,
               teamId: team.id,
-              game: shortGameLabel(game),
               hits: 0,
               hr: 0,
               rbi: 0,
+              walks: 0,
               gamesWithHit: 0,
-              score: 50
+              recentGames: 0,
+              baseScore: 50,
+              score: 50,
+              signals: []
             };
           }
 
           hitterMap[pid].hits += hits;
           hitterMap[pid].hr += hr;
           hitterMap[pid].rbi += rbi;
+          hitterMap[pid].walks += bb;
+          hitterMap[pid].recentGames += 1;
           if (hits > 0) hitterMap[pid].gamesWithHit += 1;
         });
       });
     } catch (err) {
-      console.warn("Skipping final game", finalGame.gamePk, err);
+      console.warn("Skipping hitter final game", finalGame.gamePk, err);
     }
   }
 
-  const hitters = Object.values(hitterMap).map(row => {
-    row.score = Math.min(99, Math.round(50 + row.hits * 4 + row.hr * 8 + row.rbi * 2 + row.gamesWithHit * 3));
-    row.reason = `${row.hits} H, ${row.hr} HR, ${row.rbi} RBI in recent games`;
-    return row;
-  });
+  const edges = [];
 
-  hitters.sort((a, b) => b.score - a.score);
-  return hitters;
+  for (const row of Object.values(hitterMap)) {
+    const game = gameByTeam[String(row.teamId)];
+    if (!game) continue;
+
+    let weather = null;
+    try {
+      const feed = await getGameFeed(game.gamePk);
+      weather = feed.gameData?.weather || null;
+    } catch (err) {}
+
+    const weatherImpact = scoreWeatherForHitter(weather);
+    const opponentPitcher = getProbableOpponentPitcher(game, row.teamId);
+    const opponent = getOpponentTeam(game, row.teamId);
+
+    const teamStreak = streaks.all.find(t => String(t.id) === String(row.teamId));
+    const powerBonus = teamStreak && teamStreak.type === "win" ? Math.min(10, teamStreak.number * 2) : 0;
+    const coldPenalty = teamStreak && teamStreak.type === "loss" ? Math.min(8, teamStreak.number * 1.5) : 0;
+
+    let score =
+      50 +
+      row.hits * 3.4 +
+      row.hr * 8 +
+      row.rbi * 1.8 +
+      row.walks * 1.2 +
+      row.gamesWithHit * 2.5 +
+      weatherImpact.score +
+      powerBonus -
+      coldPenalty;
+
+    score = Math.max(1, Math.min(99, Math.round(score)));
+
+    const signals = [];
+
+    if (row.hits >= 6) signals.push("hot bat");
+    if (row.hr >= 2) signals.push("power trend");
+    if (row.gamesWithHit >= 3) signals.push("hit streak");
+    if (weatherImpact.note) signals.push(weatherImpact.note);
+    if (opponentPitcher) signals.push("vs " + opponentPitcher.fullName);
+    if (teamStreak && teamStreak.type === "win") signals.push("Power Ball team " + teamStreak.streak);
+    if (teamStreak && teamStreak.type === "loss") signals.push("Cold Note team " + teamStreak.streak);
+
+    row.game = shortGameLabel(game);
+    row.fullGame = gameLabel(game);
+    row.opponent = opponent.name;
+    row.opponentPitcher = opponentPitcher ? opponentPitcher.fullName : "";
+    row.weather = weatherText(game, weather);
+    row.weatherImpact = weatherImpact.score;
+    row.teamStreak = teamStreak || null;
+    row.score = score;
+    row.signals = signals;
+    row.reason = buildReason(row);
+
+    edges.push(row);
+  }
+
+  return edges;
 }
 
 async function getPitcherLogs(pitcherId) {
@@ -292,72 +457,8 @@ async function getPitcherLogs(pitcherId) {
   }
 }
 
-async function getProbablePitchersForGame(game) {
-  const pitchers = [];
-
-  for (const side of ["away", "home"]) {
-    const probable = game.teams[side].probablePitcher;
-    if (!probable || !probable.id) continue;
-
-    const team = game.teams[side].team;
-    const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
-    const logs = await getPitcherLogs(probable.id);
-    const recent = logs.slice(0, 3);
-
-    const ks = recent.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
-    const innings = recent.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
-    const er = recent.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
-
-    pitchers.push({
-      id: probable.id,
-      name: probable.fullName,
-      team: team.name,
-      teamId: team.id,
-      opponent: opponent.name,
-      game: shortGameLabel(game),
-      recentKs: ks,
-      recentInnings: innings.toFixed(1),
-      recentEr: er,
-      score: Math.min(99, Math.round(50 + ks * 3 + Math.max(0, innings - er) * 1.5)),
-      reason: `${ks} Ks across last ${recent.length || 0} starts`
-    });
-  }
-
-  pitchers.sort((a, b) => b.score - a.score);
-  return pitchers;
-}
-
-function scoreWeatherForHitters(weather) {
-  let score = 0;
-  const temp = Number(weather.temp || weather.temperature || 0);
-  const wind = String(weather.wind || "").toLowerCase();
-  const condition = String(weather.condition || "").toLowerCase();
-
-  if (wind.includes("out")) score += 24;
-  if (temp >= 80) score += 14;
-  if (condition.includes("clear") || condition.includes("sun")) score += 6;
-  if (wind.includes("in")) score -= 18;
-  if (temp && temp <= 55) score -= 10;
-
-  return score;
-}
-
-function scoreWeatherForPitchers(weather) {
-  let score = 0;
-  const temp = Number(weather.temp || weather.temperature || 0);
-  const wind = String(weather.wind || "").toLowerCase();
-
-  if (wind.includes("in")) score += 20;
-  if (temp && temp <= 60) score += 10;
-  if (wind.includes("out")) score -= 18;
-  if (temp >= 82) score -= 10;
-
-  return score;
-}
-
-async function buildGameContexts(games) {
-  const finals = await findRecentFinalGames(8);
-  const contexts = [];
+async function collectPitcherEdges(games, streaks) {
+  const edges = [];
 
   for (const game of games) {
     let weather = null;
@@ -365,199 +466,181 @@ async function buildGameContexts(games) {
     try {
       const feed = await getGameFeed(game.gamePk);
       weather = feed.gameData?.weather || null;
-    } catch (err) {
-      weather = null;
-    }
+    } catch (err) {}
 
-    const hitters = await getRecentHittersForGame(game, finals);
-    const pitchers = await getProbablePitchersForGame(game);
+    for (const side of ["away", "home"]) {
+      const probable = game.teams[side].probablePitcher;
+      if (!probable || !probable.id) continue;
 
-    const hitterWeather = weather ? scoreWeatherForHitters(weather) : 0;
-    const pitcherWeather = weather ? scoreWeatherForPitchers(weather) : 0;
+      const team = game.teams[side].team;
+      const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
+      const logs = await getPitcherLogs(probable.id);
+      const recent = logs.slice(0, 3);
 
-    const bestHitter = hitters[0]
-      ? {
-          ...hitters[0],
-          weatherScore: hitterWeather,
-          combinedScore: Math.max(1, Math.min(99, hitters[0].score + hitterWeather))
-        }
-      : null;
+      const ks = recent.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
+      const innings = recent.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
+      const er = recent.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
 
-    const bestPitcher = pitchers[0]
-      ? {
-          ...pitchers[0],
-          weatherScore: pitcherWeather,
-          combinedScore: Math.max(1, Math.min(99, pitchers[0].score + pitcherWeather))
-        }
-      : null;
+      const weatherImpact = scoreWeatherForPitcher(weather);
+      const teamStreak = streaks.all.find(t => String(t.id) === String(team.id));
+      const powerBonus = teamStreak && teamStreak.type === "win" ? Math.min(8, teamStreak.number * 1.5) : 0;
+      const coldPenalty = teamStreak && teamStreak.type === "loss" ? Math.min(8, teamStreak.number * 1.5) : 0;
 
-    const weatherText = weather
-      ? `${shortGameLabel(game)} — ${weather.temp || weather.temperature || "?"}° ${weather.condition || ""} ${weather.wind || ""}`.trim()
-      : `${shortGameLabel(game)} — weather unavailable`;
+      let score =
+        50 +
+        ks * 2.6 +
+        Math.max(0, innings - er) * 1.4 +
+        weatherImpact.score +
+        powerBonus -
+        coldPenalty;
 
-    const gameScore = Math.max(
-      bestHitter ? bestHitter.combinedScore : 0,
-      bestPitcher ? bestPitcher.combinedScore : 0
-    ) + Math.abs(hitterWeather) + Math.abs(pitcherWeather);
+      score = Math.max(1, Math.min(99, Math.round(score)));
 
-    contexts.push({
-      gamePk: game.gamePk,
-      game: shortGameLabel(game),
-      fullGame: gameLabel(game),
-      status: game.status?.detailedState || "",
-      weather,
-      weatherText,
-      hitterWeather,
-      pitcherWeather,
-      bestHitter,
-      bestPitcher,
-      gameScore
-    });
-  }
+      const signals = [];
+      if (ks >= 15) signals.push("K form");
+      if (Number(recent[0]?.stat?.strikeOuts || 0) >= 7) signals.push("last-start Ks");
+      if (weatherImpact.note) signals.push(weatherImpact.note);
+      signals.push("vs " + opponent.name);
+      if (teamStreak && teamStreak.type === "win") signals.push("Power Ball team " + teamStreak.streak);
+      if (teamStreak && teamStreak.type === "loss") signals.push("Cold Note team " + teamStreak.streak);
 
-  contexts.sort((a, b) => b.gameScore - a.gameScore);
-  return contexts;
-}
-
-async function getTeamStreaksForGames(games) {
-  const todayTeamIds = new Set();
-  games.forEach(game => {
-    todayTeamIds.add(String(game.teams.away.team.id));
-    todayTeamIds.add(String(game.teams.home.team.id));
-  });
-
-  const data = await getJson(MLB + "/standings?leagueId=103,104&season=" + currentSeason());
-  const teams = [];
-
-  (data.records || []).forEach(record => {
-    (record.teamRecords || []).forEach(row => {
-      if (!todayTeamIds.has(String(row.team.id))) return;
-
-      const code = row.streak?.streakCode || "";
-      const type = code.startsWith("W") ? "win" : code.startsWith("L") ? "loss" : "none";
-      const number = Number(code.slice(1) || 0);
-
-      teams.push({
-        id: row.team.id,
-        name: row.team.name,
-        streak: code || "N/A",
-        type,
-        number
+      edges.push({
+        type: "pitcher",
+        id: probable.id,
+        name: probable.fullName,
+        team: team.name,
+        teamId: team.id,
+        opponent: opponent.name,
+        game: shortGameLabel(game),
+        fullGame: gameLabel(game),
+        recentKs: ks,
+        recentInnings: innings.toFixed(1),
+        recentEr: er,
+        weather: weatherText(game, weather),
+        weatherImpact: weatherImpact.score,
+        teamStreak: teamStreak || null,
+        score,
+        signals,
+        reason: `${ks} Ks over last ${recent.length || 0} starts`
       });
-    });
-  });
-
-  return {
-    powerBall: teams.filter(t => t.type === "win").sort((a, b) => b.number - a.number)[0] || null,
-    coldNote: teams.filter(t => t.type === "loss").sort((a, b) => b.number - a.number)[0] || null
-  };
-}
-
-function pickPrimaryContext(contexts) {
-  const weatherContexts = contexts.filter(ctx => ctx.weather);
-
-  if (!weatherContexts.length) {
-    return contexts[0] || null;
+    }
   }
 
-  weatherContexts.sort((a, b) => {
-    const aImpact = Math.max(Math.abs(a.hitterWeather), Math.abs(a.pitcherWeather));
-    const bImpact = Math.max(Math.abs(b.hitterWeather), Math.abs(b.pitcherWeather));
-    return bImpact - aImpact || b.gameScore - a.gameScore;
-  });
+  return edges;
+}
 
-  return weatherContexts[0];
+function buildReason(edge) {
+  const parts = [];
+
+  if (edge.type === "batter") {
+    if (edge.hits) parts.push(edge.hits + " recent hits");
+    if (edge.hr) parts.push(edge.hr + " HR");
+    if (edge.opponentPitcher) parts.push("vs " + edge.opponentPitcher);
+  }
+
+  if (edge.type === "pitcher") {
+    if (edge.recentKs) parts.push(edge.recentKs + " recent Ks");
+    parts.push("vs " + edge.opponent);
+  }
+
+  const weatherSignal = edge.signals.find(s => s.includes("weather"));
+  if (weatherSignal) parts.push(weatherSignal);
+
+  return parts.slice(0, 3).join(" + ");
+}
+
+function uniqueTopPlayers(edges, count = 3) {
+  const seen = new Set();
+  const unique = [];
+
+  edges
+    .sort((a, b) => b.score - a.score)
+    .forEach(edge => {
+      if (seen.has(String(edge.id))) return;
+      seen.add(String(edge.id));
+      unique.push(edge);
+    });
+
+  return unique.slice(0, count);
+}
+
+function playerEmoji(index) {
+  return ["🥇", "🥈", "🥉"][index] || "✅";
+}
+
+function formatEdgeLine(edge, index) {
+  const label = edge.type === "pitcher" ? "Pitcher" : "Batter";
+  const signalText = edge.signals.slice(0, 3).join(" • ");
+
+  return `${playerEmoji(index)} ${shortName(edge.name)} — ${edge.score}
+${label} Edge | ${edge.game}
+${signalText || edge.reason}`;
 }
 
 function buildPost(data) {
-  const ctx = data.primary_context;
+  const top = data.top_edges || [];
 
-  let mainEdgeLine = "🔥 Featured Edge\nNo clear player edge yet";
-
-  if (ctx) {
-    const useHitter =
-      ctx.bestHitter &&
-      (!ctx.bestPitcher || ctx.bestHitter.combinedScore >= ctx.bestPitcher.combinedScore);
-
-    if (useHitter) {
-      mainEdgeLine =
-        `🔥 Featured Weather Edge\n${ctx.bestHitter.name} (${ctx.bestHitter.combinedScore}) — ${ctx.bestHitter.reason}`;
-    } else if (ctx.bestPitcher) {
-      mainEdgeLine =
-        `🌊 Featured Weather Edge\n${ctx.bestPitcher.name} (${ctx.bestPitcher.combinedScore}) — ${ctx.bestPitcher.reason}`;
-    }
-  }
-
-  const pitcherLine = data.top_pitcher
-    ? `🌊 Pitcher Watch\n${data.top_pitcher.name} (${data.top_pitcher.combinedScore || data.top_pitcher.score}) — ${data.top_pitcher.reason}`
-    : `🌊 Pitcher Watch\nNo probable pitcher edge yet`;
-
-  const batterLine = data.top_batter
-    ? `🔥 Batter Watch\n${data.top_batter.name} (${data.top_batter.combinedScore || data.top_batter.score}) — ${data.top_batter.reason}`
-    : `🔥 Batter Watch\nNo clear batter edge yet`;
-
-  const weatherLine = ctx
-    ? `🌤 Weather Watch\n${ctx.weatherText}`
-    : `🌤 Weather Watch\nNo major weather edge found yet`;
+  const edgeLines = top.map((edge, index) => formatEdgeLine(edge, index)).join("\n\n");
 
   const powerLine = data.power_ball
-    ? `⚡ Power Ball\n${data.power_ball.name} ${data.power_ball.streak}`
-    : `⚡ Power Ball\nNo active win-streak team found`;
+    ? `⚡ Power Ball: ${data.power_ball.name} ${data.power_ball.streak}`
+    : `⚡ Power Ball: No active win-streak edge`;
 
   const coldLine = data.cold_note
-    ? `❄️ Cold Note\n${data.cold_note.name} ${data.cold_note.streak}`
-    : `❄️ Cold Note\nNo active cold streak found`;
+    ? `❄️ Cold Note: ${data.cold_note.name} ${data.cold_note.streak}`
+    : `❄️ Cold Note: No active cold-streak edge`;
 
-  return `⚾ THE DIAMOND PULSE DAILY
+  const weatherEdge = top.find(edge => Math.abs(Number(edge.weatherImpact || 0)) >= 8);
+  const weatherLine = weatherEdge
+    ? `🌤 Weather: ${weatherEdge.weather}`
+    : `🌤 Weather: No major boost flagged`;
 
-${mainEdgeLine}
+  return `🚨 THE DIAMOND PULSE REPORT
 
-${batterLine}
+TOP 3 EDGES TODAY
 
-${pitcherLine}
+${edgeLines || "No player edges found yet."}
 
 ${powerLine}
-
 ${coldLine}
-
 ${weatherLine}
 
+Full board ⬇️
 https://thediamondpulse.com`;
 }
 
 async function generateDailyPulse() {
   try {
-    setStatus("Loading today's MLB schedule...");
+    setStatus("Loading today's MLB slate...");
     const games = await getTodaysGames();
 
     if (!games.length) {
       throw new Error("No MLB games found today.");
     }
 
-    setStatus("Building connected player + weather game contexts...");
-    const contexts = await buildGameContexts(games);
-
-    const primaryContext = pickPrimaryContext(contexts);
-
-    const allHitters = contexts
-      .map(ctx => ctx.bestHitter)
-      .filter(Boolean)
-      .sort((a, b) => b.combinedScore - a.combinedScore);
-
-    const allPitchers = contexts
-      .map(ctx => ctx.bestPitcher)
-      .filter(Boolean)
-      .sort((a, b) => b.combinedScore - a.combinedScore);
-
     setStatus("Checking Power Ball and Cold Note...");
-    const streaks = await getTeamStreaksForGames(games);
+    const streaks = await getTeamStreaks(games);
+
+    setStatus("Loading recent player form...");
+    const finals = await findRecentFinalGames(8);
+
+    setStatus("Scoring batter edges...");
+    const hitterEdges = await collectHitterEdges(games, finals, streaks);
+
+    setStatus("Scoring pitcher edges...");
+    const pitcherEdges = await collectPitcherEdges(games, streaks);
+
+    const allEdges = hitterEdges.concat(pitcherEdges);
+    const topEdges = uniqueTopPlayers(allEdges, 3);
+
+    while (topEdges.length < 3 && allEdges[topEdges.length]) {
+      topEdges.push(allEdges[topEdges.length]);
+    }
 
     dailyPulseData = {
       date: nyDate(),
       generated_at: new Date().toISOString(),
-      primary_context: primaryContext,
-      top_batter: allHitters[0] || null,
-      top_pitcher: allPitchers[0] || null,
+      top_edges: topEdges,
       power_ball: streaks.powerBall,
       cold_note: streaks.coldNote,
       site_url: "https://thediamondpulse.com"
@@ -568,7 +651,7 @@ async function generateDailyPulse() {
     document.getElementById("postText").value = post;
     document.getElementById("jsonOutput").textContent = JSON.stringify(dailyPulseData, null, 2);
 
-    setStatus("Daily Pulse post generated with connected game/weather context.");
+    setStatus("Top 3 Daily Pulse post generated.");
   } catch (err) {
     console.error(err);
     setStatus("Error: " + err.message);
