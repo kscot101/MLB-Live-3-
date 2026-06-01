@@ -156,11 +156,42 @@
       margin-top: 10px;
     }
 
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .weather-item {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .weather-value {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .weather-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 12px;
+    }
+
     @media (max-width: 800px) {
       body { padding: 14px; }
 
       .hero,
-      .grid {
+      .grid,
+      .weather-grid {
         grid-template-columns: 1fr;
       }
 
@@ -183,6 +214,11 @@
     <section class="card">
       <h2>Why This Player Is Highlighted</h2>
       <div id="reasons"></div>
+    </section>
+
+    <section class="card">
+      <h2>Today’s Stadium Weather</h2>
+      <div id="stadiumWeather" class="muted">Checking today’s matchup and stadium weather...</div>
     </section>
 
     <section class="grid">
