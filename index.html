@@ -617,6 +617,7 @@
     }
 
     @media (max-width: 900px) {
+      #team-streaks .grid-3 { grid-template-columns: 1fr !important; }
       .hero,
       .grid-3 {
         grid-template-columns: 1fr;
@@ -762,14 +763,15 @@
       <div class="nav-links">
         <a href="#live-dashboard">Today’s Edges</a>
         <a href="#sample-board">Edge Board</a>
+        <a href="#team-streaks">Team Trends</a>
         <a href="#model-inputs">Model</a>
         <a href="#live-dashboard">Live Stats</a>
         <a href="#features">Features</a>
       </div>
 
       <div class="auth-nav" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button type="button" class="nav-cta" onclick="showSignup()">Sign Up</button>
-        <button type="button" class="nav-cta" id="loginBtn" onclick="showLogin()">Log In</button>
+        <button type="button" class="nav-cta login-btn" id="signupBtn" onclick="showSignup()">Sign Up</button>
+        <button type="button" class="nav-cta login-btn" id="loginBtn" onclick="showLogin()">Log In</button>
         <button type="button" class="nav-cta" id="logoutBtn" onclick="logoutUser()" style="display:none;">Log Out</button>
       </div>
     </nav>
@@ -857,7 +859,7 @@
   </div>
 
   <div id="teamFilterWrap" class="filter-wrap"><div class="filter-title">Filter by team playing today</div><div id="teamFilters" class="filter-bar"><button class="filter-btn active">All Teams</button></div></div>
-  <nav class="desktop-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button><button class="tab-btn" data-tab-target="live">📡 Live</button><button class="tab-btn" data-tab-target="bats">🔥 Bats</button><button class="tab-btn" data-tab-target="arms">🌊 Arms</button><button class="tab-btn" data-tab-target="edge">🧬 The Edge</button><button class="tab-btn" data-tab-target="recap">📊 Recap</button></nav>
+  <nav class="desktop-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse Board</button><button class="tab-btn" data-tab-target="live">📡 Live Board</button><button class="tab-btn" data-tab-target="bats">🔥 Bat Board</button><button class="tab-btn" data-tab-target="arms">🌊 Arm Board</button><button class="tab-btn" data-tab-target="edge">🧬 Edge Board</button><button class="tab-btn" data-tab-target="recap">📊 Recap Board</button></nav>
 
   <section class="tab-panel active" data-tab="pulse">
     <details class="helper-box" open><summary>🧢 New to Baseball? Quick Helper</summary><p>This page is built so you can glance and get the main storylines. If someone is hot, they’ve been playing well lately. If a lineup had a lot of strikeouts and a high whiff rate, that means they were swinging and missing a lot.</p><div class="helper-grid"><div class="helper-chip"><div class="helper-chip-title">Strikeouts (K)</div><div class="helper-chip-copy">How many batters a pitcher struck out.</div></div><div class="helper-chip"><div class="helper-chip-title">Whiff%</div><div class="helper-chip-copy">How often hitters swung and missed.</div></div><div class="helper-chip"><div class="helper-chip-title">Hot Bats</div><div class="helper-chip-copy">Hitters who’ve been getting a lot of hits lately.</div></div><div class="helper-chip"><div class="helper-chip-title">Hit Streaks</div><div class="helper-chip-copy">Players with at least one hit in several straight games.</div></div></div></details>
@@ -920,11 +922,11 @@
     <section id="sample-board">
       <div class="container">
         <div class="section-head">
-          <small>Live Edge Board</small>
-          <h2>Today’s Diamond Pulse edges.</h2>
+          <small>Edge Board</small>
+          <h2>Edge Board: today’s strongest Diamond Pulse signals.</h2>
           <p>
-            This board now uses the same live Diamond Pulse edge engine as your dashboard:
-            pitcher H2H, batter vs starter, hot bats, hit streaks, live hits, and K-watch signals.
+            One clean board for today’s matchup edges. If the same player qualifies on more than one board,
+            their signals are combined into a single row so the board stays simple.
           </p>
         </div>
 
@@ -934,8 +936,8 @@
               <tr>
                 <th>Game</th>
                 <th>Player</th>
-                <th>Edge Type</th>
-                <th>Signal</th>
+                <th>Boards Matched</th>
+                <th>Combined Signals</th>
                 <th>Context</th>
                 <th>Rating</th>
                 <th>Open</th>
@@ -948,6 +950,39 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="team-streaks">
+      <div class="container">
+        <div class="section-head">
+          <small>Team Trends</small>
+          <h2>Power Ball and Cold Note.</h2>
+          <p>
+            Daily team momentum boards from current MLB streak data. Power Ball shows teams on win streaks.
+            Cold Note shows teams on losing streaks.
+          </p>
+        </div>
+
+        <div class="grid-3" style="grid-template-columns:repeat(2,1fr);">
+          <div class="feature-card">
+            <div class="stat">⚾</div>
+            <h3>Power Ball</h3>
+            <p>Teams currently riding win streaks.</p>
+            <div id="powerBallList" style="margin-top:18px;">
+              <div class="loading">Loading win streaks...</div>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="stat">❄️</div>
+            <h3>Cold Note</h3>
+            <p>Teams currently stuck on losing streaks.</p>
+            <div id="coldNoteList" style="margin-top:18px;">
+              <div class="loading">Loading losing streaks...</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -999,7 +1034,7 @@
     The Diamond Pulse © 2026 · Baseball analytics, live stats, and matchup edges.
   </footer>
 
-<nav class="mobile-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button><button class="tab-btn" data-tab-target="live">📡 Live</button><button class="tab-btn" data-tab-target="bats">🔥 Bats</button><button class="tab-btn" data-tab-target="arms">🌊 Arms</button><button class="tab-btn" data-tab-target="edge">🧬 Edge</button><button class="tab-btn" data-tab-target="recap">📊 Recap</button></nav>
+<nav class="mobile-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse Board</button><button class="tab-btn" data-tab-target="live">📡 Live Board</button><button class="tab-btn" data-tab-target="bats">🔥 Bat Board</button><button class="tab-btn" data-tab-target="arms">🌊 Arm Board</button><button class="tab-btn" data-tab-target="edge">🧬 Edge Board</button><button class="tab-btn" data-tab-target="recap">📊 Recap Board</button></nav>
 <div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)"><div class="profile-panel"><button class="profile-close" onclick="closeProfile()">Close</button><div id="profileContent"></div></div></div>
 <div id="gameModal" class="game-modal" onclick="closeGameHubFromBackdrop(event)"><div class="game-panel"><button class="game-close" onclick="closeGameHub()">Close</button><div id="gameHubContent"></div></div></div>
 
@@ -1011,7 +1046,7 @@ let profileStore = [];
 let pitchCodeMapCache = null;
 let gameFeedCache = {};
 let recentBoxscoreCache = {};
-let appState = { selectedTeamId:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[] };
+let appState = { selectedTeamId:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], teamWinStreaks:[], teamLosingStreaks:[], followedPlayers:[] };
 
 function h(value){ return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
 function playerPageLink(personId,name,extra=""){ if(!personId) return h(name)+extra; return '<a class="player-page-link" href="player.html?id='+encodeURIComponent(personId)+'" onclick="event.stopPropagation()" style="color:inherit;text-decoration:none;">'+h(name)+extra+'</a>'; }
@@ -1255,21 +1290,68 @@ function playerEdgeLink(row, text){
   return h(text || (row && row.name) || 'Team');
 }
 
-function edgeBoardRow(row, type, signal, context, score){
-  if(!row) return '';
+function edgeKey(row, fallbackType){
+  if(row && row.personId) return 'player:' + String(row.personId);
+  return 'team:' + String((row && row.teamId) || '') + ':' + String((row && row.name) || '') + ':' + String(fallbackType || '');
+}
+
+function compactUnique(list){
+  return [...new Set((list || []).filter(Boolean))];
+}
+
+function addEdgeBoardSignal(map, row, type, signal, context, score){
+  if(!row) return;
+
+  const key = edgeKey(row, type);
+  const existing = map.get(key);
+
+  if(existing){
+    existing.types.push(type);
+    existing.signals.push(signal);
+    existing.contexts.push(context || row.status || row.extra || '');
+    existing.score = Math.max(existing.score || 0, score || 0);
+    existing.row = {
+      ...existing.row,
+      ...row,
+      game: existing.row.game || row.game,
+      opponent: existing.row.opponent || row.opponent,
+      team: existing.row.team || row.team,
+      teamId: existing.row.teamId || row.teamId,
+      personId: existing.row.personId || row.personId
+    };
+    return;
+  }
+
+  map.set(key, {
+    row,
+    types: [type],
+    signals: [signal],
+    contexts: [context || row.status || row.extra || ''],
+    score: score || 0
+  });
+}
+
+function edgeBoardRow(edge){
+  if(!edge || !edge.row) return '';
+
+  const row = edge.row;
   const game = row.game || (row.opponent ? 'Today vs '+row.opponent : row.team || 'Today');
   const player = playerEdgeLink(row, row.name || 'Today’s Edge');
   const open = row.personId
     ? '<a class="tag" href="player.html?id='+h(row.personId)+'">Breakdown</a>'
     : '<span class="tag">Team</span>';
 
+  const typeText = compactUnique(edge.types).join(' + ');
+  const signalText = compactUnique(edge.signals).join(' · ');
+  const contextText = compactUnique(edge.contexts).join(' · ');
+
   return '<tr>'
     + '<td>'+h(game)+'</td>'
     + '<td>'+player+'</td>'
-    + '<td>'+h(type)+'</td>'
-    + '<td>'+h(signal)+'</td>'
-    + '<td>'+h(context || row.status || row.extra || '')+'</td>'
-    + '<td class="'+(score >= 58 ? 'positive' : 'warning')+'">'+edgeRating(score)+'</td>'
+    + '<td>'+h(typeText)+'</td>'
+    + '<td>'+h(signalText)+'</td>'
+    + '<td>'+h(contextText)+'</td>'
+    + '<td class="'+(edge.score >= 58 ? 'positive' : 'warning')+'">'+edgeRating(edge.score)+'</td>'
     + '<td>'+open+'</td>'
     + '</tr>';
 }
@@ -1278,101 +1360,196 @@ function renderEdgeBoard(){
   const target = document.getElementById('edgeBoardRows');
   if(!target) return;
 
-  const rows = [];
+  const edgeMap = new Map();
 
   filterRows(appState.pitcherH2H || []).slice(0,8).forEach(row => {
     const score = Math.min(96, 76 + Number(row.qualifiedGames || 0) * 4 + Math.min(10, Number(row.bestKs || 0)));
-    rows.push(edgeBoardRow(
+    addEdgeBoardSignal(
+      edgeMap,
       row,
       'Pitcher H2H Edge',
       (row.qualifiedGames || 0)+' qualifying 8+ K games',
       row.status || ('Best: '+(row.bestKs || row.value || '-')+' Ks vs '+(row.opponent || 'opponent')),
       score
-    ));
+    );
   });
 
   filterRows(appState.batterH2H || []).slice(0,8).forEach(row => {
     const score = Math.min(96, 72 + Number(row.hr || 0) * 8 + Math.min(12, Number(row.hits || 0)));
-    rows.push(edgeBoardRow(
+    addEdgeBoardSignal(
+      edgeMap,
       row,
       'Batter vs Starter Edge',
       (row.hits || 0)+' H · '+(row.hr || 0)+' HR',
       row.status || ('History vs '+(row.pitcherName || 'today’s starter')),
       score
-    ));
+    );
   });
 
-  filterRows(appState.hotHitters || []).slice(0,6).forEach(row => {
-    const score = Math.min(88, 52 + Number(row.value || 0) * 5);
-    rows.push(edgeBoardRow(
+  filterRows(appState.hotHitters || []).slice(0,8).forEach(row => {
+    const score = Math.min(88, 58 + Number(row.value || 0) * 4);
+    addEdgeBoardSignal(
+      edgeMap,
       row,
-      'Hot Bat Watch',
-      (row.value || 0)+' hits recently',
-      row.status || 'Recent completed game trend',
+      'Hot Bat Board',
+      (row.value || 0)+' hits over recent games',
+      row.status || row.extra || 'Recent contact trend',
       score
-    ));
+    );
   });
 
-  filterRows(appState.streakingHitters || []).slice(0,6).forEach(row => {
-    const score = Math.min(86, 54 + Number(row.value || 0) * 7);
-    rows.push(edgeBoardRow(
+  filterRows(appState.streakingHitters || []).slice(0,8).forEach(row => {
+    const score = Math.min(88, 58 + Number(row.value || 0) * 6);
+    addEdgeBoardSignal(
+      edgeMap,
       row,
-      'Hit Streak',
-      (row.value || 0)+' straight games',
-      row.status || 'Active recent hit streak',
+      'Hit Streak Board',
+      (row.value || 0)+' game hit streak',
+      row.status || row.extra || 'Hit streak trend',
       score
-    ));
+    );
   });
 
-  filterRows(appState.hotPitchers || []).slice(0,6).forEach(row => {
-    const score = Math.min(90, 55 + Number(row.value || 0) + Math.min(10, Number(row.whiffPct || 0) / 3));
-    rows.push(edgeBoardRow(
+  filterRows(appState.hotPitchers || []).slice(0,8).forEach(row => {
+    const score = Math.min(90, 58 + Number(row.value || 0) * 2 + Number(row.whiffPct || 0) / 2);
+    addEdgeBoardSignal(
+      edgeMap,
       row,
       'Pitcher K Watch',
-      (row.value || 0)+' Ks last 2 starts',
-      row.status || ('Whiff%: '+(row.whiffPct || '0.0')+'%'),
+      (row.value || 0)+' recent Ks'+(row.whiffPct ? ' · '+row.whiffPct+'% Whiff' : ''),
+      row.status || row.extra || 'Recent strikeout trend',
       score
-    ));
+    );
   });
 
   filterRows(appState.liveHits || []).slice(0,5).forEach(row => {
     const score = Math.min(82, 50 + Number(row.value || 0) * 9);
-    rows.push(edgeBoardRow(
+    addEdgeBoardSignal(
+      edgeMap,
       row,
-      'Live Hit Leader',
+      'Live Hit Board',
       (row.value || 0)+' hits live',
       row.status || (row.lastHitLabel ? 'Latest: '+row.lastHitLabel : 'Game in progress'),
       score
-    ));
+    );
   });
 
   filterRows(appState.liveKs || []).slice(0,5).forEach(row => {
     const score = Math.min(84, 50 + Number(row.value || 0) * 6);
-    rows.push(edgeBoardRow(
+    addEdgeBoardSignal(
+      edgeMap,
       row,
-      'Live Strikeout Leader',
+      'Live K Board',
       (row.value || 0)+' Ks live',
       row.status || 'Game in progress',
       score
-    ));
+    );
   });
 
+  const rows = Array.from(edgeMap.values())
+    .sort((a,b) => (b.score || 0) - (a.score || 0));
+
   if(!rows.length){
-    target.innerHTML = '<tr><td colspan="7">Today’s edge board is loading. It will populate from today’s matchups once schedules, probable starters, and recent stats are available.</td></tr>';
+    target.innerHTML = '<tr><td colspan="7">Today’s Edge Board is loading. It will populate from today’s matchups once schedules, probable starters, and recent stats are available.</td></tr>';
     return;
   }
 
-  target.innerHTML = rows.slice(0,24).join('');
+  target.innerHTML = rows.slice(0,24).map(edgeBoardRow).join('');
 }
 
-function renderAllData(){ profileStore=[]; renderHeroEdges(); renderEdgeBoard(); renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
+
+function teamStreakCard(row,type){
+  const isHot = type === "win";
+  const label = isHot ? "Power Ball" : "Cold Note";
+  const streakText = (isHot ? "W" : "L") + h(row.streakNumber || row.value || 0);
+  const pct = Math.round(Math.min(100, Math.max(20, Number(row.streakNumber || row.value || 0) * 18)));
+  return '<div class="edge-card" style="margin-bottom:12px;">'
+    + '<div class="game-row">'
+      + '<div style="display:flex;gap:12px;align-items:center;">'
+        + '<img src="'+logo(row.teamId)+'" alt="" style="width:42px;height:42px;border-radius:50%;background:#ecfdf5;padding:5px;object-fit:contain;">'
+        + '<div>'
+          + '<div class="teams">'+h(row.teamName)+'</div>'
+          + '<div class="market">'+h(label)+' · '+h(row.recordText)+'</div>'
+          + '<div class="edge-player"><span>Trend:</span> '+h(row.context)+'</div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="edge-value">'+streakText+'</div>'
+    + '</div>'
+    + '<div class="meter"><span style="width:'+pct+'%;"></span></div>'
+  + '</div>';
+}
+
+function renderTeamStreakBoards(){
+  const powerTarget = document.getElementById("powerBallList");
+  const coldTarget = document.getElementById("coldNoteList");
+  if(!powerTarget || !coldTarget) return;
+
+  const wins = (appState.teamWinStreaks || []).slice(0,6);
+  const losses = (appState.teamLosingStreaks || []).slice(0,6);
+
+  powerTarget.innerHTML = wins.length
+    ? wins.map(row => teamStreakCard(row,"win")).join("")
+    : '<div class="loading">No active win streaks found right now.</div>';
+
+  coldTarget.innerHTML = losses.length
+    ? losses.map(row => teamStreakCard(row,"loss")).join("")
+    : '<div class="loading">No active losing streaks found right now.</div>';
+}
+
+async function loadTeamStreaks(){
+  try {
+    const season = currentSeason();
+    const data = await getJson("https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season="+season+"&standingsTypes=regularSeason");
+    const wins = [];
+    const losses = [];
+
+    (data.records || []).forEach(group => {
+      (group.teamRecords || []).forEach(record => {
+        const streak = record.streak || {};
+        const streakCode = String(streak.streakCode || "");
+        const streakType = String(streak.streakType || "").toLowerCase();
+        const streakNumber = Number(streak.streakNumber || streakCode.replace(/\D/g,"") || 0);
+        const isWin = streakCode.startsWith("W") || streakType === "wins" || streakType === "win";
+        const isLoss = streakCode.startsWith("L") || streakType === "losses" || streakType === "loss";
+
+        if(!streakNumber) return;
+
+        const row = {
+          value: streakNumber,
+          streakNumber,
+          teamId: record.team && record.team.id,
+          teamName: (record.team && record.team.name) || "Team",
+          recordText: (record.wins || 0)+"-"+(record.losses || 0)+(record.winningPercentage ? " · ."+String(record.winningPercentage).replace(/^0\./,"") : ""),
+          context: (isWin ? "Won " : "Lost ")+streakNumber+" straight"+(record.divisionRank ? " · Division rank: "+record.divisionRank : "")
+        };
+
+        if(isWin) wins.push(row);
+        if(isLoss) losses.push(row);
+      });
+    });
+
+    wins.sort((a,b) => b.streakNumber - a.streakNumber);
+    losses.sort((a,b) => b.streakNumber - a.streakNumber);
+
+    appState.teamWinStreaks = wins;
+    appState.teamLosingStreaks = losses;
+    renderTeamStreakBoards();
+  } catch(err) {
+    console.error(err);
+    appState.teamWinStreaks = [];
+    appState.teamLosingStreaks = [];
+    renderTeamStreakBoards();
+  }
+}
+
+function renderAllData(){ profileStore=[]; renderHeroEdges(); renderEdgeBoard(); renderTeamStreakBoards(); renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(isActuallyLiveGame(game)) liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
 async function findPreviousCompletedGameDay(){ for(let i=1;i<=10;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(finals.length) return {dateString,games:finals}; } return {dateString:"",games:[]}; }
 async function loadPreviousGameDayStats(){ const previous=await findPreviousCompletedGameDay(); const pitchMap=await getPitchCodeMap(); let prevKs=[], prevHits=[]; for(const game of previous.games){ const live=await getGameFeed(game.gamePk); const box=live.liveData.boxscore; const whiffStats=computeTeamWhiffStats(live,pitchMap); ["away","home"].forEach(side=>{ const team=game.teams[side].team; const opponent=side==="away"?game.teams.home.team:game.teams.away.team; const battingStats=box.teams[side].teamStats.batting; const teamKs=Number(battingStats.strikeOuts||0); const teamHits=Number(battingStats.hits||0); const whiff=whiffStats[team.id]||{swings:0,misses:0,whiffPct:"0.0"}; let players=[]; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(batting&&Number(batting.hits||0)>0) players.push({name:player.person.fullName,personId:player.person.id,team:team.name,teamId:team.id,hits:Number(batting.hits||0)}); }); players.sort((a,b)=>b.hits-a.hits); prevKs.push({value:teamKs,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses,extra:teamKs+" team strikeouts · Whiff%: "+whiff.whiffPct+"%"}); prevHits.push({value:teamHits,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,players}); }); } prevKs.sort((a,b)=>b.value-a.value); prevHits.sort((a,b)=>b.value-a.value); appState.prevKs=prevKs; appState.prevHits=prevHits; renderAllData(); }
 async function loadHotHitters(){ let days=[], hotMap={}, appearanceMap={}; for(let i=1;i<=14&&days.length<4;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(!finals.length) continue; days.push(dateString); for(const game of finals){ const box=await getJson("https://statsapi.mlb.com/api/v1/game/"+game.gamePk+"/boxscore"); ["away","home"].forEach(side=>{ const team=game.teams[side].team; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(!batting) return; const hits=Number(batting.hits||0); const atBats=Number(batting.atBats||0); const plateAppearances=Number(batting.plateAppearances||0); if(atBats<=0&&plateAppearances<=0) return; const id=player.person.id; if(!hotMap[id]) hotMap[id]={value:0,name:player.person.fullName,personId:id,team:team.name,game:"Last 4 completed game days",status:"",teamId:team.id,logs:[],boxscoreGroup:"hitting"}; hotMap[id].value+=hits; hotMap[id].logs.push({date:dateString,game:gameLabel(game),hits}); if(!appearanceMap[id]) appearanceMap[id]={name:player.person.fullName,personId:id,team:team.name,teamId:team.id,logsByDate:{},boxscoreGroup:"hitting"}; appearanceMap[id].logsByDate[dateString]={date:dateString,game:gameLabel(game),hits}; }); }); } } const hotHitters=Object.values(hotMap).filter(hit=>hit.value>=5).sort((a,b)=>b.value-a.value); let streakingHitters=[]; Object.values(appearanceMap).forEach(player=>{ let streak=0, logs=[]; for(const day of days){ const log=player.logsByDate[day]; if(!log) continue; if(log.hits>0){ streak++; logs.push(log); } else break; } if(streak>=3) streakingHitters.push({value:streak,name:player.name,personId:player.personId,team:player.team,game:"Hit in "+streak+" straight completed games",status:"",teamId:player.teamId,logs,boxscoreGroup:"hitting"}); }); streakingHitters.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(hotHitters,"hitting",3); await attachRecentBoxscores(streakingHitters,"hitting",3); appState.hotHitters=hotHitters; appState.streakingHitters=streakingHitters; renderAllData(); }
 async function loadHotPitchersToday(){ const pitchMap=await getPitchCodeMap(); const probables=await getTodaysProbables(); let hotPitchers=[]; for(const p of probables){ const logs=await fetchPitcherGameLogs(p.id,1); const splits=logs.filter(s=>s.stat&&s.stat.strikeOuts!==undefined).sort((a,b)=>new Date(b.date)-new Date(a.date)); const lastTwo=splits.slice(0,2); if(lastTwo.length<2) continue; const k1=Number(lastTwo[0].stat.strikeOuts||0), k2=Number(lastTwo[1].stat.strikeOuts||0); if(k1>=8&&k2>=8){ let totalSwings=0,totalMisses=0,rowLogs=[]; for(const split of lastTwo){ const gamePk=getSplitGamePk(split); const whiff=await computePitcherWhiffForGame(gamePk,p.id,pitchMap); const ks=Number(split.stat.strikeOuts||0); totalSwings+=whiff.swings; totalMisses+=whiff.misses; rowLogs.push({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses}); } const totalWhiffPct=totalSwings>0?((totalMisses/totalSwings)*100).toFixed(1):"0.0"; hotPitchers.push({value:k1+k2,name:p.name,personId:p.personId,team:p.team,game:"Today vs "+p.opponent,status:"Last 2 games: "+k1+" K, "+k2+" K",teamId:p.teamId,opponent:p.opponent,opponentId:p.opponentId,todayGamePk:p.todayGamePk,whiffPct:totalWhiffPct,swings:totalSwings,misses:totalMisses,extra:"Probable starter today · Whiff%: "+totalWhiffPct+"% ("+totalMisses+"/"+totalSwings+")",logs:rowLogs,recentBoxscores:pitcherRecentBoxscoresFromSplits(logs,p.team,3),boxscoreGroup:"pitching"}); } } hotPitchers.sort((a,b)=>b.value-a.value); appState.hotPitchers=hotPitchers; renderAllData(); }
-async function loadStaticSectionsOnce(){ try{ await loadPreviousGameDayStats(); }catch(err){ console.error(err); } try{ await loadHotHitters(); }catch(err){ console.error(err); } try{ await loadHotPitchersToday(); }catch(err){ console.error(err); } renderAllData(); }
+async function loadStaticSectionsOnce(){ try{ await loadPreviousGameDayStats(); }catch(err){ console.error(err); } try{ await loadHotHitters(); }catch(err){ console.error(err); } try{ await loadHotPitchersToday(); }catch(err){ console.error(err); } try{ await loadTeamStreaks(); }catch(err){ console.error(err); } renderAllData(); }
 async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); }catch(err){ console.error(err); document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">Error loading scoreboard</button>'; } try{ await loadLiveStats(); }catch(err){ console.error(err); document.getElementById("liveKs").innerHTML='<div class="card ks">Error loading live data. Refresh page.</div>'; document.getElementById("liveHits").innerHTML='<div class="card hits">Error loading live data. Refresh page.</div>'; } }
 appState.followedPlayers=loadFollowedPlayers();
 loadDashboard(); loadStaticSectionsOnce(); loadHeadToHeadEdges();
@@ -1461,14 +1638,18 @@ setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
     } = await supabaseClient.auth.getUser();
 
     const logoutBtn = document.getElementById("logoutBtn");
-    const loginBtn = document.getElementById("loginBtn");
+    const loginBtns = document.querySelectorAll(".login-btn");
 
     if (user) {
       if (logoutBtn) logoutBtn.style.display = "inline-block";
-      if (loginBtn) loginBtn.style.display = "none";
+      loginBtns.forEach(btn => {
+        btn.style.display = "none";
+      });
     } else {
       if (logoutBtn) logoutBtn.style.display = "none";
-      if (loginBtn) loginBtn.style.display = "inline-block";
+      loginBtns.forEach(btn => {
+        btn.style.display = "inline-block";
+      });
     }
   };
 
