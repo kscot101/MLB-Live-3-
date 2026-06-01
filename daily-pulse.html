@@ -568,13 +568,56 @@ function playerEmoji(index) {
   return ["🥇", "🥈", "🥉"][index] || "✅";
 }
 
+function primaryReason(edge) {
+  if (edge.type === "pitcher") {
+    if (edge.recentKs >= 18) return "Why: elite recent K form";
+    if (edge.weatherImpact >= 12) return "Why: pitcher-friendly weather setup";
+    if (edge.teamStreak && edge.teamStreak.type === "win") return "Why: hot team + strong starter form";
+    return "Why: starter form points to a strong matchup";
+  }
+
+  if (edge.hr >= 2 && edge.weatherImpact >= 8) return "Why: power trend + hitter-friendly weather";
+  if (edge.hits >= 8) return "Why: hot bat entering today's matchup";
+  if (edge.gamesWithHit >= 3) return "Why: active hit trend";
+  if (edge.opponentPitcher) return "Why: matchup vs projected starter";
+  return "Why: recent form pushed him onto the board";
+}
+
+function statBullets(edge) {
+  if (edge.type === "pitcher") {
+    const bullets = [];
+
+    if (edge.recentKs !== undefined) bullets.push(edge.recentKs + " recent Ks");
+    if (edge.recentInnings !== undefined) bullets.push(edge.recentInnings + " recent IP");
+    if (edge.recentEr !== undefined) bullets.push(edge.recentEr + " ER");
+    if (edge.weatherImpact) bullets.push((edge.weatherImpact > 0 ? "+" : "") + edge.weatherImpact + " weather");
+
+    return bullets.slice(0, 3).join(" • ");
+  }
+
+  const bullets = [];
+
+  if (edge.hits !== undefined) bullets.push(edge.hits + " recent H");
+  if (edge.hr !== undefined) bullets.push(edge.hr + " HR");
+  if (edge.rbi !== undefined) bullets.push(edge.rbi + " RBI");
+  if (edge.gamesWithHit !== undefined) bullets.push(edge.gamesWithHit + " games w/ hit");
+  if (edge.weatherImpact) bullets.push((edge.weatherImpact > 0 ? "+" : "") + edge.weatherImpact + " weather");
+
+  return bullets.slice(0, 3).join(" • ");
+}
+
 function formatEdgeLine(edge, index) {
-  const label = edge.type === "pitcher" ? "Pitcher" : "Batter";
-  const signalText = edge.signals.slice(0, 3).join(" • ");
+  const label = edge.type === "pitcher" ? "Pitcher Edge" : "Batter Edge";
+  const reason = primaryReason(edge);
+  const stats = statBullets(edge);
+  const matchup = edge.opponentPitcher
+    ? `${edge.game} vs ${shortName(edge.opponentPitcher)}`
+    : edge.game;
 
   return `${playerEmoji(index)} ${shortName(edge.name)} — ${edge.score}
-${label} Edge | ${edge.game}
-${signalText || edge.reason}`;
+${label} | ${matchup}
+${reason}
+Stats: ${stats || edge.reason}`;
 }
 
 function buildPost(data) {
@@ -592,8 +635,8 @@ function buildPost(data) {
 
   const weatherEdge = top.find(edge => Math.abs(Number(edge.weatherImpact || 0)) >= 8);
   const weatherLine = weatherEdge
-    ? `🌤 Weather: ${weatherEdge.weather}`
-    : `🌤 Weather: No major boost flagged`;
+    ? `🌤 Weather Note: ${weatherEdge.weather}`
+    : `🌤 Weather Note: No major boost flagged`;
 
   return `🚨 THE DIAMOND PULSE REPORT
 
