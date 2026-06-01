@@ -200,7 +200,37 @@
         height: 76px;
       }
     }
+  
+    .edge-score-box {
+      background: linear-gradient(135deg, rgba(47,245,138,0.16), rgba(58,167,255,0.08));
+      border: 1px solid rgba(47,245,138,0.3);
+    }
+    .score-big {
+      font-size: clamp(56px, 9vw, 96px);
+      font-weight: 950;
+      line-height: .9;
+      color: var(--green);
+      font-family: "Roboto Mono", monospace;
+    }
+    .favorite-btn {
+      margin-top: 14px;
+      display: inline-flex;
+      border: 1px solid rgba(47,245,138,0.35);
+      background: rgba(47,245,138,0.14);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .favorite-btn.active {
+      background: rgba(47,245,138,0.28);
+      color: #fff;
+    }
+
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
 </head>
 
 <body>
@@ -214,6 +244,13 @@
     <section class="card">
       <h2>Why This Player Is Highlighted</h2>
       <div id="reasons"></div>
+    </section>
+
+    <section class="card edge-score-box">
+      <h2>Diamond Pulse Edge Score</h2>
+      <div id="edgeScorePanel">
+        <div class="muted">Calculating recent form, streak, and role signals...</div>
+      </div>
     </section>
 
     <section class="card">
@@ -248,6 +285,7 @@
     const params = new URLSearchParams(window.location.search);
     const playerId = params.get("id");
     const reasonFromLink = params.get("reason");
+    const scoreFromLink = params.get("score");
 
     function h(value) {
       return String(value ?? "").replace(/[&<>"']/g, ch => ({
@@ -268,6 +306,123 @@
       const res = await fetch(url + sep + "_=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("Could not load " + url);
       return await res.json();
+    }
+
+
+    function todayDateString() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+    }
+
+    function parseWeatherNumber(value){
+      const match = String(value || "").match(/-?\d+(\.\d+)?/);
+      return match ? Number(match[0]) : null;
+    }
+
+    function parseWindMph(windText){
+      return parseWeatherNumber(windText);
+    }
+
+    function weatherAdjustment(weather, role){
+      if(!weather) return {delta:0, signal:"No stadium weather adjustment available yet."};
+
+      const temp = Number(weather.temp || 0);
+      const wind = String(weather.wind || "").toLowerCase();
+      const condition = String(weather.condition || "").toLowerCase();
+      const mph = parseWindMph(wind) || 0;
+      const isPitcher = String(role || "").toLowerCase().includes("pitcher");
+      let delta = 0;
+      const signals = [];
+
+      if(condition.includes("dome") || condition.includes("roof")){
+        signals.push("Weather neutral: roof/dome conditions.");
+      } else {
+        if(temp >= 82){
+          delta += isPitcher ? -3 : 5;
+          signals.push(isPitcher ? "Hot weather slightly hurts pitching." : "Hot weather gives hitters a boost.");
+        } else if(temp > 0 && temp <= 55){
+          delta += isPitcher ? 4 : -4;
+          signals.push(isPitcher ? "Cool weather favors pitching." : "Cool weather lowers hit conditions.");
+        }
+
+        if(mph >= 8 && (wind.includes("out") || wind.includes("to center") || wind.includes("to left") || wind.includes("to right"))){
+          delta += isPitcher ? -6 : 8;
+          signals.push(isPitcher ? "Wind blowing out downgrades pitchers." : "Wind blowing out boosts hitters.");
+        } else if(mph >= 8 && (wind.includes("in") || wind.includes("from center") || wind.includes("from left") || wind.includes("from right"))){
+          delta += isPitcher ? 6 : -6;
+          signals.push(isPitcher ? "Wind blowing in boosts pitchers." : "Wind blowing in downgrades hitters.");
+        }
+
+        if(condition.includes("rain") || condition.includes("drizzle") || condition.includes("delay")){
+          delta -= 5;
+          signals.push("Weather risk lowers the fantasy rating.");
+        }
+      }
+
+      return {
+        delta: Math.max(-12, Math.min(12, delta)),
+        signal: signals.join(" ") || "Weather is neutral for this player."
+      };
+    }
+
+    async function loadTodayGameWeather(teamId, role){
+      const target = document.getElementById("stadiumWeather");
+      if(!teamId){
+        if(target) target.innerHTML = "<p class='muted'>No current team found for weather lookup.</p>";
+        return {weather:null, adjustment:{delta:0, signal:"No weather found."}};
+      }
+
+      try {
+        const schedule = await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" + todayDateString());
+        let game = null;
+
+        (schedule.dates || []).forEach(date => {
+          (date.games || []).forEach(g => {
+            const awayId = String(g.teams?.away?.team?.id || "");
+            const homeId = String(g.teams?.home?.team?.id || "");
+            if(awayId === String(teamId) || homeId === String(teamId)) game = g;
+          });
+        });
+
+        if(!game){
+          if(target) target.innerHTML = "<p class='muted'>This player’s team does not appear to have a listed MLB game today.</p>";
+          return {weather:null, adjustment:{delta:0, signal:"No game today."}};
+        }
+
+        let weather = {};
+        try {
+          const live = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+          weather = live.gameData?.weather || {};
+          weather.venue = live.gameData?.venue?.name || game.venue?.name || "Stadium";
+        } catch(err) {
+          weather = {venue: game.venue?.name || "Stadium"};
+        }
+
+        const away = game.teams?.away?.team?.name || "Away";
+        const home = game.teams?.home?.team?.name || "Home";
+        const status = game.status?.detailedState || "Scheduled";
+        const adj = weatherAdjustment(weather, role);
+
+        if(target){
+          target.innerHTML = `
+            <p><strong>${h(away)} @ ${h(home)}</strong> · ${h(status)}</p>
+            <p class="muted">${h(weather.venue || "Stadium")}</p>
+            <div class="weather-grid">
+              <div class="weather-item"><div class="weather-value">${h(weather.temp || "-")}</div><div class="label">Temperature</div></div>
+              <div class="weather-item"><div class="weather-value">${h(weather.condition || "-")}</div><div class="label">Condition</div></div>
+              <div class="weather-item"><div class="weather-value">${h(weather.wind || "-")}</div><div class="label">Wind</div></div>
+              <div class="weather-item"><div class="weather-value">${adj.delta > 0 ? "+"+adj.delta : adj.delta}</div><div class="label">Rating Impact</div></div>
+            </div>
+            <div class="reason ${adj.delta < 0 ? "orange" : ""}">${h(adj.signal)}</div>
+          `;
+        }
+
+        return {weather, adjustment:adj};
+      } catch(err) {
+        console.warn("Weather lookup failed", err);
+        if(target) target.innerHTML = "<p class='muted'>Weather could not be loaded right now.</p>";
+        return {weather:null, adjustment:{delta:0, signal:"Weather unavailable."}};
+      }
     }
 
     async function loadStatGroup(group) {
@@ -296,6 +451,126 @@
       }
     }
 
+
+    function calculatePlayerEdgeScore(info) {
+      let score = 45;
+
+      if (info.scoreFromLink && !Number.isNaN(Number(info.scoreFromLink))) {
+        score = Math.max(score, Math.round(Number(info.scoreFromLink)));
+      }
+
+      if (info.totalHits >= 10) score += 24;
+      else if (info.totalHits >= 7) score += 18;
+      else if (info.totalHits >= 5) score += 12;
+
+      if (info.hitStreak >= 5) score += 18;
+      else if (info.hitStreak >= 3) score += 12;
+
+      if (info.totalKs >= 16) score += 20;
+      else if (info.totalKs >= 10) score += 14;
+      else if (info.totalKs >= 8) score += 10;
+
+      if (info.reason) score += 8;
+
+      if (info.weatherDelta) score += Number(info.weatherDelta || 0);
+      if (info.matchupBoost) score += Number(info.matchupBoost || 0);
+
+      return Math.max(1, Math.min(100, Math.round(score)));
+    }
+
+    function confidenceLabel(score) {
+      if (score >= 88) return "Elite";
+      if (score >= 75) return "Strong";
+      if (score >= 62) return "Watch";
+      return "Monitor";
+    }
+
+    function renderEdgeScorePanel(score, reasons) {
+      const target = document.getElementById("edgeScorePanel");
+      if (!target) return;
+
+      target.innerHTML = `
+        <div class="score-big">${h(score)}</div>
+        <div class="pill">${h(confidenceLabel(score))} Confidence</div>
+        <p class="muted" style="margin-top:12px;">
+          Score is based on current Diamond Pulse signals, recent form, streaks, and the board that sent you here.
+        </p>
+        <div>
+          ${(reasons || []).map(reason => `<div class="reason">${h(reason)}</div>`).join("")}
+        </div>
+      `;
+    }
+
+    function hasSupabase() {
+      return typeof supabaseClient !== "undefined" && supabaseClient && supabaseClient.auth;
+    }
+
+    async function getLoggedInUser() {
+      if (!hasSupabase()) return null;
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      return user;
+    }
+
+    async function saveFavoritePlayer(playerId, playerName, teamName, teamId) {
+      const user = await getLoggedInUser();
+
+      if (!user) {
+        alert("Log in from the main Diamond Pulse page to save favorite players.");
+        return;
+      }
+
+      try {
+        await supabaseClient
+          .from("favorite_players")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("player_id", String(playerId));
+
+        await supabaseClient
+          .from("favorite_players")
+          .insert({
+            user_id: user.id,
+            player_id: String(playerId),
+            player_name: playerName,
+            team_name: teamName
+          });
+
+        try {
+          const local = JSON.parse(localStorage.getItem("diamondPulseFollowedPlayers") || "[]");
+          if (!local.some(p => String(p.personId) === String(playerId))) {
+            local.push({ personId: playerId, name: playerName, team: teamName, teamId: teamId });
+            localStorage.setItem("diamondPulseFollowedPlayers", JSON.stringify(local));
+          }
+        } catch(err) {}
+
+        updateFavoriteButton(playerId, true);
+        alert("Player saved to your Diamond Pulse account.");
+      } catch (err) {
+        console.error(err);
+        alert("Could not save player. Check your Supabase favorite_players table.");
+      }
+    }
+
+    async function updateFavoriteButton(playerId, forceActive) {
+      const btn = document.getElementById("favoritePlayerBtn");
+      if (!btn) return;
+
+      let active = !!forceActive;
+
+      try {
+        const local = JSON.parse(localStorage.getItem("diamondPulseFollowedPlayers") || "[]");
+        active = active || local.some(p => String(p.personId) === String(playerId));
+      } catch(err) {}
+
+      if (active) {
+        btn.classList.add("active");
+        btn.innerText = "⭐ Saved Player";
+      } else {
+        btn.classList.remove("active");
+        btn.innerText = "⭐ Save Player";
+      }
+    }
+
     async function loadPlayer() {
       if (!playerId) {
         document.getElementById("playerHero").innerHTML = "<div>No player ID found.</div>";
@@ -316,11 +591,14 @@
           <h1>${h(player.fullName)}</h1>
           <p class="muted">${h(team.name || "MLB Player")} · ${h(player.primaryPosition?.name || "")}</p>
           ${reasonFromLink ? `<div class="pill">${h(reasonFromLink.replaceAll("-", " "))}</div>` : ""}
+          <button id="favoritePlayerBtn" class="favorite-btn" type="button">⭐ Save Player</button>
         </div>
       `;
 
       const hittingSplits = await loadStatGroup("hitting");
       const pitchingSplits = await loadStatGroup("pitching");
+      const playerRole = (player.primaryPosition?.type === "Pitcher" || pitchingSplits.length > hittingSplits.length) ? "Pitcher" : "Batter";
+      const weatherInfo = await loadTodayGameWeather(team.id, playerRole);
 
       const allSplits = hittingSplits.concat(pitchingSplits)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -354,8 +632,37 @@
         reasons.push("💗 Hit Streak: hit in " + hitStreak + " straight recent games.");
       }
 
+      if (reasonFromLink && reasonFromLink.includes("dfs")) {
+        reasons.push("🧬 DFS rating includes matchup context, hitter-vs-pitcher or pitcher-vs-lineup edges when available.");
+      }
+
+      if (weatherInfo.adjustment && weatherInfo.adjustment.signal) {
+        reasons.push("🌤 Weather factor: " + weatherInfo.adjustment.signal);
+      }
+
       if (!reasons.length) {
         reasons.push("📊 This player was selected from the Diamond Pulse board. Recent stats are shown below.");
+      }
+
+      const computedScore = calculatePlayerEdgeScore({
+        totalHits,
+        totalKs,
+        hitStreak,
+        games: recent.length,
+        reason: reasonFromLink,
+        scoreFromLink,
+        weatherDelta: weatherInfo.adjustment ? weatherInfo.adjustment.delta : 0,
+        matchupBoost: reasonFromLink && (reasonFromLink.includes("h2h") || reasonFromLink.includes("dfs")) ? 6 : 0
+      });
+
+      renderEdgeScorePanel(computedScore, reasons);
+
+      const favBtn = document.getElementById("favoritePlayerBtn");
+      if (favBtn) {
+        favBtn.addEventListener("click", function () {
+          saveFavoritePlayer(player.id, player.fullName, team.name || "", team.id || "");
+        });
+        updateFavoriteButton(player.id);
       }
 
       document.getElementById("reasons").innerHTML = reasons
