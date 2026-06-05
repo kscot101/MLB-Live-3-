@@ -5,646 +5,239 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daily Pulse Post Generator</title>
   <style>
-    :root {
-      --bg:#07111f;
-      --panel:rgba(255,255,255,.055);
-      --border:rgba(255,255,255,.12);
-      --text:#f4f7fb;
-      --muted:#91a4bd;
-      --green:#2ff58a;
-      --orange:#ffb347;
-    }
-
+    :root { --bg:#07111f; --panel:rgba(255,255,255,.055); --border:rgba(255,255,255,.12); --text:#f4f7fb; --muted:#91a4bd; --green:#2ff58a; --orange:#ffb347; }
     * { box-sizing:border-box; }
-
-    body {
-      margin:0;
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top left, rgba(47,245,138,.14), transparent 30%),
-        radial-gradient(circle at top right, rgba(58,167,255,.12), transparent 32%),
-        var(--bg);
-      color:var(--text);
-      font-family:Inter, Arial, sans-serif;
-      padding:24px;
-    }
-
-    .wrap { max-width:900px; margin:auto; }
-
-    .card {
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:24px;
-      margin-bottom:18px;
-      box-shadow:0 18px 50px rgba(0,0,0,.28);
-    }
-
-    h1 {
-      margin:0 0 8px;
-      font-size:clamp(34px, 6vw, 58px);
-      line-height:1;
-      letter-spacing:-2px;
-    }
-
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top left, rgba(47,245,138,.14), transparent 30%), radial-gradient(circle at top right, rgba(58,167,255,.12), transparent 32%), var(--bg); color:var(--text); font-family:Inter, Arial, sans-serif; padding:24px; }
+    .wrap { max-width:960px; margin:auto; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:24px; padding:24px; margin-bottom:18px; box-shadow:0 18px 50px rgba(0,0,0,.28); }
+    h1 { margin:0 0 8px; font-size:clamp(34px, 6vw, 58px); line-height:1; letter-spacing:-2px; }
     p { color:var(--muted); }
-
-    button {
-      border:0;
-      border-radius:999px;
-      background:var(--green);
-      color:#06101d;
-      font-weight:900;
-      padding:12px 18px;
-      cursor:pointer;
-      margin-right:8px;
-      margin-top:8px;
-    }
-
-    button.secondary {
-      background:rgba(255,255,255,.08);
-      color:var(--text);
-      border:1px solid var(--border);
-    }
-
-    textarea, pre {
-      width:100%;
-      min-height:260px;
-      background:#020617;
-      color:#d1fae5;
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:16px;
-      font-size:15px;
-      line-height:1.45;
-      white-space:pre-wrap;
-      overflow:auto;
-    }
-
-    .status {
-      color:var(--orange);
-      font-weight:800;
-      margin-top:10px;
-    }
-
-    .small {
-      font-size:13px;
-      color:var(--muted);
-    }
+    button { border:0; border-radius:999px; background:var(--green); color:#06101d; font-weight:900; padding:12px 18px; cursor:pointer; margin-right:8px; margin-top:8px; }
+    button.secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border); }
+    textarea, pre { width:100%; min-height:380px; background:#020617; color:#d1fae5; border:1px solid var(--border); border-radius:18px; padding:16px; font-size:15px; line-height:1.45; white-space:pre-wrap; overflow:auto; }
+    .status { color:var(--orange); font-weight:800; margin-top:10px; }
+    .small { font-size:13px; color:var(--muted); }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Daily Pulse Generator</h1>
-      <p>
-        Private helper page. Generates a PropFinder-style Diamond Pulse post with at least
-        three player edges ranked by recent form, matchup context, weather, and team trend.
-      </p>
-
-      <button onclick="generateDailyPulse()">Generate Today's Post</button>
-      <button class="secondary" onclick="copyPost()">Copy Post</button>
-      <button class="secondary" onclick="downloadJson()">Download JSON</button>
-
-      <div id="status" class="status">Ready.</div>
-    </div>
-
-    <div class="card">
-      <h2>Post Text</h2>
-      <textarea id="postText" readonly>Click "Generate Today's Post".</textarea>
-    </div>
-
-    <div class="card">
-      <h2>JSON Data</h2>
-      <pre id="jsonOutput">{}</pre>
-      <p class="small">
-        This page is not linked on the public site. Use it to copy a daily X post or export JSON.
-      </p>
-    </div>
+<div class="wrap">
+  <div class="card">
+    <h1>Daily Pulse Generator</h1>
+    <p>Private helper page. Generates two separate social posts: <b>⚡ Batters Edge</b> and <b>🎯 Round the Mound</b>, using recent form, probable matchups, weather, team trends, and pitcher H2H history.</p>
+    <button onclick="generateDailyPulse()">Generate Today's Posts</button>
+    <button class="secondary" onclick="copyPost()">Copy Both Posts</button>
+    <button class="secondary" onclick="downloadJson()">Download JSON</button>
+    <div id="status" class="status">Ready.</div>
   </div>
+  <div class="card">
+    <h2>⚡ Batters Edge Post</h2>
+    <button class="secondary" onclick="copyBattersPost()">Copy Batters Edge</button>
+    <textarea id="battersPostText" readonly>Click "Generate Today's Post".</textarea>
+  </div>
+
+  <div class="card">
+    <h2>🎯 Round the Mound Post</h2>
+    <button class="secondary" onclick="copyPitchersPost()">Copy Round the Mound</button>
+    <textarea id="pitchersPostText" readonly>Click "Generate Today's Post".</textarea>
+  </div>
+  <div class="card"><h2>JSON Data</h2><pre id="jsonOutput">{}</pre><p class="small">This page is not linked on the public site.</p></div>
+</div>
 
 <script>
 const MLB = "https://statsapi.mlb.com/api/v1";
 let dailyPulseData = null;
+const H2H_YEARS_BACK = 6;
 
 function nyDate(offsetDays = 0) {
   const ny = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
   ny.setDate(ny.getDate() + offsetDays);
-  return ny.getFullYear() + "-" +
-    String(ny.getMonth() + 1).padStart(2, "0") + "-" +
-    String(ny.getDate()).padStart(2, "0");
+  return ny.getFullYear() + "-" + String(ny.getMonth() + 1).padStart(2, "0") + "-" + String(ny.getDate()).padStart(2, "0");
 }
+function currentSeason(){ return Number(nyDate().slice(0,4)); }
+async function getJson(url){ const sep=url.includes("?")?"&":"?"; const res=await fetch(url+sep+"_="+Date.now(),{cache:"no-store"}); if(!res.ok) throw new Error("Could not load "+url); return await res.json(); }
+function setStatus(text){ document.getElementById("status").textContent=text; }
+function shortName(name){ const p=String(name||"").trim().split(" "); return p.length<=2 ? name : p[0]+" "+p[p.length-1]; }
+function shortTeam(team){ return team.abbreviation || team.teamName || team.name || "TEAM"; }
+function shortGameLabel(game){ return shortTeam(game.teams.away.team)+" @ "+shortTeam(game.teams.home.team); }
+function gameLabel(game){ return game.teams.away.team.name+" @ "+game.teams.home.team.name; }
+function parseInnings(value){ if(!value) return 0; const [whole,part]=String(value).split("."); let innings=Number(whole||0); if(part==="1") innings+=1/3; if(part==="2") innings+=2/3; return innings; }
+function normalizeName(name){ return String(name||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function opponentNameFromSplit(split){ return (split.opponent && (split.opponent.name || split.opponent.teamName)) || ""; }
+function opponentIdFromSplit(split){ return split.opponent && (split.opponent.id || (split.opponent.team && split.opponent.team.id)); }
+function sameOpponent(split, opponentId, opponentName){ const splitId=opponentIdFromSplit(split); if(splitId && String(splitId)===String(opponentId)) return true; const a=normalizeName(opponentNameFromSplit(split)); const b=normalizeName(opponentName); return a && b && (a===b || a.includes(b) || b.includes(a)); }
 
-function currentSeason() {
-  return Number(nyDate().slice(0, 4));
-}
-
-async function getJson(url) {
-  const sep = url.includes("?") ? "&" : "?";
-  const res = await fetch(url + sep + "_=" + Date.now(), { cache: "no-store" });
-  if (!res.ok) throw new Error("Could not load " + url);
-  return await res.json();
-}
-
-function setStatus(text) {
-  document.getElementById("status").textContent = text;
-}
-
-function shortName(name) {
-  const parts = String(name || "").trim().split(" ");
-  if (parts.length <= 2) return name;
-  return parts[0] + " " + parts[parts.length - 1];
-}
-
-function shortTeam(team) {
-  return team.abbreviation || team.teamName || team.name || "TEAM";
-}
-
-function shortGameLabel(game) {
-  return shortTeam(game.teams.away.team) + " @ " + shortTeam(game.teams.home.team);
-}
-
-function gameLabel(game) {
-  return game.teams.away.team.name + " @ " + game.teams.home.team.name;
-}
-
-function parseInnings(value) {
-  if (!value) return 0;
-  const [whole, part] = String(value).split(".");
-  let innings = Number(whole || 0);
-  if (part === "1") innings += 1 / 3;
-  if (part === "2") innings += 2 / 3;
-  return innings;
-}
-
-async function getTodaysGames() {
-  const today = nyDate();
-  const data = await getJson(
-    MLB + "/schedule?sportId=1&date=" + today + "&hydrate=probablePitcher,venue,linescore"
-  );
-
-  const games = [];
-  (data.dates || []).forEach(date => {
-    (date.games || []).forEach(game => games.push(game));
-  });
-
+async function getTodaysGames(){
+  const data=await getJson(MLB+"/schedule?sportId=1&date="+nyDate()+"&hydrate=probablePitcher,venue,linescore");
+  const games=[]; (data.dates||[]).forEach(d=>(d.games||[]).forEach(g=>games.push(g)));
   return games;
 }
-
-async function getGameFeed(gamePk) {
-  return await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
-}
-
-async function findRecentFinalGames(maxDays = 8) {
-  const finals = [];
-
-  for (let i = 1; i <= maxDays && finals.length < 55; i++) {
-    const date = nyDate(-i);
-    const data = await getJson(MLB + "/schedule?sportId=1&date=" + date);
-
-    (data.dates || []).forEach(day => {
-      (day.games || []).forEach(game => {
-        if (game.status && game.status.abstractGameState === "Final") {
-          finals.push({ ...game, date });
-        }
-      });
-    });
+async function getGameFeed(gamePk){ return await getJson("https://statsapi.mlb.com/api/v1.1/game/"+gamePk+"/feed/live"); }
+async function findRecentFinalGames(maxDays=8){
+  const finals=[];
+  for(let i=1;i<=maxDays && finals.length<60;i++){
+    const data=await getJson(MLB+"/schedule?sportId=1&date="+nyDate(-i));
+    (data.dates||[]).forEach(day=>(day.games||[]).forEach(game=>{ if(game.status && game.status.abstractGameState==="Final") finals.push({...game,date:nyDate(-i)}); }));
   }
-
   return finals;
 }
-
-async function getTeamStreaks(games) {
-  const todaysIds = new Set();
-  games.forEach(game => {
-    todaysIds.add(String(game.teams.away.team.id));
-    todaysIds.add(String(game.teams.home.team.id));
-  });
-
-  const data = await getJson(MLB + "/standings?leagueId=103,104&season=" + currentSeason());
-  const teams = [];
-
-  (data.records || []).forEach(record => {
-    (record.teamRecords || []).forEach(row => {
-      if (!todaysIds.has(String(row.team.id))) return;
-
-      const code = row.streak?.streakCode || "";
-      const type = code.startsWith("W") ? "win" : code.startsWith("L") ? "loss" : "none";
-      const number = Number(code.slice(1) || 0);
-
-      teams.push({
-        id: row.team.id,
-        name: row.team.name,
-        streak: code || "N/A",
-        type,
-        number
-      });
-    });
-  });
-
-  return {
-    all: teams,
-    powerBall: teams.filter(t => t.type === "win").sort((a, b) => b.number - a.number)[0] || null,
-    coldNote: teams.filter(t => t.type === "loss").sort((a, b) => b.number - a.number)[0] || null
-  };
+async function getTeamStreaks(games){
+  const todaysIds=new Set();
+  games.forEach(game=>{ todaysIds.add(String(game.teams.away.team.id)); todaysIds.add(String(game.teams.home.team.id)); });
+  const data=await getJson(MLB+"/standings?leagueId=103,104&season="+currentSeason());
+  const teams=[];
+  (data.records||[]).forEach(record=>(record.teamRecords||[]).forEach(row=>{
+    if(!todaysIds.has(String(row.team.id))) return;
+    const code=row.streak?.streakCode || "";
+    const type=code.startsWith("W")?"win":code.startsWith("L")?"loss":"none";
+    const number=Number(code.slice(1)||0);
+    teams.push({id:row.team.id,name:row.team.name,streak:code||"N/A",type,number});
+  }));
+  return { all:teams, powerBall:teams.filter(t=>t.type==="win").sort((a,b)=>b.number-a.number)[0]||null, coldNote:teams.filter(t=>t.type==="loss").sort((a,b)=>b.number-a.number)[0]||null };
 }
+function getOpponentTeam(game, teamId){ const away=game.teams.away.team, home=game.teams.home.team; return String(away.id)===String(teamId)?home:away; }
+function getProbableOpponentPitcher(game, hitterTeamId){ const isAway=String(game.teams.away.team.id)===String(hitterTeamId); return game.teams[isAway?"home":"away"].probablePitcher || null; }
 
-function getOpponentTeam(game, teamId) {
-  const away = game.teams.away.team;
-  const home = game.teams.home.team;
-  return String(away.id) === String(teamId) ? home : away;
+function scoreWeatherForHitter(weather){
+  if(!weather) return {score:0,note:""};
+  let score=0; const temp=Number(weather.temp||weather.temperature||0); const wind=String(weather.wind||"").toLowerCase(); const condition=String(weather.condition||"").toLowerCase();
+  if(wind.includes("out")) score+=20; if(wind.includes("in")) score-=16; if(temp>=80) score+=10; if(temp&&temp<=55) score-=8; if(condition.includes("clear")||condition.includes("sun")) score+=4;
+  let note=""; if(score>=18) note="weather boost"; else if(score<=-12) note="weather downgrade"; else if(score>0) note="slight weather lift"; else if(score<0) note="slight weather drag";
+  return {score,note};
 }
-
-function getProbableOpponentPitcher(game, hitterTeamId) {
-  const isAwayHitter = String(game.teams.away.team.id) === String(hitterTeamId);
-  const opponentSide = isAwayHitter ? "home" : "away";
-  return game.teams[opponentSide].probablePitcher || null;
+function scoreWeatherForPitcher(weather){
+  if(!weather) return {score:0,note:""};
+  let score=0; const temp=Number(weather.temp||weather.temperature||0); const wind=String(weather.wind||"").toLowerCase();
+  if(wind.includes("in")) score+=18; if(wind.includes("out")) score-=16; if(temp&&temp<=60) score+=8; if(temp>=82) score-=8;
+  let note=""; if(score>=16) note="pitcher-friendly weather"; else if(score<=-12) note="weather risk"; else if(score>0) note="slight weather lift"; else if(score<0) note="slight weather drag";
+  return {score,note};
 }
+function weatherText(game, weather){ if(!weather) return shortGameLabel(game)+" — weather unavailable"; return `${shortGameLabel(game)} — ${weather.temp||weather.temperature||"?"}° ${weather.condition||""} ${weather.wind||""}`.trim(); }
+async function getWeatherForGame(game){ try{ const feed=await getGameFeed(game.gamePk); return feed.gameData?.weather || null; }catch(e){ return null; } }
 
-function scoreWeatherForHitter(weather) {
-  if (!weather) return { score: 0, note: "" };
-
-  let score = 0;
-  const temp = Number(weather.temp || weather.temperature || 0);
-  const wind = String(weather.wind || "").toLowerCase();
-  const condition = String(weather.condition || "").toLowerCase();
-
-  if (wind.includes("out")) score += 20;
-  if (wind.includes("in")) score -= 16;
-  if (temp >= 80) score += 10;
-  if (temp && temp <= 55) score -= 8;
-  if (condition.includes("clear") || condition.includes("sun")) score += 4;
-
-  let note = "";
-  if (score >= 18) note = "weather boost";
-  else if (score <= -12) note = "weather downgrade";
-  else if (score > 0) note = "slight weather lift";
-  else if (score < 0) note = "slight weather drag";
-
-  return { score, note };
-}
-
-function scoreWeatherForPitcher(weather) {
-  if (!weather) return { score: 0, note: "" };
-
-  let score = 0;
-  const temp = Number(weather.temp || weather.temperature || 0);
-  const wind = String(weather.wind || "").toLowerCase();
-
-  if (wind.includes("in")) score += 18;
-  if (wind.includes("out")) score -= 16;
-  if (temp && temp <= 60) score += 8;
-  if (temp >= 82) score -= 8;
-
-  let note = "";
-  if (score >= 16) note = "pitcher-friendly weather";
-  else if (score <= -12) note = "weather risk";
-  else if (score > 0) note = "slight weather lift";
-  else if (score < 0) note = "slight weather drag";
-
-  return { score, note };
-}
-
-function weatherText(game, weather) {
-  if (!weather) return shortGameLabel(game) + " — weather unavailable";
-
-  const temp = weather.temp || weather.temperature || "?";
-  const condition = weather.condition || "";
-  const wind = weather.wind || "";
-
-  return `${shortGameLabel(game)} — ${temp}° ${condition} ${wind}`.trim();
-}
-
-async function collectHitterEdges(games, finals, streaks) {
-  const gameByTeam = {};
-  games.forEach(game => {
-    gameByTeam[String(game.teams.away.team.id)] = game;
-    gameByTeam[String(game.teams.home.team.id)] = game;
-  });
-
-  const todayIds = new Set(Object.keys(gameByTeam));
-  const hitterMap = {};
-
-  for (const finalGame of finals.slice(0, 42)) {
-    try {
-      const feed = await getGameFeed(finalGame.gamePk);
-      const box = feed.liveData.boxscore;
-
-      ["away", "home"].forEach(side => {
-        const team = feed.gameData.teams[side];
-        if (!todayIds.has(String(team.id))) return;
-
-        Object.values(box.teams[side].players || {}).forEach(player => {
-          const batting = player.stats && player.stats.batting;
-          if (!batting) return;
-
-          const hits = Number(batting.hits || 0);
-          const hr = Number(batting.homeRuns || 0);
-          const rbi = Number(batting.rbi || 0);
-          const bb = Number(batting.baseOnBalls || 0);
-
-          if (hits <= 0 && hr <= 0 && rbi <= 0 && bb <= 0) return;
-
-          const pid = player.person.id;
-
-          if (!hitterMap[pid]) {
-            hitterMap[pid] = {
-              type: "batter",
-              id: pid,
-              name: player.person.fullName,
-              team: team.name,
-              teamId: team.id,
-              hits: 0,
-              hr: 0,
-              rbi: 0,
-              walks: 0,
-              gamesWithHit: 0,
-              recentGames: 0,
-              baseScore: 50,
-              score: 50,
-              signals: []
-            };
-          }
-
-          hitterMap[pid].hits += hits;
-          hitterMap[pid].hr += hr;
-          hitterMap[pid].rbi += rbi;
-          hitterMap[pid].walks += bb;
-          hitterMap[pid].recentGames += 1;
-          if (hits > 0) hitterMap[pid].gamesWithHit += 1;
+async function collectBatterEdges(games, finals, streaks){
+  const gameByTeam={}; games.forEach(game=>{ gameByTeam[String(game.teams.away.team.id)]=game; gameByTeam[String(game.teams.home.team.id)]=game; });
+  const todayIds=new Set(Object.keys(gameByTeam)); const hitterMap={};
+  for(const finalGame of finals.slice(0,45)){
+    try{
+      const feed=await getGameFeed(finalGame.gamePk); const box=feed.liveData.boxscore;
+      ["away","home"].forEach(side=>{
+        const team=feed.gameData.teams[side]; if(!todayIds.has(String(team.id))) return;
+        Object.values(box.teams[side].players||{}).forEach(player=>{
+          const batting=player.stats&&player.stats.batting; if(!batting) return;
+          const hits=Number(batting.hits||0), hr=Number(batting.homeRuns||0), rbi=Number(batting.rbi||0), bb=Number(batting.baseOnBalls||0);
+          if(hits<=0&&hr<=0&&rbi<=0&&bb<=0) return;
+          const pid=player.person.id;
+          if(!hitterMap[pid]) hitterMap[pid]={type:"batter",id:pid,name:player.person.fullName,team:team.name,teamId:team.id,hits:0,hr:0,rbi:0,walks:0,gamesWithHit:0,recentGames:0,score:50,signals:[]};
+          hitterMap[pid].hits+=hits; hitterMap[pid].hr+=hr; hitterMap[pid].rbi+=rbi; hitterMap[pid].walks+=bb; hitterMap[pid].recentGames+=1; if(hits>0) hitterMap[pid].gamesWithHit+=1;
         });
       });
-    } catch (err) {
-      console.warn("Skipping hitter final game", finalGame.gamePk, err);
-    }
+    }catch(e){}
   }
-
-  const edges = [];
-
-  for (const row of Object.values(hitterMap)) {
-    const game = gameByTeam[String(row.teamId)];
-    if (!game) continue;
-
-    let weather = null;
-    try {
-      const feed = await getGameFeed(game.gamePk);
-      weather = feed.gameData?.weather || null;
-    } catch (err) {}
-
-    const weatherImpact = scoreWeatherForHitter(weather);
-    const opponentPitcher = getProbableOpponentPitcher(game, row.teamId);
-    const opponent = getOpponentTeam(game, row.teamId);
-
-    const teamStreak = streaks.all.find(t => String(t.id) === String(row.teamId));
-    const powerBonus = teamStreak && teamStreak.type === "win" ? Math.min(10, teamStreak.number * 2) : 0;
-    const coldPenalty = teamStreak && teamStreak.type === "loss" ? Math.min(8, teamStreak.number * 1.5) : 0;
-
-    let score =
-      50 +
-      row.hits * 3.4 +
-      row.hr * 8 +
-      row.rbi * 1.8 +
-      row.walks * 1.2 +
-      row.gamesWithHit * 2.5 +
-      weatherImpact.score +
-      powerBonus -
-      coldPenalty;
-
-    score = Math.max(1, Math.min(99, Math.round(score)));
-
-    const signals = [];
-
-    if (row.hits >= 6) signals.push("hot bat");
-    if (row.hr >= 2) signals.push("power trend");
-    if (row.gamesWithHit >= 3) signals.push("hit streak");
-    if (weatherImpact.note) signals.push(weatherImpact.note);
-    if (opponentPitcher) signals.push("vs " + opponentPitcher.fullName);
-    if (teamStreak && teamStreak.type === "win") signals.push("Power Ball team " + teamStreak.streak);
-    if (teamStreak && teamStreak.type === "loss") signals.push("Cold Note team " + teamStreak.streak);
-
-    row.game = shortGameLabel(game);
-    row.fullGame = gameLabel(game);
-    row.opponent = opponent.name;
-    row.opponentPitcher = opponentPitcher ? opponentPitcher.fullName : "";
-    row.weather = weatherText(game, weather);
-    row.weatherImpact = weatherImpact.score;
-    row.teamStreak = teamStreak || null;
-    row.score = score;
-    row.signals = signals;
-    row.reason = buildReason(row);
-
+  const edges=[];
+  for(const row of Object.values(hitterMap)){
+    const game=gameByTeam[String(row.teamId)]; if(!game) continue;
+    const weather=await getWeatherForGame(game); const weatherImpact=scoreWeatherForHitter(weather); const opponentPitcher=getProbableOpponentPitcher(game,row.teamId); const opponent=getOpponentTeam(game,row.teamId);
+    const teamStreak=streaks.all.find(t=>String(t.id)===String(row.teamId)); const powerBonus=teamStreak&&teamStreak.type==="win"?Math.min(10,teamStreak.number*2):0; const coldPenalty=teamStreak&&teamStreak.type==="loss"?Math.min(8,teamStreak.number*1.5):0;
+    let score=50+row.hits*3.4+row.hr*8+row.rbi*1.8+row.walks*1.2+row.gamesWithHit*2.5+weatherImpact.score+powerBonus-coldPenalty;
+    score=Math.max(1,Math.min(99,Math.round(score)));
+    const signals=[]; if(row.hits>=6) signals.push("hot bat"); if(row.hr>=2) signals.push("power trend"); if(row.gamesWithHit>=3) signals.push("hit trend"); if(weatherImpact.note) signals.push(weatherImpact.note); if(opponentPitcher) signals.push("vs "+opponentPitcher.fullName); if(teamStreak&&teamStreak.type==="win") signals.push("Power Ball "+teamStreak.streak); if(teamStreak&&teamStreak.type==="loss") signals.push("Cold Note "+teamStreak.streak);
+    Object.assign(row,{game:shortGameLabel(game),fullGame:gameLabel(game),opponent:opponent.name,opponentPitcher:opponentPitcher?opponentPitcher.fullName:"",weather:weatherText(game,weather),weatherImpact:weatherImpact.score,teamStreak:teamStreak||null,score,signals,reason:buildBatterReason(row)});
     edges.push(row);
   }
-
-  return edges;
+  return uniqueById(edges.sort((a,b)=>b.score-a.score)).slice(0,3);
 }
+function buildBatterReason(edge){ if(edge.hr>=2&&edge.weatherImpact>=8) return "Power trend plus hitter-friendly conditions"; if(edge.hits>=8) return "Hot bat entering today's matchup"; if(edge.gamesWithHit>=3) return "Recent hit trend with matchup context"; if(edge.opponentPitcher) return "Projected starter matchup pushed him up"; return "Recent form pushed him onto the board"; }
 
-async function getPitcherLogs(pitcherId) {
-  try {
-    const data = await getJson(
-      MLB + "/people/" + pitcherId + "/stats?stats=gameLog&group=pitching&season=" + currentSeason()
-    );
-
-    const splits = [];
-    (data.stats || []).forEach(block => {
-      (block.splits || []).forEach(split => splits.push(split));
-    });
-
-    return splits.sort((a, b) => new Date(b.date) - new Date(a.date));
-  } catch (err) {
-    return [];
+async function getPitcherLogsMultiYear(pitcherId, yearsBack=H2H_YEARS_BACK){
+  const season=currentSeason(); const all=[];
+  for(let year=season; year>=season-yearsBack; year--){
+    try{ const data=await getJson(MLB+"/people/"+pitcherId+"/stats?stats=gameLog&group=pitching&season="+year); (data.stats||[]).forEach(block=>(block.splits||[]).forEach(split=>all.push(split))); }catch(e){}
   }
+  return all.sort((a,b)=>new Date(b.date)-new Date(a.date));
 }
-
-async function collectPitcherEdges(games, streaks) {
-  const edges = [];
-
-  for (const game of games) {
-    let weather = null;
-
-    try {
-      const feed = await getGameFeed(game.gamePk);
-      weather = feed.gameData?.weather || null;
-    } catch (err) {}
-
-    for (const side of ["away", "home"]) {
-      const probable = game.teams[side].probablePitcher;
-      if (!probable || !probable.id) continue;
-
-      const team = game.teams[side].team;
-      const opponent = side === "away" ? game.teams.home.team : game.teams.away.team;
-      const logs = await getPitcherLogs(probable.id);
-      const recent = logs.slice(0, 3);
-
-      const ks = recent.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
-      const innings = recent.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
-      const er = recent.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
-
-      const weatherImpact = scoreWeatherForPitcher(weather);
-      const teamStreak = streaks.all.find(t => String(t.id) === String(team.id));
-      const powerBonus = teamStreak && teamStreak.type === "win" ? Math.min(8, teamStreak.number * 1.5) : 0;
-      const coldPenalty = teamStreak && teamStreak.type === "loss" ? Math.min(8, teamStreak.number * 1.5) : 0;
-
-      let score =
-        50 +
-        ks * 2.6 +
-        Math.max(0, innings - er) * 1.4 +
-        weatherImpact.score +
-        powerBonus -
-        coldPenalty;
-
-      score = Math.max(1, Math.min(99, Math.round(score)));
-
-      const signals = [];
-      if (ks >= 15) signals.push("K form");
-      if (Number(recent[0]?.stat?.strikeOuts || 0) >= 7) signals.push("last-start Ks");
-      if (weatherImpact.note) signals.push(weatherImpact.note);
-      signals.push("vs " + opponent.name);
-      if (teamStreak && teamStreak.type === "win") signals.push("Power Ball team " + teamStreak.streak);
-      if (teamStreak && teamStreak.type === "loss") signals.push("Cold Note team " + teamStreak.streak);
-
-      edges.push({
-        type: "pitcher",
-        id: probable.id,
-        name: probable.fullName,
-        team: team.name,
-        teamId: team.id,
-        opponent: opponent.name,
-        game: shortGameLabel(game),
-        fullGame: gameLabel(game),
-        recentKs: ks,
-        recentInnings: innings.toFixed(1),
-        recentEr: er,
-        weather: weatherText(game, weather),
-        weatherImpact: weatherImpact.score,
-        teamStreak: teamStreak || null,
-        score,
-        signals,
-        reason: `${ks} Ks over last ${recent.length || 0} starts`
-      });
+function summarizePitcherH2H(logs, opponentId, opponentName){
+  const starts=logs.filter(split=>sameOpponent(split,opponentId,opponentName)).slice(0,8);
+  const games=starts.length, ks=starts.reduce((s,g)=>s+Number(g.stat?.strikeOuts||0),0), er=starts.reduce((s,g)=>s+Number(g.stat?.earnedRuns||0),0), ip=starts.reduce((s,g)=>s+parseInnings(g.stat?.inningsPitched),0), eight=starts.filter(s=>Number(s.stat?.strikeOuts||0)>=8).length, best=starts.length?Math.max(...starts.map(s=>Number(s.stat?.strikeOuts||0))):0;
+  return {games,ks,er,ip,eightKGames:eight,bestKs:best,avgKs:games?ks/games:0};
+}
+async function collectPitcherEdges(games, streaks){
+  const edges=[];
+  for(const game of games){
+    const weather=await getWeatherForGame(game);
+    for(const side of ["away","home"]){
+      const probable=game.teams[side].probablePitcher; if(!probable||!probable.id) continue;
+      const team=game.teams[side].team; const opponent=side==="away"?game.teams.home.team:game.teams.away.team;
+      const logs=await getPitcherLogsMultiYear(probable.id,H2H_YEARS_BACK);
+      const currentLogs=logs.filter(s=>String(new Date(s.date).getFullYear())===String(currentSeason()));
+      const recent=currentLogs.slice(0,3);
+      const recentKs=recent.reduce((sum,g)=>sum+Number(g.stat?.strikeOuts||0),0), recentIp=recent.reduce((sum,g)=>sum+parseInnings(g.stat?.inningsPitched),0), recentEr=recent.reduce((sum,g)=>sum+Number(g.stat?.earnedRuns||0),0), lastStartKs=Number(recent[0]?.stat?.strikeOuts||0);
+      const h2h=summarizePitcherH2H(logs,opponent.id,opponent.name); const weatherImpact=scoreWeatherForPitcher(weather);
+      const teamStreak=streaks.all.find(t=>String(t.id)===String(team.id)); const powerBonus=teamStreak&&teamStreak.type==="win"?Math.min(8,teamStreak.number*1.5):0; const coldPenalty=teamStreak&&teamStreak.type==="loss"?Math.min(8,teamStreak.number*1.5):0;
+      const h2hBoost=Math.min(16,h2h.avgKs*2)+h2h.eightKGames*5+Math.min(8,h2h.bestKs);
+      let score=48+recentKs*2.4+Math.max(0,recentIp-recentEr)*1.3+lastStartKs*1.2+h2hBoost+weatherImpact.score+powerBonus-coldPenalty;
+      score=Math.max(1,Math.min(99,Math.round(score)));
+      const signals=[]; if(recentKs>=18) signals.push("elite K form"); else if(recentKs>=12) signals.push("K form"); if(h2h.games>=2&&h2h.avgKs>=6) signals.push("H2H K history"); if(h2h.eightKGames>=1) signals.push(h2h.eightKGames+" past 8+ K vs opp"); if(weatherImpact.note) signals.push(weatherImpact.note); signals.push("vs "+opponent.name); if(teamStreak&&teamStreak.type==="win") signals.push("Power Ball "+teamStreak.streak); if(teamStreak&&teamStreak.type==="loss") signals.push("Cold Note "+teamStreak.streak);
+      edges.push({type:"pitcher",id:probable.id,name:probable.fullName,team:team.name,teamId:team.id,opponent:opponent.name,game:shortGameLabel(game),fullGame:gameLabel(game),recentKs,recentIp:recentIp.toFixed(1),recentEr,lastStartKs,h2hGames:h2h.games,h2hKs:h2h.ks,h2hAvgKs:h2h.avgKs.toFixed(1),h2hBestKs:h2h.bestKs,h2hEightKGames:h2h.eightKGames,weather:weatherText(game,weather),weatherImpact:weatherImpact.score,teamStreak:teamStreak||null,score,signals,reason:buildPitcherReason({recentKs,h2h,weatherImpact,teamStreak})});
     }
   }
-
-  return edges;
+  return uniqueById(edges.sort((a,b)=>b.score-a.score)).slice(0,3);
 }
+function buildPitcherReason(data){ if(data.h2h.games>=2&&data.h2h.avgKs>=6.5) return "H2H strikeout history vs today's opponent"; if(data.recentKs>=18) return "Elite current K form entering matchup"; if(data.weatherImpact.score>=12) return "Pitcher-friendly weather adds support"; if(data.teamStreak&&data.teamStreak.type==="win") return "Hot team plus strong starter form"; return "Current form and matchup profile pushed him up"; }
+function uniqueById(edges){ const seen=new Set(), out=[]; edges.forEach(e=>{ if(seen.has(String(e.id))) return; seen.add(String(e.id)); out.push(e); }); return out; }
+function playerEmoji(index){ return ["🥇","🥈","🥉"][index]||"✅"; }
+function formatBatterLine(edge,index){ const stats=[edge.hits+" recent H",edge.hr+" HR",edge.rbi+" RBI"]; if(edge.gamesWithHit) stats.push(edge.gamesWithHit+" games w/ hit"); if(edge.weatherImpact) stats.push((edge.weatherImpact>0?"+":"")+edge.weatherImpact+" weather"); const matchup=edge.opponentPitcher?`${edge.game} vs ${shortName(edge.opponentPitcher)}`:edge.game; return `${playerEmoji(index)} ${shortName(edge.name)} — ${edge.score}\nBatter Edge | ${matchup}\nWhy: ${edge.reason}\nStats: ${stats.slice(0,4).join(" • ")}`; }
+function formatPitcherLine(edge,index){ const stats=[edge.recentKs+" recent Ks",edge.recentIp+" IP",edge.recentEr+" ER"]; if(edge.h2hGames) stats.push(edge.h2hAvgKs+" H2H K/G"); if(edge.h2hEightKGames) stats.push(edge.h2hEightKGames+" 8+K H2H"); if(edge.weatherImpact) stats.push((edge.weatherImpact>0?"+":"")+edge.weatherImpact+" weather"); return `${playerEmoji(index)} ${shortName(edge.name)} — ${edge.score}\nPitcher Edge | ${edge.game}\nWhy: ${edge.reason}\nStats: ${stats.slice(0,5).join(" • ")}`; }
+function buildBattersPost(data) {
+  const batterLines = (data.top_batters || [])
+    .map((edge, index) => formatBatterLine(edge, index))
+    .join("\n\n");
 
-function buildReason(edge) {
-  const parts = [];
+  const weatherEdge = (data.top_batters || [])
+    .find(edge => Math.abs(Number(edge.weatherImpact || 0)) >= 8);
 
-  if (edge.type === "batter") {
-    if (edge.hits) parts.push(edge.hits + " recent hits");
-    if (edge.hr) parts.push(edge.hr + " HR");
-    if (edge.opponentPitcher) parts.push("vs " + edge.opponentPitcher);
-  }
-
-  if (edge.type === "pitcher") {
-    if (edge.recentKs) parts.push(edge.recentKs + " recent Ks");
-    parts.push("vs " + edge.opponent);
-  }
-
-  const weatherSignal = edge.signals.find(s => s.includes("weather"));
-  if (weatherSignal) parts.push(weatherSignal);
-
-  return parts.slice(0, 3).join(" + ");
-}
-
-function uniqueTopPlayers(edges, count = 3) {
-  const seen = new Set();
-  const unique = [];
-
-  edges
-    .sort((a, b) => b.score - a.score)
-    .forEach(edge => {
-      if (seen.has(String(edge.id))) return;
-      seen.add(String(edge.id));
-      unique.push(edge);
-    });
-
-  return unique.slice(0, count);
-}
-
-function playerEmoji(index) {
-  return ["🥇", "🥈", "🥉"][index] || "✅";
-}
-
-function primaryReason(edge) {
-  if (edge.type === "pitcher") {
-    if (edge.recentKs >= 18) return "Why: elite recent K form";
-    if (edge.weatherImpact >= 12) return "Why: pitcher-friendly weather setup";
-    if (edge.teamStreak && edge.teamStreak.type === "win") return "Why: hot team + strong starter form";
-    return "Why: starter form points to a strong matchup";
-  }
-
-  if (edge.hr >= 2 && edge.weatherImpact >= 8) return "Why: power trend + hitter-friendly weather";
-  if (edge.hits >= 8) return "Why: hot bat entering today's matchup";
-  if (edge.gamesWithHit >= 3) return "Why: active hit trend";
-  if (edge.opponentPitcher) return "Why: matchup vs projected starter";
-  return "Why: recent form pushed him onto the board";
-}
-
-function statBullets(edge) {
-  if (edge.type === "pitcher") {
-    const bullets = [];
-
-    if (edge.recentKs !== undefined) bullets.push(edge.recentKs + " recent Ks");
-    if (edge.recentInnings !== undefined) bullets.push(edge.recentInnings + " recent IP");
-    if (edge.recentEr !== undefined) bullets.push(edge.recentEr + " ER");
-    if (edge.weatherImpact) bullets.push((edge.weatherImpact > 0 ? "+" : "") + edge.weatherImpact + " weather");
-
-    return bullets.slice(0, 3).join(" • ");
-  }
-
-  const bullets = [];
-
-  if (edge.hits !== undefined) bullets.push(edge.hits + " recent H");
-  if (edge.hr !== undefined) bullets.push(edge.hr + " HR");
-  if (edge.rbi !== undefined) bullets.push(edge.rbi + " RBI");
-  if (edge.gamesWithHit !== undefined) bullets.push(edge.gamesWithHit + " games w/ hit");
-  if (edge.weatherImpact) bullets.push((edge.weatherImpact > 0 ? "+" : "") + edge.weatherImpact + " weather");
-
-  return bullets.slice(0, 3).join(" • ");
-}
-
-function formatEdgeLine(edge, index) {
-  const label = edge.type === "pitcher" ? "Pitcher Edge" : "Batter Edge";
-  const reason = primaryReason(edge);
-  const stats = statBullets(edge);
-  const matchup = edge.opponentPitcher
-    ? `${edge.game} vs ${shortName(edge.opponentPitcher)}`
-    : edge.game;
-
-  return `${playerEmoji(index)} ${shortName(edge.name)} — ${edge.score}
-${label} | ${matchup}
-${reason}
-Stats: ${stats || edge.reason}`;
-}
-
-function buildPost(data) {
-  const top = data.top_edges || [];
-
-  const edgeLines = top.map((edge, index) => formatEdgeLine(edge, index)).join("\n\n");
+  const weatherLine = weatherEdge
+    ? `🌤 Hitting Weather: ${weatherEdge.weather}`
+    : `🌤 Hitting Weather: No major boost flagged`;
 
   const powerLine = data.power_ball
     ? `⚡ Power Ball: ${data.power_ball.name} ${data.power_ball.streak}`
     : `⚡ Power Ball: No active win-streak edge`;
 
+  return `⚡ BATTERS EDGE ⚡
+
+Top 3 hitter spots on today's Diamond Pulse board:
+
+${batterLines || "No batter edges found yet."}
+
+${powerLine}
+${weatherLine}
+
+Full board ⬇️
+https://thediamondpulse.com`;
+}
+
+function buildPitchersPost(data) {
+  const pitcherLines = (data.top_pitchers || [])
+    .map((edge, index) => formatPitcherLine(edge, index))
+    .join("\n\n");
+
+  const weatherEdge = (data.top_pitchers || [])
+    .find(edge => Math.abs(Number(edge.weatherImpact || 0)) >= 8);
+
+  const weatherLine = weatherEdge
+    ? `🌤 Pitching Weather: ${weatherEdge.weather}`
+    : `🌤 Pitching Weather: No major boost flagged`;
+
   const coldLine = data.cold_note
     ? `❄️ Cold Note: ${data.cold_note.name} ${data.cold_note.streak}`
     : `❄️ Cold Note: No active cold-streak edge`;
 
-  const weatherEdge = top.find(edge => Math.abs(Number(edge.weatherImpact || 0)) >= 8);
-  const weatherLine = weatherEdge
-    ? `🌤 Weather Note: ${weatherEdge.weather}`
-    : `🌤 Weather Note: No major boost flagged`;
+  return `🎯 ROUND THE MOUND 🎯
 
-  return `🚨 THE DIAMOND PULSE REPORT
+Top 3 arms on today's Diamond Pulse board:
 
-TOP 3 EDGES TODAY
+${pitcherLines || "No pitcher edges found yet."}
 
-${edgeLines || "No player edges found yet."}
-
-${powerLine}
 ${coldLine}
 ${weatherLine}
 
@@ -652,69 +245,63 @@ Full board ⬇️
 https://thediamondpulse.com`;
 }
 
-async function generateDailyPulse() {
-  try {
+function buildPost(data) {
+  return {
+    batters: buildBattersPost(data),
+    pitchers: buildPitchersPost(data)
+  };
+}
+
+async function generateDailyPulse(){
+  try{
     setStatus("Loading today's MLB slate...");
-    const games = await getTodaysGames();
-
-    if (!games.length) {
-      throw new Error("No MLB games found today.");
-    }
-
+    const games=await getTodaysGames(); if(!games.length) throw new Error("No MLB games found today.");
     setStatus("Checking Power Ball and Cold Note...");
-    const streaks = await getTeamStreaks(games);
+    const streaks=await getTeamStreaks(games);
+    setStatus("Loading recent game data for batters...");
+    const finals=await findRecentFinalGames(8);
+    setStatus("Scoring Top 3 batter edges...");
+    const topBatters=await collectBatterEdges(games,finals,streaks);
+    setStatus("Scoring Top 3 pitcher edges with H2H history...");
+    const topPitchers=await collectPitcherEdges(games,streaks);
+    dailyPulseData={date:nyDate(),generated_at:new Date().toISOString(),top_batters:topBatters,top_pitchers:topPitchers,power_ball:streaks.powerBall,cold_note:streaks.coldNote,site_url:"https://thediamondpulse.com"};
+    const posts = buildPost(dailyPulseData);
+    dailyPulseData.posts = posts;
 
-    setStatus("Loading recent player form...");
-    const finals = await findRecentFinalGames(8);
-
-    setStatus("Scoring batter edges...");
-    const hitterEdges = await collectHitterEdges(games, finals, streaks);
-
-    setStatus("Scoring pitcher edges...");
-    const pitcherEdges = await collectPitcherEdges(games, streaks);
-
-    const allEdges = hitterEdges.concat(pitcherEdges);
-    const topEdges = uniqueTopPlayers(allEdges, 3);
-
-    while (topEdges.length < 3 && allEdges[topEdges.length]) {
-      topEdges.push(allEdges[topEdges.length]);
-    }
-
-    dailyPulseData = {
-      date: nyDate(),
-      generated_at: new Date().toISOString(),
-      top_edges: topEdges,
-      power_ball: streaks.powerBall,
-      cold_note: streaks.coldNote,
-      site_url: "https://thediamondpulse.com"
-    };
-
-    const post = buildPost(dailyPulseData);
-
-    document.getElementById("postText").value = post;
+    document.getElementById("battersPostText").value = posts.batters;
+    document.getElementById("pitchersPostText").value = posts.pitchers;
     document.getElementById("jsonOutput").textContent = JSON.stringify(dailyPulseData, null, 2);
 
-    setStatus("Top 3 Daily Pulse post generated.");
-  } catch (err) {
-    console.error(err);
-    setStatus("Error: " + err.message);
-  }
+    setStatus("Daily Pulse generated: Batters Edge + Round the Mound.");
+  }catch(err){ console.error(err); setStatus("Error: "+err.message); }
+}
+async function copyPost(){
+  const batters = document.getElementById("battersPostText").value;
+  const pitchers = document.getElementById("pitchersPostText").value;
+  await navigator.clipboard.writeText(batters + "\n\n---\n\n" + pitchers);
+  setStatus("Copied both posts to clipboard.");
 }
 
-async function copyPost() {
-  const text = document.getElementById("postText").value;
+async function copyBattersPost(){
+  const text = document.getElementById("battersPostText").value;
   await navigator.clipboard.writeText(text);
-  setStatus("Copied post to clipboard.");
+  setStatus("Copied Batters Edge post.");
 }
 
-function downloadJson() {
-  if (!dailyPulseData) {
+async function copyPitchersPost(){
+  const text = document.getElementById("pitchersPostText").value;
+  await navigator.clipboard.writeText(text);
+  setStatus("Copied Round the Mound post.");
+}
+
+function downloadJson(){
+  if(!dailyPulseData){
     setStatus("Generate the post first.");
     return;
   }
 
   const blob = new Blob([JSON.stringify(dailyPulseData, null, 2)], {
-    type: "application/json"
+    type:"application/json"
   });
 
   const url = URL.createObjectURL(blob);
