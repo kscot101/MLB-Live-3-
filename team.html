@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Pulse | The Diamond Pulse</title>
+
+  <style>
+    :root {
+      --bg:#07111f;
+      --panel:rgba(255,255,255,.055);
+      --border:rgba(255,255,255,.12);
+      --text:#f4f7fb;
+      --muted:#91a4bd;
+      --green:#2ff58a;
+      --orange:#ffb347;
+      --blue:#3aa7ff;
+      --red:#ff5f6d;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(47,245,138,.14), transparent 32%),
+        radial-gradient(circle at top right, rgba(58,167,255,.12), transparent 34%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, Arial, sans-serif;
+      padding:20px;
+    }
+
+    .wrap {
+      max-width:1120px;
+      margin:auto;
+    }
+
+    a {
+      color:var(--green);
+      text-decoration:none;
+      font-weight:900;
+    }
+
+    .hero,
+    .card {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:24px;
+      margin-bottom:18px;
+      box-shadow:0 18px 45px rgba(0,0,0,.24);
+    }
+
+    .hero {
+      display:grid;
+      grid-template-columns:92px 1fr;
+      gap:20px;
+      align-items:center;
+    }
+
+    .logo {
+      width:92px;
+      height:92px;
+      border-radius:50%;
+      background:#ecfdf5;
+      padding:10px;
+      object-fit:contain;
+    }
+
+    h1 {
+      margin:0;
+      font-size:clamp(36px, 7vw, 64px);
+      line-height:1;
+      letter-spacing:-2px;
+    }
+
+    h2 {
+      margin:0 0 14px;
+      font-size:24px;
+    }
+
+    .muted {
+      color:var(--muted);
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+
+    .stat {
+      font-size:36px;
+      font-weight:950;
+      color:var(--green);
+      line-height:1;
+    }
+
+    .label {
+      color:var(--muted);
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      margin-top:7px;
+      letter-spacing:.06em;
+    }
+
+    .pill {
+      display:inline-block;
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(47,245,138,.1);
+      border:1px solid rgba(47,245,138,.24);
+      color:var(--green);
+      font-weight:950;
+      font-size:12px;
+      margin:6px 6px 0 0;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .pill.orange {
+      background:rgba(255,179,71,.1);
+      border-color:rgba(255,179,71,.28);
+      color:var(--orange);
+    }
+
+    .pill.red {
+      background:rgba(255,95,109,.1);
+      border-color:rgba(255,95,109,.28);
+      color:var(--red);
+    }
+
+    .player-card {
+      background:rgba(255,255,255,.045);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:12px;
+    }
+
+    .player-top {
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+    }
+
+    .player-name {
+      font-size:18px;
+      font-weight:950;
+      margin-bottom:4px;
+    }
+
+    .score {
+      min-width:58px;
+      text-align:center;
+      border-radius:999px;
+      padding:8px 10px;
+      background:rgba(47,245,138,.12);
+      border:1px solid rgba(47,245,138,.3);
+      color:var(--green);
+      font-weight:950;
+      font-family:monospace;
+    }
+
+    .reason {
+      color:#d1fae5;
+      margin-top:8px;
+      line-height:1.45;
+      font-size:14px;
+    }
+
+    .statline {
+      color:var(--muted);
+      margin-top:8px;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .k-high { color:var(--green); }
+    .k-mid { color:var(--orange); }
+    .k-low { color:var(--red); }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    th,
+    td {
+      padding:13px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      font-size:14px;
+    }
+
+    th {
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .table-wrap {
+      overflow-x:auto;
+    }
+
+    @media (max-width:850px) {
+      body { padding:14px; }
+      .hero,
+      .grid {
+        grid-template-columns:1fr;
+      }
+      .logo {
+        width:76px;
+        height:76px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <p><a href="index.html">← Back to Diamond Pulse</a></p>
+
+    <section id="teamHero" class="hero">
+      <div class="muted">Loading team...</div>
+    </section>
+
+    <section class="card">
+      <h2>Today’s Matchup</h2>
+      <div id="matchupBox" class="muted">Checking today’s MLB slate...</div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div id="hotCount" class="stat">-</div>
+        <div class="label">Hot Hitters Found</div>
+      </div>
+
+      <div class="card">
+        <div id="oppPitcherThreat" class="stat">-</div>
+        <div class="label">Opposing Pitcher K Threat</div>
+      </div>
+
+      <div class="card">
+        <div id="weatherImpact" class="stat">-</div>
+        <div class="label">Weather Impact</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Hot Hitters For This Team</h2>
+      <div id="hotHitters">Loading hitter form...</div>
+    </section>
+
+    <section class="card">
+      <h2>Pitcher Strikeout Outlook</h2>
+      <div id="pitcherOutlook">Loading pitcher outlook...</div>
+    </section>
+
+    <section class="card">
+      <h2>Recent Team Hitting Log</h2>
+      <div id="teamLog" class="table-wrap">Loading recent games...</div>
+    </section>
+  </div>
+
+<script>
+const MLB = "https://statsapi.mlb.com/api/v1";
+const params = new URLSearchParams(window.location.search);
+const teamId = params.get("id");
+
+function nyDate(offsetDays = 0) {
+  const ny = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  ny.setDate(ny.getDate() + offsetDays);
+  return ny.getFullYear() + "-" +
+    String(ny.getMonth() + 1).padStart(2, "0") + "-" +
+    String(ny.getDate()).padStart(2, "0");
+}
+
+function currentSeason() {
+  return Number(nyDate().slice(0, 4));
+}
+
+async function getJson(url) {
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(url + sep + "_=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("Could not load " + url);
+  return await res.json();
+}
+
+function h(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[ch]));
+}
+
+function shortTeam(team) {
+  return team.abbreviation || team.teamName || team.name || "TEAM";
+}
+
+function gameLabel(game) {
+  return shortTeam(game.teams.away.team) + " @ " + shortTeam(game.teams.home.team);
+}
+
+function parseInnings(value) {
+  if (!value) return 0;
+  const [whole, part] = String(value).split(".");
+  let innings = Number(whole || 0);
+  if (part === "1") innings += 1 / 3;
+  if (part === "2") innings += 2 / 3;
+  return innings;
+}
+
+function isSameTeam(team, id) {
+  return String(team?.id) === String(id);
+}
+
+async function getTeam() {
+  const data = await getJson(MLB + "/teams/" + teamId);
+  return data.teams[0];
+}
+
+async function getTodaysGame() {
+  const data = await getJson(
+    MLB + "/schedule?sportId=1&date=" + nyDate() + "&hydrate=probablePitcher,venue,linescore"
+  );
+
+  let found = null;
+
+  (data.dates || []).forEach(date => {
+    (date.games || []).forEach(game => {
+      if (
+        isSameTeam(game.teams.away.team, teamId) ||
+        isSameTeam(game.teams.home.team, teamId)
+      ) {
+        found = game;
+      }
+    });
+  });
+
+  return found;
+}
+
+function getTeamSide(game) {
+  return isSameTeam(game.teams.away.team, teamId) ? "away" : "home";
+}
+
+function getOpponentSide(side) {
+  return side === "away" ? "home" : "away";
+}
+
+async function getGameFeed(gamePk) {
+  return await getJson("https://statsapi.mlb.com/api/v1.1/game/" + gamePk + "/feed/live");
+}
+
+async function findRecentFinalGames(maxDays = 8) {
+  const finals = [];
+
+  for (let i = 1; i <= maxDays && finals.length < 50; i++) {
+    const data = await getJson(MLB + "/schedule?sportId=1&date=" + nyDate(-i));
+
+    (data.dates || []).forEach(day => {
+      (day.games || []).forEach(game => {
+        if (
+          game.status?.abstractGameState === "Final" &&
+          (
+            isSameTeam(game.teams.away.team, teamId) ||
+            isSameTeam(game.teams.home.team, teamId)
+          )
+        ) {
+          finals.push(game);
+        }
+      });
+    });
+  }
+
+  return finals;
+}
+
+async function collectHotHitters(finals, todaysGame) {
+  const hitterMap = {};
+  const rows = [];
+
+  for (const game of finals.slice(0, 8)) {
+    try {
+      const feed = await getGameFeed(game.gamePk);
+      const side = String(feed.gameData.teams.away.id) === String(teamId) ? "away" : "home";
+      const team = feed.gameData.teams[side];
+      const box = feed.liveData.boxscore.teams[side];
+
+      Object.values(box.players || {}).forEach(player => {
+        const batting = player.stats && player.stats.batting;
+        if (!batting) return;
+
+        const hits = Number(batting.hits || 0);
+        const hr = Number(batting.homeRuns || 0);
+        const rbi = Number(batting.rbi || 0);
+        const bb = Number(batting.baseOnBalls || 0);
+        const ab = Number(batting.atBats || 0);
+
+        if (hits <= 0 && hr <= 0 && rbi <= 0 && bb <= 0) return;
+
+        const pid = player.person.id;
+
+        if (!hitterMap[pid]) {
+          hitterMap[pid] = {
+            id: pid,
+            name: player.person.fullName,
+            team: team.name,
+            hits: 0,
+            hr: 0,
+            rbi: 0,
+            walks: 0,
+            atBats: 0,
+            gamesWithHit: 0,
+            games: 0
+          };
+        }
+
+        hitterMap[pid].hits += hits;
+        hitterMap[pid].hr += hr;
+        hitterMap[pid].rbi += rbi;
+        hitterMap[pid].walks += bb;
+        hitterMap[pid].atBats += ab;
+        hitterMap[pid].games += 1;
+        if (hits > 0) hitterMap[pid].gamesWithHit += 1;
+      });
+
+      rows.push({
+        date: feed.gameData.datetime?.officialDate || "",
+        opponent: side === "away" ? feed.gameData.teams.home.name : feed.gameData.teams.away.name,
+        runs: box.teamStats?.batting?.runs ?? "-",
+        hits: box.teamStats?.batting?.hits ?? "-",
+        hr: box.teamStats?.batting?.homeRuns ?? "-"
+      });
+    } catch (err) {
+      console.warn("Skipping recent game", game.gamePk, err);
+    }
+  }
+
+  const side = getTeamSide(todaysGame);
+  const oppSide = getOpponentSide(side);
+  const opposingPitcher = todaysGame.teams[oppSide].probablePitcher || null;
+  const weather = await getWeather(todaysGame);
+
+  const weatherScore = scoreHitterWeather(weather);
+
+  const hitters = Object.values(hitterMap).map(row => {
+    const avg = row.atBats ? row.hits / row.atBats : 0;
+
+    let score =
+      50 +
+      row.hits * 3.6 +
+      row.hr * 8 +
+      row.rbi * 2 +
+      row.gamesWithHit * 2.8 +
+      row.walks * 1.2 +
+      weatherScore.score;
+
+    score = Math.max(1, Math.min(99, Math.round(score)));
+
+    const reasons = [];
+
+    if (row.hits >= 6) reasons.push("hot bat");
+    if (row.hr >= 2) reasons.push("power trend");
+    if (row.gamesWithHit >= 3) reasons.push("hit trend");
+    if (weatherScore.note) reasons.push(weatherScore.note);
+    if (opposingPitcher) reasons.push("vs " + opposingPitcher.fullName);
+
+    return {
+      ...row,
+      avg: avg.toFixed(3).replace(/^0/, ""),
+      score,
+      reasons,
+      opposingPitcher: opposingPitcher ? opposingPitcher.fullName : "",
+      playerUrl: "player.html?id=" + row.id + "&reason=team-hot-hitter"
+    };
+  });
+
+  hitters.sort((a, b) => b.score - a.score);
+
+  return { hitters: hitters.slice(0, 8), rows };
+}
+
+async function getWeather(game) {
+  try {
+    const feed = await getGameFeed(game.gamePk);
+    return feed.gameData?.weather || null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function scoreHitterWeather(weather) {
+  if (!weather) return { score: 0, note: "" };
+
+  let score = 0;
+  const temp = Number(weather.temp || weather.temperature || 0);
+  const wind = String(weather.wind || "").toLowerCase();
+  const condition = String(weather.condition || "").toLowerCase();
+
+  if (wind.includes("out")) score += 20;
+  if (wind.includes("in")) score -= 16;
+  if (temp >= 80) score += 10;
+  if (temp && temp <= 55) score -= 8;
+  if (condition.includes("clear") || condition.includes("sun")) score += 4;
+
+  let note = "";
+  if (score >= 18) note = "hitter-friendly weather";
+  else if (score <= -12) note = "weather downgrade";
+  else if (score > 0) note = "slight weather lift";
+  else if (score < 0) note = "slight weather drag";
+
+  return { score, note };
+}
+
+function scorePitcherWeather(weather) {
+  if (!weather) return { score: 0, note: "" };
+
+  let score = 0;
+  const temp = Number(weather.temp || weather.temperature || 0);
+  const wind = String(weather.wind || "").toLowerCase();
+
+  if (wind.includes("in")) score += 18;
+  if (wind.includes("out")) score -= 16;
+  if (temp && temp <= 60) score += 8;
+  if (temp >= 82) score -= 8;
+
+  let note = "";
+  if (score >= 16) note = "pitcher-friendly weather";
+  else if (score <= -12) note = "weather risk";
+  else if (score > 0) note = "slight pitcher lift";
+  else if (score < 0) note = "slight pitcher drag";
+
+  return { score, note };
+}
+
+async function getPitcherLogs(pitcherId, yearsBack = 3) {
+  const season = currentSeason();
+  const all = [];
+
+  for (let year = season; year >= season - yearsBack; year--) {
+    try {
+      const data = await getJson(
+        MLB + "/people/" + pitcherId + "/stats?stats=gameLog&group=pitching&season=" + year
+      );
+
+      (data.stats || []).forEach(block => {
+        (block.splits || []).forEach(split => all.push(split));
+      });
+    } catch (err) {}
+  }
+
+  return all.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function normalize(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function sameOpponent(split, opponentTeam) {
+  const splitId = split.opponent?.id;
+  if (splitId && String(splitId) === String(opponentTeam.id)) return true;
+
+  const a = normalize(split.opponent?.name || split.opponent?.teamName || "");
+  const b = normalize(opponentTeam.name || "");
+
+  return a && b && (a === b || a.includes(b) || b.includes(a));
+}
+
+function summarizeH2H(logs, opponentTeam) {
+  const games = logs.filter(split => sameOpponent(split, opponentTeam)).slice(0, 8);
+
+  const ks = games.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
+  const er = games.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
+  const ip = games.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
+  const eightK = games.filter(g => Number(g.stat?.strikeOuts || 0) >= 8).length;
+  const bestK = games.length ? Math.max(...games.map(g => Number(g.stat?.strikeOuts || 0))) : 0;
+
+  return {
+    games: games.length,
+    ks,
+    er,
+    ip,
+    avgKs: games.length ? ks / games.length : 0,
+    eightK,
+    bestK
+  };
+}
+
+function estimateWhiffPct(data) {
+  const ip = Math.max(1, Number(data.recentIp || 0));
+  const recentKs = Number(data.recentKs || 0);
+  const h2hAvgKs = Number(data.h2h?.avgKs || 0);
+  const lastStartKs = Number(data.lastStartKs || 0);
+
+  let whiff =
+    18 +
+    (recentKs / ip) * 6 +
+    h2hAvgKs * 0.9 +
+    lastStartKs * 0.6;
+
+  if (data.weatherImpact?.score > 0) whiff += 1.5;
+  if (data.weatherImpact?.score < 0) whiff -= 1.5;
+
+  return Math.max(16, Math.min(42, Math.round(whiff)));
+}
+
+function kThreatLabel(outlook) {
+  if (
+    outlook.whiffPct >= 32 ||
+    outlook.recentKs >= 20 ||
+    (outlook.h2h.games >= 2 && outlook.h2h.avgKs >= 7)
+  ) {
+    return "HIGH";
+  }
+
+  if (
+    outlook.whiffPct >= 27 ||
+    outlook.recentKs >= 15 ||
+    (outlook.h2h.games >= 2 && outlook.h2h.avgKs >= 5.5)
+  ) {
+    return "MEDIUM";
+  }
+
+  return "LOW";
+}
+
+async function buildPitcherOutlook(todaysGame) {
+  const side = getTeamSide(todaysGame);
+  const oppSide = getOpponentSide(side);
+  const opponentTeam = todaysGame.teams[side].team;
+  const pitcher = todaysGame.teams[oppSide].probablePitcher || null;
+
+  if (!pitcher) {
+    return null;
+  }
+
+  const logs = await getPitcherLogs(pitcher.id, 5);
+  const currentLogs = logs.filter(split => String(new Date(split.date).getFullYear()) === String(currentSeason()));
+  const recent = currentLogs.slice(0, 3);
+
+  const recentKs = recent.reduce((sum, g) => sum + Number(g.stat?.strikeOuts || 0), 0);
+  const recentIp = recent.reduce((sum, g) => sum + parseInnings(g.stat?.inningsPitched), 0);
+  const recentEr = recent.reduce((sum, g) => sum + Number(g.stat?.earnedRuns || 0), 0);
+  const lastStartKs = Number(recent[0]?.stat?.strikeOuts || 0);
+
+  const h2h = summarizeH2H(logs, opponentTeam);
+  const weather = await getWeather(todaysGame);
+  const weatherImpact = scorePitcherWeather(weather);
+
+  const whiffPct = estimateWhiffPct({
+    recentKs,
+    recentIp,
+    lastStartKs,
+    h2h,
+    weatherImpact
+  });
+
+  const outlook = {
+    id: pitcher.id,
+    name: pitcher.fullName,
+    team: todaysGame.teams[oppSide].team.name,
+    opponent: opponentTeam.name,
+    recentKs,
+    recentIp: recentIp.toFixed(1),
+    recentEr,
+    lastStartKs,
+    h2h,
+    weather,
+    weatherImpact,
+    whiffPct
+  };
+
+  outlook.threat = kThreatLabel(outlook);
+
+  return outlook;
+}
+
+function renderHero(team) {
+  const logo = "https://www.mlbstatic.com/team-logos/" + team.id + ".svg";
+
+  document.title = team.name + " Team Pulse | The Diamond Pulse";
+
+  document.getElementById("teamHero").innerHTML = `
+    <img class="logo" src="${logo}" alt="">
+    <div>
+      <h1>${h(team.name)}</h1>
+      <p class="muted">Today’s team-specific Diamond Pulse breakdown.</p>
+      <span class="pill">Team Pulse</span>
+    </div>
+  `;
+}
+
+function renderMatchup(game, weather) {
+  if (!game) {
+    document.getElementById("matchupBox").innerHTML =
+      "<p class='muted'>No game found for this team today.</p>";
+    return;
+  }
+
+  const side = getTeamSide(game);
+  const oppSide = getOpponentSide(side);
+  const opponent = game.teams[oppSide].team;
+  const teamProbable = game.teams[side].probablePitcher;
+  const oppProbable = game.teams[oppSide].probablePitcher;
+
+  const weatherText = weather
+    ? `${h(weather.temp || weather.temperature || "?")}° · ${h(weather.condition || "")} · ${h(weather.wind || "")}`
+    : "Weather unavailable";
+
+  document.getElementById("matchupBox").innerHTML = `
+    <h3>${h(gameLabel(game))}</h3>
+    <p class="muted">${h(game.status?.detailedState || "Scheduled")} · ${h(game.venue?.name || "")}</p>
+    <span class="pill">Opponent: ${h(opponent.name)}</span>
+    <span class="pill">Their Starter: ${h(oppProbable?.fullName || "TBD")}</span>
+    <span class="pill">Your Starter: ${h(teamProbable?.fullName || "TBD")}</span>
+    <p class="reason">Weather: ${weatherText}</p>
+  `;
+}
+
+function renderHotHitters(hitters) {
+  document.getElementById("hotCount").textContent = hitters.length;
+
+  if (!hitters.length) {
+    document.getElementById("hotHitters").innerHTML =
+      "<p class='muted'>No recent hot hitters found yet.</p>";
+    return;
+  }
+
+  document.getElementById("hotHitters").innerHTML = hitters.map((p, index) => `
+    <div class="player-card">
+      <div class="player-top">
+        <div>
+          <div class="player-name">
+            <a href="${h(p.playerUrl)}">${index + 1}. ${h(p.name)}</a>
+          </div>
+          <div class="muted">${h(p.team)} · ${h(p.opposingPitcher ? "vs " + p.opposingPitcher : "Today")}</div>
+        </div>
+        <div class="score">${h(p.score)}</div>
+      </div>
+
+      <div class="reason">Why: ${h(p.reasons.join(" • ") || "Recent form pushed him onto the board")}</div>
+      <div class="statline">
+        ${h(p.hits)} recent H · ${h(p.hr)} HR · ${h(p.rbi)} RBI · ${h(p.gamesWithHit)} games w/ hit · AVG ${h(p.avg)}
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderPitcherOutlook(outlook) {
+  if (!outlook) {
+    document.getElementById("oppPitcherThreat").textContent = "TBD";
+    document.getElementById("pitcherOutlook").innerHTML =
+      "<p class='muted'>The opposing probable pitcher is not listed yet.</p>";
+    return;
+  }
+
+  const threatClass =
+    outlook.threat === "HIGH" ? "k-high" :
+    outlook.threat === "MEDIUM" ? "k-mid" :
+    "k-low";
+
+  document.getElementById("oppPitcherThreat").textContent = outlook.threat;
+
+  document.getElementById("pitcherOutlook").innerHTML = `
+    <div class="player-card">
+      <div class="player-top">
+        <div>
+          <div class="player-name">
+            <a href="player.html?id=${h(outlook.id)}&reason=opposing-pitcher-k-outlook">${h(outlook.name)}</a>
+          </div>
+          <div class="muted">${h(outlook.team)} vs ${h(outlook.opponent)}</div>
+        </div>
+        <div class="score ${threatClass}">${h(outlook.threat)}</div>
+      </div>
+
+      <div class="reason">
+        K Outlook:
+        <strong class="${threatClass}">
+          ${outlook.threat === "HIGH" ? "High strikeout threat" :
+            outlook.threat === "MEDIUM" ? "Moderate strikeout upside" :
+            "Lower strikeout profile"}
+        </strong>
+      </div>
+
+      <div class="statline">
+        Recent form: ${h(outlook.recentKs)} Ks · ${h(outlook.recentIp)} IP · ${h(outlook.recentEr)} ER · Last start ${h(outlook.lastStartKs)} Ks
+      </div>
+
+      <div class="statline">
+        H2H vs ${h(outlook.opponent)}:
+        ${h(outlook.h2h.games)} games · ${h(outlook.h2h.ks)} Ks · ${h(outlook.h2h.avgKs.toFixed(1))} K/G · Best ${h(outlook.h2h.bestK)} Ks
+      </div>
+
+      <div class="statline">
+        Whiff Est.: ${h(outlook.whiffPct)}% · Weather Impact:
+        ${h(outlook.weatherImpact.score > 0 ? "+" + outlook.weatherImpact.score : outlook.weatherImpact.score)}
+        ${h(outlook.weatherImpact.note || "")}
+      </div>
+    </div>
+  `;
+}
+
+function renderRecentLog(rows) {
+  if (!rows.length) {
+    document.getElementById("teamLog").innerHTML =
+      "<p class='muted'>No recent team log found.</p>";
+    return;
+  }
+
+  document.getElementById("teamLog").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Opponent</th>
+          <th>Runs</th>
+          <th>Hits</th>
+          <th>HR</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(row => `
+          <tr>
+            <td>${h(row.date)}</td>
+            <td>${h(row.opponent)}</td>
+            <td>${h(row.runs)}</td>
+            <td>${h(row.hits)}</td>
+            <td>${h(row.hr)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+async function loadTeamPage() {
+  if (!teamId) {
+    document.getElementById("teamHero").innerHTML =
+      "<div>No team ID found.</div>";
+    return;
+  }
+
+  const team = await getTeam();
+  renderHero(team);
+
+  const todaysGame = await getTodaysGame();
+
+  if (!todaysGame) {
+    renderMatchup(null, null);
+    document.getElementById("hotHitters").innerHTML = "<p class='muted'>No game today.</p>";
+    document.getElementById("pitcherOutlook").innerHTML = "<p class='muted'>No game today.</p>";
+    return;
+  }
+
+  const weather = await getWeather(todaysGame);
+  const hitterWeather = scoreHitterWeather(weather);
+
+  document.getElementById("weatherImpact").textContent =
+    hitterWeather.score > 0 ? "+" + hitterWeather.score :
+    String(hitterWeather.score);
+
+  renderMatchup(todaysGame, weather);
+
+  const finals = await findRecentFinalGames(8);
+  const hitterData = await collectHotHitters(finals, todaysGame);
+  renderHotHitters(hitterData.hitters);
+  renderRecentLog(hitterData.rows);
+
+  const pitcherOutlook = await buildPitcherOutlook(todaysGame);
+  renderPitcherOutlook(pitcherOutlook);
+}
+
+loadTeamPage().catch(err => {
+  console.error(err);
+  document.getElementById("teamHero").innerHTML = "<div>Could not load team page.</div>";
+});
+</script>
+</body>
+</html>
