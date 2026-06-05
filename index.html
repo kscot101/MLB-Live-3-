@@ -1635,5 +1635,8 @@ setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
 })();
 </script>
 
+<script>
+(function(){function add(){document.querySelectorAll(".nav-links").forEach(nav=>{if(!nav.querySelector('[href="mypulse.html"]')){const a=document.createElement("a");a.href="mypulse.html";a.textContent="My Pulse";nav.appendChild(a)}});document.querySelectorAll(".btn-row").forEach(row=>{if(!row.querySelector('[href="mypulse.html"]')){const a=document.createElement("a");a.href="mypulse.html";a.className="btn secondary";a.textContent="⭐ My Pulse";row.appendChild(a)}})}document.addEventListener("DOMContentLoaded",add);window.addEventListener("load",add);setInterval(add,2500)})();
+</script>
 </body>
 </html>
