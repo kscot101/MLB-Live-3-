@@ -31,8 +31,10 @@
 <script>
 const MLB="https://statsapi.mlb.com/api/v1";function currentSeason(){return new Date().getFullYear()}function h(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}async function getJson(u){const s=u.includes("?")?"&":"?";const r=await fetch(u+s+"_="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("Could not load "+u);return await r.json()}function saved(){try{return JSON.parse(localStorage.getItem("diamondPulseSavedDailyPulse")||"null")}catch{return null}}
 async function logs(id,group){try{const d=await getJson(MLB+"/people/"+id+"/stats?stats=gameLog&group="+group+"&season="+currentSeason());const out=[];(d.stats||[]).forEach(b=>(b.splits||[]).forEach(s=>out.push({date:s.date,opponent:s.opponent?.name||"",stat:s.stat||{}})));return out.sort((a,b)=>new Date(b.date)-new Date(a.date))}catch{return[]}}
-function pick(gs,date){return gs.find(g=>g.date===date)||gs[0]||null}function gradeB(g){if(!g)return{grade:"PENDING",cls:"push",text:"No final game log found yet.",hit:false,smash:false};const hits=Number(g.stat.hits||0),hr=Number(g.stat.homeRuns||0),rbi=Number(g.stat.rbi||0),runs=Number(g.stat.runs||0),tb=Number(g.stat.totalBases||0),bb=Number(g.stat.baseOnBalls||0);if(hr>=1||hits>=2||tb>=4)return{grade:"SMASH",cls:"smash",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:true,smash:true};if(hits>=1||rbi>=1||runs>=1||bb>=2)return{grade:"HIT",cls:"hit",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${runs} R`,hit:true,smash:false};return{grade:"MISS",cls:"miss",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:false,smash:false}}
-function ip(v){if(!v)return 0;const [w,p]=String(v).split(".");let i=Number(w||0);if(p==="1")i+=1/3;if(p==="2")i+=2/3;return i}function gradeP(g){if(!g)return{grade:"PENDING",cls:"push",text:"No final game log found yet.",hit:false,smash:false};const ks=Number(g.stat.strikeOuts||0),er=Number(g.stat.earnedRuns||0),inn=ip(g.stat.inningsPitched),txt=g.stat.inningsPitched||"0.0";if(ks>=8&&er<=2)return{grade:"SMASH",cls:"smash",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:true};if(ks>=6||(inn>=6&&er<=2))return{grade:"HIT",cls:"hit",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:false};if(ks>=5&&er<=3)return{grade:"PUSH",cls:"push",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false};return{grade:"MISS",cls:"miss",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false}}
+function pick(gs,date){
+  return gs.find(g => g.date === date) || null;
+}function gradeB(g){if(!g)return{grade:"PENDING",cls:"push",text:"Pending — no same-date game log found yet.",hit:false,smash:false};const hits=Number(g.stat.hits||0),hr=Number(g.stat.homeRuns||0),rbi=Number(g.stat.rbi||0),runs=Number(g.stat.runs||0),tb=Number(g.stat.totalBases||0),bb=Number(g.stat.baseOnBalls||0);if(hr>=1||hits>=2||tb>=4)return{grade:"SMASH",cls:"smash",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:true,smash:true};if(hits>=1||rbi>=1||runs>=1||bb>=2)return{grade:"HIT",cls:"hit",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${runs} R`,hit:true,smash:false};return{grade:"MISS",cls:"miss",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:false,smash:false}}
+function ip(v){if(!v)return 0;const [w,p]=String(v).split(".");let i=Number(w||0);if(p==="1")i+=1/3;if(p==="2")i+=2/3;return i}function gradeP(g){if(!g)return{grade:"PENDING",cls:"push",text:"Pending — no same-date game log found yet.",hit:false,smash:false};const ks=Number(g.stat.strikeOuts||0),er=Number(g.stat.earnedRuns||0),inn=ip(g.stat.inningsPitched),txt=g.stat.inningsPitched||"0.0";if(ks>=8&&er<=2)return{grade:"SMASH",cls:"smash",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:true};if(ks>=6||(inn>=6&&er<=2))return{grade:"HIT",cls:"hit",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:false};if(ks>=5&&er<=3)return{grade:"PUSH",cls:"push",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false};return{grade:"MISS",cls:"miss",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false}}
 function name(p){return p.name||p.player_name||p.fullName||"Player"}async function bres(p,d){const g=pick(await logs(p.id,"hitting"),d);return{type:"batter",player:p,game:g,grade:gradeB(g)}}async function pres(p,d){const g=pick(await logs(p.id,"pitching"),d);return{type:"pitcher",player:p,game:g,grade:gradeP(g)}}function render(r){const p=r.player,g=r.grade,gm=r.game,opp=gm?.opponent?"vs "+gm.opponent:(p.game||"");return `<div class="player-card"><div class="player-top"><div><div class="player-name"><a href="player.html?id=${h(p.id)}&reason=daily-recap">${h(name(p))}</a></div><div class="muted">${h(p.team||"")} · ${h(opp)}</div></div><div class="score">${h(p.score||"-")}</div></div><span class="grade ${h(g.cls)}">${h(g.grade)}</span><div class="reason">Result: ${h(g.text)}</div><div class="statline">Original reason: ${h(p.reason||(p.signals||[]).join(" • ")||"Daily Pulse edge")}</div></div>`}
 function post(date,bs,ps,rate,sm){const bl=bs.map(r=>`${r.grade.grade==="SMASH"?"✅🔥":r.grade.grade==="HIT"?"✅":r.grade.grade==="PUSH"?"➖":"❌"} ${name(r.player)}: ${r.grade.text} — ${r.grade.grade}`).join("\n");const pl=ps.map(r=>`${r.grade.grade==="SMASH"?"✅🔥":r.grade.grade==="HIT"?"✅":r.grade.grade==="PUSH"?"➖":"❌"} ${name(r.player)}: ${r.grade.text} — ${r.grade.grade}`).join("\n");return `📊 DIAMOND PULSE RECAP\n${date}\n\n⚡ Batters Edge\n${bl||"No batter results yet."}\n\n🎯 Round the Mound\n${pl||"No pitcher results yet."}\n\nHit Rate: ${rate}\nSmashes: ${sm}\n\nFull board ⬇️\nhttps://thediamondpulse.com`}
 
@@ -54,24 +56,28 @@ function updateTracker(date, batterResults, pitcherResults){
   tracker[date] = {
     date,
     saved_at: new Date().toISOString(),
-    batters: batterResults.map(r => ({
-      id: r.player.id,
-      name: name(r.player),
-      grade: r.grade.grade,
-      hit: r.grade.hit,
-      smash: r.grade.smash,
-      result: r.grade.text,
-      score: r.player.score || null
-    })),
-    pitchers: pitcherResults.map(r => ({
-      id: r.player.id,
-      name: name(r.player),
-      grade: r.grade.grade,
-      hit: r.grade.hit,
-      smash: r.grade.smash,
-      result: r.grade.text,
-      score: r.player.score || null
-    }))
+    batters: batterResults
+      .filter(r => r.grade.grade !== "PENDING")
+      .map(r => ({
+        id: r.player.id,
+        name: name(r.player),
+        grade: r.grade.grade,
+        hit: r.grade.hit,
+        smash: r.grade.smash,
+        result: r.grade.text,
+        score: r.player.score || null
+      })),
+    pitchers: pitcherResults
+      .filter(r => r.grade.grade !== "PENDING")
+      .map(r => ({
+        id: r.player.id,
+        name: name(r.player),
+        grade: r.grade.grade,
+        hit: r.grade.hit,
+        smash: r.grade.smash,
+        result: r.grade.text,
+        score: r.player.score || null
+      }))
   };
 
   saveTracker(tracker);
