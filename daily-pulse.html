@@ -27,6 +27,8 @@
     <button onclick="generateDailyPulse()">Generate Today's Posts</button>
     <button class="secondary" onclick="copyPost()">Copy Both Posts</button>
     <button class="secondary" onclick="downloadJson()">Download JSON</button>
+      <button class="secondary" onclick="saveTodaysPulse()">Save Today’s Pulse</button>
+      <a href="daily-recap.html" style="display:inline-block;text-decoration:none;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border);font-weight:900;padding:12px 18px;margin-top:8px;">Open Recap</a>
     <div id="status" class="status">Ready.</div>
   </div>
   <div class="card">
@@ -396,6 +398,29 @@ async function copyPitchersPost(){
   const text = document.getElementById("pitchersPostText").value;
   await navigator.clipboard.writeText(text);
   setStatus("Copied Round the Mound post.");
+}
+
+
+function saveTodaysPulse(){
+  if(!dailyPulseData){
+    setStatus("Generate today's posts first, then save.");
+    return;
+  }
+
+  const saved = {
+    date: dailyPulseData.date,
+    generated_at: dailyPulseData.generated_at,
+    top_batters: dailyPulseData.top_batters || [],
+    top_pitchers: dailyPulseData.top_pitchers || [],
+    power_ball: dailyPulseData.power_ball || null,
+    cold_note: dailyPulseData.cold_note || null,
+    posts: dailyPulseData.posts || buildPost(dailyPulseData),
+    site_url: "https://thediamondpulse.com"
+  };
+
+  localStorage.setItem("diamondPulseSavedDailyPulse", JSON.stringify(saved));
+  localStorage.setItem("diamondPulseSavedDailyPulse:" + saved.date, JSON.stringify(saved));
+  setStatus("Saved Today's Pulse. Open daily-recap.html after games finish.");
 }
 
 function downloadJson(){
