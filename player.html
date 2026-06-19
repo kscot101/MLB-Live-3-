@@ -228,6 +228,9 @@
       color: #fff;
     }
 
+  
+    .positive { color: var(--green); font-weight: 900; }
+    .warning { color: var(--orange); font-weight: 900; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
@@ -595,6 +598,8 @@
         </div>
       `;
 
+      await loadStadiumWeatherForPlayer(player, team);
+
       const hittingSplits = await loadStatGroup("hitting");
       const pitchingSplits = await loadStatGroup("pitching");
       const playerRole = (player.primaryPosition?.type === "Pitcher" || pitchingSplits.length > hittingSplits.length) ? "Pitcher" : "Batter";
@@ -729,11 +734,176 @@
       return streak;
     }
 
+
+    async function loadStadiumWeatherForPlayer(player, team) {
+      const weatherBox = document.getElementById("stadiumWeather");
+      if (!weatherBox) return;
+
+      if (!team || !team.id) {
+        weatherBox.innerHTML = "<p class='muted'>No current team found for this player.</p>";
+        return;
+      }
+
+      try {
+        const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+        const date =
+          today.getFullYear() + "-" +
+          String(today.getMonth() + 1).padStart(2, "0") + "-" +
+          String(today.getDate()).padStart(2, "0");
+
+        const schedule = await getJson(
+          "https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=" +
+          date +
+          "&hydrate=probablePitcher,venue,linescore"
+        );
+
+        let game = null;
+
+        (schedule.dates || []).forEach(day => {
+          (day.games || []).forEach(g => {
+            if (
+              String(g.teams.away.team.id) === String(team.id) ||
+              String(g.teams.home.team.id) === String(team.id)
+            ) {
+              game = g;
+            }
+          });
+        });
+
+        if (!game) {
+          weatherBox.innerHTML = `<p class="muted">No game found today for ${h(team.name || "this player's team")}.</p>`;
+          return;
+        }
+
+        const side = String(game.teams.away.team.id) === String(team.id) ? "away" : "home";
+        const opponentSide = side === "away" ? "home" : "away";
+        const opponent = game.teams[opponentSide].team;
+        const opposingPitcher = game.teams[opponentSide].probablePitcher;
+        const teamPitcher = game.teams[side].probablePitcher;
+
+        let feed = null;
+        let weather = null;
+
+        try {
+          feed = await getJson("https://statsapi.mlb.com/api/v1.1/game/" + game.gamePk + "/feed/live");
+          weather = feed.gameData?.weather || null;
+        } catch (err) {
+          console.warn("Could not load game feed weather", err);
+        }
+
+        const venue = game.venue?.name || feed?.gameData?.venue?.name || "Stadium";
+        const temp = weather?.temp || weather?.temperature || "-";
+        const condition = weather?.condition || "Not listed";
+        const wind = weather?.wind || "Not listed";
+
+        const hitterImpact = getHitterWeatherImpact(weather);
+        const pitcherImpact = getPitcherWeatherImpact(weather);
+
+        const impactClass =
+          hitterImpact.score >= 10 ? "positive" :
+          pitcherImpact.score >= 10 ? "warning" :
+          "";
+
+        weatherBox.innerHTML = `
+          <div class="weather-grid">
+            <div class="weather-item">
+              <div class="weather-value">${h(temp)}°</div>
+              <div class="label">Temperature</div>
+            </div>
+
+            <div class="weather-item">
+              <div class="weather-value">${h(condition)}</div>
+              <div class="label">Condition</div>
+            </div>
+
+            <div class="weather-item">
+              <div class="weather-value">${h(wind)}</div>
+              <div class="label">Wind</div>
+            </div>
+
+            <div class="weather-item">
+              <div class="weather-value">${h(hitterImpact.score > 0 ? "+" + hitterImpact.score : hitterImpact.score)}</div>
+              <div class="label">Hitter Weather</div>
+            </div>
+          </div>
+
+          <p class="weather-note">
+            <strong>${h(game.teams.away.team.name)} @ ${h(game.teams.home.team.name)}</strong><br>
+            Venue: ${h(venue)}<br>
+            Opponent: ${h(opponent.name)}<br>
+            Opposing Starter: ${h(opposingPitcher?.fullName || "TBD")}<br>
+            Team Starter: ${h(teamPitcher?.fullName || "TBD")}<br>
+            Weather Read: <span class="${impactClass}">${h(buildWeatherRead(hitterImpact, pitcherImpact, String(wind).toLowerCase()))}</span>
+          </p>
+        `;
+      } catch (err) {
+        console.error("Weather load failed", err);
+        weatherBox.innerHTML = "<p class='muted'>Could not load today's stadium weather.</p>";
+      }
+    }
+
+    function getHitterWeatherImpact(weather) {
+      if (!weather) return { score: 0, note: "Weather unavailable" };
+
+      let score = 0;
+      const temp = Number(weather.temp || weather.temperature || 0);
+      const wind = String(weather.wind || "").toLowerCase();
+      const condition = String(weather.condition || "").toLowerCase();
+
+      if (wind.includes("out")) score += 20;
+      if (wind.includes("in")) score -= 16;
+      if (temp >= 80) score += 10;
+      if (temp && temp <= 55) score -= 8;
+      if (condition.includes("clear") || condition.includes("sun")) score += 4;
+
+      let note = "Neutral hitting weather";
+      if (score >= 18) note = "Strong hitter weather boost";
+      else if (score >= 8) note = "Slight hitter weather boost";
+      else if (score <= -12) note = "Weather leans against hitters";
+      else if (score < 0) note = "Slight hitter downgrade";
+
+      return { score, note };
+    }
+
+    function getPitcherWeatherImpact(weather) {
+      if (!weather) return { score: 0, note: "Weather unavailable" };
+
+      let score = 0;
+      const temp = Number(weather.temp || weather.temperature || 0);
+      const wind = String(weather.wind || "").toLowerCase();
+
+      if (wind.includes("in")) score += 18;
+      if (wind.includes("out")) score -= 16;
+      if (temp && temp <= 60) score += 8;
+      if (temp >= 82) score -= 8;
+
+      let note = "Neutral pitching weather";
+      if (score >= 16) note = "Pitcher-friendly weather";
+      else if (score >= 8) note = "Slight pitcher lift";
+      else if (score <= -12) note = "Weather risk for pitchers";
+      else if (score < 0) note = "Slight pitcher downgrade";
+
+      return { score, note };
+    }
+
+    function buildWeatherRead(hitterImpact, pitcherImpact, windLower) {
+      if (hitterImpact.score >= 18) return hitterImpact.note + " — ball could carry better today.";
+      if (pitcherImpact.score >= 16) return pitcherImpact.note + " — conditions may help run prevention and Ks.";
+      if (windLower.includes("out")) return "Wind appears to favor hitters.";
+      if (windLower.includes("in")) return "Wind appears to favor pitchers.";
+      return hitterImpact.note + " / " + pitcherImpact.note + ".";
+    }
+
+
     loadPlayer().catch(err => {
       console.error(err);
       document.getElementById("playerHero").innerHTML = "<div>Could not load this player.</div>";
       document.getElementById("gameLog").innerHTML = "Could not load player stats.";
     });
   </script>
+<script>
+(function(){const KEY="diamondPulseFavoritePlayers";function fav(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]}}function save(f){const seen=new Set(),out=[];f.forEach(p=>{const id=String(p.id||"");if(!id||seen.has(id))return;seen.add(id);out.push(p)});localStorage.setItem(KEY,JSON.stringify(out))}
+window.saveCurrentPlayerToPulse=async function(){const id=new URLSearchParams(location.search).get("id");if(!id){alert("No player ID found.");return}const name=document.querySelector("h1")?.textContent?.trim()||"Saved Player";const teamName=document.querySelector("#playerHero .muted")?.textContent?.split("·")?.[0]?.trim()||"";const f=fav();if(!f.some(p=>String(p.id)===String(id)))f.push({id:String(id),name,teamName});save(f);if(window.supabaseClient){try{const {data:{user}}=await supabaseClient.auth.getUser();if(user){await supabaseClient.from("favorite_players").upsert({user_id:user.id,player_id:String(id),player_name:name,team_name:teamName},{onConflict:"user_id,player_id"})}}catch(e){}}alert("Saved to My Pulse.")};function add(){const hero=document.getElementById("playerHero");if(!hero||document.getElementById("saveToMyPulseBtn"))return;const btn=document.createElement("button");btn.id="saveToMyPulseBtn";btn.textContent="⭐ Save to My Pulse";btn.onclick=window.saveCurrentPlayerToPulse;btn.style.cssText="margin-top:12px;padding:10px 14px;border-radius:999px;border:1px solid rgba(47,245,138,.3);background:rgba(47,245,138,.14);color:#2ff58a;font-weight:900;cursor:pointer;";hero.appendChild(btn)}document.addEventListener("DOMContentLoaded",add);window.addEventListener("load",add);setInterval(add,1200)})();
+</script>
 </body>
 </html>
