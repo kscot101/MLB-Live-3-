@@ -735,6 +735,29 @@
     }
 
 
+
+    function getIndoorVenueInfo(venueName) {
+      const venue = String(venueName || "").toLowerCase();
+
+      const indoorMap = [
+        { key: "globe life field", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "minute maid park", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "rogers centre", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "tropicana field", label: "Indoor Stadium", impact: "Neutral weather impact" },
+        { key: "loandepot park", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "chase field", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "american family field", label: "Indoor / Retractable Roof", impact: "Neutral weather impact" },
+        { key: "t-mobile park", label: "Retractable Roof", impact: "Neutral weather impact when roof is closed" }
+      ];
+
+      return indoorMap.find(item => venue.includes(item.key)) || null;
+    }
+
+    function hasRealWeather(weather) {
+      if (!weather) return false;
+      return Boolean(weather.temp || weather.temperature || weather.condition || weather.wind);
+    }
+
     async function loadStadiumWeatherForPlayer(player, team) {
       const weatherBox = document.getElementById("stadiumWeather");
       if (!weatherBox) return;
@@ -792,12 +815,22 @@
         }
 
         const venue = game.venue?.name || feed?.gameData?.venue?.name || "Stadium";
-        const temp = weather?.temp || weather?.temperature || "-";
-        const condition = weather?.condition || "Not listed";
-        const wind = weather?.wind || "Not listed";
+        const indoorInfo = getIndoorVenueInfo(venue);
+        const realWeather = hasRealWeather(weather);
 
-        const hitterImpact = getHitterWeatherImpact(weather);
-        const pitcherImpact = getPitcherWeatherImpact(weather);
+        const temp = realWeather ? (weather?.temp || weather?.temperature || "-") : "Indoor";
+        const condition = realWeather ? (weather?.condition || "Not listed") : (indoorInfo?.label || "Weather unavailable");
+        const wind = realWeather ? (weather?.wind || "Not listed") : "N/A";
+
+        const hitterImpact = realWeather ? getHitterWeatherImpact(weather) : {
+          score: 0,
+          note: indoorInfo ? indoorInfo.impact : "Weather unavailable"
+        };
+
+        const pitcherImpact = realWeather ? getPitcherWeatherImpact(weather) : {
+          score: 0,
+          note: indoorInfo ? indoorInfo.impact : "Weather unavailable"
+        };
 
         const impactClass =
           hitterImpact.score >= 10 ? "positive" :
@@ -805,9 +838,11 @@
           "";
 
         weatherBox.innerHTML = `
+          ${!realWeather && indoorInfo ? `<span class="pill">🏟 ${h(indoorInfo.label)}</span>` : ""}
+
           <div class="weather-grid">
             <div class="weather-item">
-              <div class="weather-value">${h(temp)}°</div>
+              <div class="weather-value">${h(temp)}${realWeather ? "°" : ""}</div>
               <div class="label">Temperature</div>
             </div>
 
@@ -823,17 +858,17 @@
 
             <div class="weather-item">
               <div class="weather-value">${h(hitterImpact.score > 0 ? "+" + hitterImpact.score : hitterImpact.score)}</div>
-              <div class="label">Hitter Weather</div>
+              <div class="label">Weather Impact</div>
             </div>
           </div>
 
           <p class="weather-note">
             <strong>${h(game.teams.away.team.name)} @ ${h(game.teams.home.team.name)}</strong><br>
-            Venue: ${h(venue)}<br>
+            Venue: ${h(venue)}${indoorInfo ? " · " + h(indoorInfo.label) : ""}<br>
             Opponent: ${h(opponent.name)}<br>
             Opposing Starter: ${h(opposingPitcher?.fullName || "TBD")}<br>
             Team Starter: ${h(teamPitcher?.fullName || "TBD")}<br>
-            Weather Read: <span class="${impactClass}">${h(buildWeatherRead(hitterImpact, pitcherImpact, String(wind).toLowerCase()))}</span>
+            Weather Read: <span class="${impactClass}">${h(!realWeather && indoorInfo ? indoorInfo.label + ". Weather impact is neutral for this game." : buildWeatherRead(hitterImpact, pitcherImpact, String(wind).toLowerCase()))}</span>
           </p>
         `;
       } catch (err) {
