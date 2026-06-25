@@ -2,1008 +2,703 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Diamond Pulse | Baseball Analytics & Edges</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diamond Pulse | Edge Board</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-/* Imported Diamond Pulse live dashboard CSS */
-
     * { box-sizing: border-box; }
     :root {
-      --bg:#020617; --panel:rgba(2,6,23,.82); --text:#f0fdf4; --muted:#a7f3d0;
-      --bright:#bbf7d0; --green:#22c55e; --lime:#bef264; --mint:#86efac;
-      --shadow:0 18px 42px rgba(0,0,0,.38);
+      --bg: #030712;
+      --panel: rgba(7, 13, 25, .82);
+      --panel-2: rgba(10, 18, 32, .92);
+      --line: rgba(134, 239, 172, .18);
+      --line-strong: rgba(190, 242, 100, .38);
+      --text: #f0fdf4;
+      --muted: #9ca3af;
+      --green: #22c55e;
+      --lime: #bef264;
+      --mint: #86efac;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --chip: rgba(15, 23, 42, .76);
+      --shadow: 0 24px 90px rgba(0, 0, 0, .45);
     }
-    html { scroll-behavior:smooth; }
+
+    html { scroll-behavior: smooth; }
     body {
-      margin:0; font-family:Inter,Arial,sans-serif; color:white; padding:16px; min-height:100vh; overflow-x:hidden; position:relative;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(34,197,94,.28), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(16,185,129,.18), transparent 25%),
-        radial-gradient(circle at 50% 100%, rgba(20,184,166,.14), transparent 35%),
-        #020617;
-    }
-    body::before { content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.24; background-image:radial-gradient(circle,rgba(34,197,94,.14) 1px,transparent 1px); background-size:28px 28px; }
-
-    main { position: relative; z-index: 1; }
-    .field-bg { position:fixed; inset:0; width:100%; height:100%; z-index:0; opacity:.46; pointer-events:none; filter:drop-shadow(0 0 12px rgba(34,197,94,.3)); }
-    .app { max-width:1180px; margin:0 auto; position:relative; z-index:1; }
-
-    .header { position:sticky; top:10px; z-index:10; background:rgba(2,6,23,.84); border:1px solid rgba(34,197,94,.35); box-shadow:0 0 35px rgba(34,197,94,.22); backdrop-filter:blur(18px); border-radius:30px; padding:18px; margin-bottom:18px; overflow:hidden; }
-    .header::before { content:""; position:absolute; right:-20px; top:-20px; width:180px; height:180px; background:radial-gradient(circle,rgba(190,242,100,.18),transparent 55%); filter:blur(6px); pointer-events:none; }
-    .top-row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; position:relative; z-index:1; }
-    .brand-wrap { position:relative; display:flex; align-items:center; gap:14px; }
-    .brand-watermark { position:absolute; left:12px; top:-16px; width:108px; height:108px; opacity:.12; pointer-events:none; filter:drop-shadow(0 0 20px rgba(34,197,94,.45)); }
-    .brand-logo { width:72px; height:72px; border-radius:26px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 50% 35%,rgba(190,242,100,.22),transparent 45%),rgba(2,6,23,.55); border:1px solid rgba(134,239,172,.26); box-shadow:0 0 24px rgba(34,197,94,.25), inset 0 0 22px rgba(34,197,94,.08); overflow:hidden; position:relative; z-index:2; }
-    .diamond-logo { width:66px; height:66px; filter:drop-shadow(0 0 12px rgba(34,197,94,.55)); }
-    h1 { margin:0; font-size:34px; letter-spacing:-.05em; color:#dcfce7; text-shadow:0 0 18px rgba(34,197,94,.65); position:relative; z-index:2; }
-    h2 { margin:34px 0 8px; font-size:22px; color:#bbf7d0; }
-    .sub,.section-note { color:#a7f3d0; }
-    .section-note { font-size:13px; margin-bottom:12px; line-height:1.35; }
-    .refresh { display:inline-block; margin-top:10px; padding:7px 12px; border-radius:999px; background:rgba(34,197,94,.16); border:1px solid rgba(34,197,94,.35); color:#86efac; font-size:12px; font-weight:800; position:relative; z-index:2; }
-    .stadium-toggle { border:1px solid rgba(134,239,172,.28); background:rgba(34,197,94,.14); color:#bbf7d0; border-radius:999px; padding:10px 14px; font-weight:950; cursor:pointer; white-space:nowrap; box-shadow:0 0 18px rgba(34,197,94,.12); }
-    .stadium-toggle.active { background:rgba(190,242,100,.24); color:#f7fee7; border-color:rgba(190,242,100,.45); box-shadow:0 0 26px rgba(190,242,100,.25); }
-
-    .score-strip { margin-top:14px; background:rgba(2,6,23,.74); border:1px solid rgba(134,239,172,.22); border-radius:999px; padding:8px; overflow:hidden; box-shadow:inset 0 0 20px rgba(34,197,94,.08); position:relative; z-index:1; }
-    .score-strip-top { display:flex; align-items:center; gap:10px; margin-bottom:7px; padding:0 6px; }
-    .score-dot { width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 12px rgba(34,197,94,.9); }
-    .score-title { color:#bbf7d0; font-size:12px; font-weight:950; letter-spacing:.08em; text-transform:uppercase; }
-    .ticker-viewport { overflow:hidden; width:100%; }
-    .ticker-track { display:inline-flex; gap:10px; min-width:max-content; animation:tickerScroll 55s linear infinite; will-change:transform; }
-    .ticker-track:hover { animation-play-state:paused; }
-    @keyframes tickerScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-    .ticker-item { appearance:none; display:inline-flex; align-items:center; gap:7px; white-space:nowrap; padding:8px 12px; border-radius:999px; background:rgba(15,23,42,.78); border:1px solid rgba(134,239,172,.18); color:#d1fae5; font-size:13px; font-weight:750; cursor:pointer; }
-    .ticker-live { border-color:rgba(34,197,94,.5); box-shadow:0 0 16px rgba(34,197,94,.16); }
-    .ticker-final { opacity:.78; } .ticker-preview { opacity:.9; }
-    .ticker-score { color:#f0fdf4; font-weight:950; font-size:15px; }
-    .ticker-detail { color:#86efac; font-size:12px; font-weight:900; margin-left:4px; }
-
-    .filter-wrap,.helper-box,.watchlist-box,.feed-box { background:rgba(2,6,23,.78); border:1px solid rgba(34,197,94,.24); border-radius:26px; padding:14px; box-shadow:inset 0 0 18px rgba(34,197,94,.06); margin-bottom:18px; }
-    .filter-wrap { margin:16px 0 14px; padding:12px; }
-    .filter-title { color:#86efac; font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
-    .filter-bar { display:flex; gap:9px; overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
-    .filter-btn { display:inline-flex; align-items:center; gap:7px; border:1px solid rgba(134,239,172,.18); background:rgba(15,23,42,.78); color:#d1fae5; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:900; cursor:pointer; white-space:nowrap; }
-    .filter-btn img { width:22px; height:22px; border-radius:50%; background:#ecfdf5; padding:3px; object-fit:contain; }
-    .filter-btn.active { background:rgba(34,197,94,.22); border-color:rgba(190,242,100,.45); color:#f0fdf4; box-shadow:0 0 18px rgba(34,197,94,.16); }
-
-    .desktop-tabs { position:sticky; top:128px; z-index:9; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:12px 0 18px; padding:10px; background:rgba(2,6,23,.82); border:1px solid rgba(134,239,172,.24); border-radius:24px; box-shadow:0 0 28px rgba(34,197,94,.14); backdrop-filter:blur(14px); }
-    .mobile-tabs { display:none; }
-    .tab-btn { border:0; border-radius:16px; padding:11px 8px; background:transparent; color:#a7f3d0; font-size:12px; font-weight:950; cursor:pointer; white-space:nowrap; }
-    .tab-btn.active { background:rgba(34,197,94,.18); color:#f0fdf4; box-shadow:inset 0 0 16px rgba(34,197,94,.08), 0 0 18px rgba(34,197,94,.10); }
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
-
-    .helper-box summary { list-style:none; cursor:pointer; color:#dcfce7; font-weight:950; font-size:16px; }
-    .helper-box summary::-webkit-details-marker { display:none; }
-    .helper-box p { margin:10px 0 0; color:#d1fae5; line-height:1.45; font-size:14px; }
-    .helper-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:12px; }
-    .helper-chip,.watch-chip,.feed-item,.game-mini-card,.detail-chip { background:rgba(15,23,42,.78); border:1px solid rgba(134,239,172,.15); border-radius:18px; padding:10px; }
-    .helper-chip-title,.watch-title,.feed-title { font-size:13px; font-weight:900; color:#bbf7d0; margin-bottom:5px; }
-    .helper-chip-copy,.watch-copy,.feed-copy { color:#d1fae5; font-size:12px; line-height:1.4; }
-    .watch-grid,.feed-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; }
-    .watch-chip { display:grid; grid-template-columns:34px 1fr auto; gap:10px; align-items:center; }
-    .watch-chip img { width:34px; height:34px; border-radius:50%; background:#ecfdf5; padding:4px; }
-    .mini-remove { border:1px solid rgba(134,239,172,.2); background:rgba(2,6,23,.55); color:#bbf7d0; border-radius:999px; padding:5px 8px; cursor:pointer; font-size:11px; font-weight:900; }
-    .key { background:rgba(2,6,23,.78); border:1px solid rgba(34,197,94,.28); box-shadow:inset 0 0 25px rgba(34,197,94,.08); border-radius:26px; padding:16px; color:#d1fae5; line-height:1.65; font-size:14px; margin-bottom:24px; }
-
-    .quick-grid,.pulse-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
-    .quick-card,.pulse-card,.game-night { position:relative; overflow:hidden; background:radial-gradient(circle at top left,rgba(190,242,100,.2),transparent 38%), linear-gradient(135deg,rgba(2,44,34,.96),rgba(6,78,59,.92)); border:1px solid rgba(134,239,172,.28); border-radius:28px; padding:16px; box-shadow:var(--shadow),0 0 26px rgba(34,197,94,.15); }
-    .pulse-card { padding:0; }
-    .pulse-card summary { padding:16px; cursor:pointer; position:relative; }
-    .quick-card::before,.pulse-card::before,.game-night::before,.card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 38%); pointer-events:none; }
-    .quick-tag,.pulse-tag,.game-night-title { display:inline-block; padding:5px 9px; border-radius:999px; background:rgba(2,6,23,.42); border:1px solid rgba(134,239,172,.2); color:#bbf7d0; font-size:11px; font-weight:950; text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; position:relative; }
-    .quick-headline,.pulse-main,.game-night-main { font-size:20px; font-weight:950; color:#f0fdf4; line-height:1.2; position:relative; }
-    .quick-copy,.pulse-sub,.game-night-sub { margin-top:8px; font-size:14px; line-height:1.45; color:#d1fae5; position:relative; }
-    .pulse-icon { width:42px; height:42px; border-radius:50%; background:rgba(2,6,23,.42); border:1px solid rgba(134,239,172,.24); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:10px; box-shadow:0 0 18px rgba(34,197,94,.18); position:relative; }
-    .pulse-title { position:relative; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#86efac; font-weight:950; margin-bottom:5px; }
-    .pulse-details { position:relative; padding:0 16px 16px; }
-
-    .stat-layout { display:block; margin-top:18px; }
-    .stat-column { min-width:0; }
-    .column-pill { display:inline-block; margin:18px 0 10px; padding:7px 12px; border-radius:999px; background:rgba(34,197,94,.14); border:1px solid rgba(134,239,172,.24); color:#bbf7d0; font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.06em; }
-    .stat-section { min-width:0; }
-    .stat-section h2 { margin-top:22px; }
-    .card { position:relative; overflow:hidden; border-radius:30px; padding:16px; margin-bottom:14px; border:1px solid rgba(134,239,172,.28); box-shadow:0 18px 42px rgba(0,0,0,.38),0 0 28px rgba(34,197,94,.14); animation:bubbleIn .35s ease both; }
-    .card:hover,.pulse-card:hover,.quick-card:hover { transform:translateY(-2px) scale(1.01); box-shadow:0 22px 55px rgba(0,0,0,.45),0 0 38px rgba(34,197,94,.28); }
-    @keyframes bubbleIn { from{opacity:0; transform:translateY(12px) scale(.96)} to{opacity:1; transform:translateY(0) scale(1)} }
-    summary { list-style:none; cursor:pointer; }
-    summary::-webkit-details-marker { display:none; }
-    .main-row { position:relative; display:grid; grid-template-columns:54px 72px minmax(0,1fr); gap:12px; align-items:center; }
-    .dp-team-logo { width:54px; height:54px; background:#ecfdf5; border-radius:50%; padding:7px; object-fit:contain; box-shadow:inset 0 0 12px rgba(34,197,94,.25),0 0 20px rgba(34,197,94,.38); }
-    .num-wrap { text-align:center; background:rgba(2,6,23,.42); border:1px solid rgba(134,239,172,.2); border-radius:999px; padding:9px 4px; }
-    .num { font-size:36px; font-weight:950; line-height:.9; color:#f0fdf4; text-shadow:0 0 18px rgba(34,197,94,.65); }
-    .stat-label { margin-top:5px; font-size:11px; font-weight:900; color:#86efac; text-transform:uppercase; }
-    .info { min-width:0; }
-    .name { font-size:20px; font-weight:950; color:#f0fdf4; overflow-wrap:anywhere; }
-    .team,.game,.status,.extra { margin-top:3px; color:#d1fae5; font-size:13px; overflow-wrap:anywhere; line-height:1.35; }
-    .extra { color:#bef264; font-weight:900; }
-    .label { display:inline-block; margin-top:8px; padding:5px 10px; border-radius:999px; background:rgba(2,6,23,.45); border:1px solid rgba(134,239,172,.22); color:#bbf7d0; font-size:11px; font-weight:950; letter-spacing:.05em; text-transform:uppercase; }
-    .profile-btn,.follow-btn { position:relative; display:inline-block; margin-top:8px; margin-left:6px; padding:5px 10px; border-radius:999px; border:1px solid rgba(190,242,100,.32); background:rgba(190,242,100,.13); color:#f7fee7; font-size:11px; font-weight:950; cursor:pointer; text-transform:uppercase; letter-spacing:.05em; }
-    .follow-btn { background:rgba(190,242,100,.18); border-color:rgba(190,242,100,.44); box-shadow:0 0 14px rgba(190,242,100,.12); }
-    .follow-btn.active { background:rgba(190,242,100,.28); color:#fff; border-color:rgba(190,242,100,.55); }
-    .card-follow-top { position:absolute; top:12px; right:12px; z-index:6; margin:0; }
-    .card.has-follow { padding-top:52px; }
-    .pulse-card.has-follow summary { padding-top:54px; }
-    .detail-chip,.game-mini-card { position:relative; }
-    .detail-chip.has-follow,.game-mini-card.has-follow { padding-top:46px; }
-    .detail-chip .card-follow-top,.game-mini-card .card-follow-top { top:8px; right:8px; padding:4px 8px; font-size:10px; }
-    .ks { background:linear-gradient(135deg,#064e3b,#16a34a); }
-    .hits { background:linear-gradient(135deg,#022c22,#22c55e); }
-    .hot { background:linear-gradient(135deg,#14532d,#84cc16); }
-    .streak { background:linear-gradient(135deg,#052e16,#10b981); }
-    .hotpitcher { background:linear-gradient(135deg,#042f2e,#14b8a6); }
-    .prevks { background:linear-gradient(135deg,#1c1917,#15803d); }
-    .prevhits { background:linear-gradient(135deg,#022c22,#4ade80); }
-    .edgecard { background:linear-gradient(135deg,#064e3b,#65a30d); }
-    .leader { border:2px solid #bef264; box-shadow:0 0 0 1px rgba(190,242,100,.3),0 0 36px rgba(190,242,100,.38),0 18px 42px rgba(0,0,0,.38); }
-    .elite { box-shadow:0 0 36px rgba(190,242,100,.55),0 18px 42px rgba(0,0,0,.38); }
-    .good { box-shadow:0 0 28px rgba(34,197,94,.45),0 18px 42px rgba(0,0,0,.38); }
-    .bad { box-shadow:0 0 28px rgba(250,204,21,.45),0 18px 42px rgba(0,0,0,.38); }
-
-    .details { position:relative; margin-top:16px; background:rgba(2,6,23,.58); border:1px solid rgba(134,239,172,.18); border-radius:24px; padding:12px; max-width:100%; }
-    .details-header { font-size:12px; font-weight:900; color:#86efac; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
-    .details-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .detail-name { font-size:13px; font-weight:800; color:#f0fdf4; line-height:1.25; overflow-wrap:anywhere; }
-    .detail-sub { margin-top:4px; font-size:11px; color:#a7f3d0; line-height:1.25; overflow-wrap:anywhere; }
-    .detail-stat { margin-top:8px; display:inline-block; padding:5px 9px; border-radius:999px; background:rgba(34,197,94,.16); color:#bbf7d0; border:1px solid rgba(134,239,172,.22); font-size:12px; font-weight:900; margin-right:4px; }
-    .dot-row { display:flex; gap:4px; flex-wrap:wrap; margin-top:8px; }
-    .stat-dot { width:9px; height:9px; border-radius:50%; background:#bef264; box-shadow:0 0 10px rgba(190,242,100,.45); }
-    .stat-dot.empty { background:rgba(134,239,172,.14); box-shadow:none; border:1px solid rgba(134,239,172,.18); }
-    .k-bar { height:8px; border-radius:999px; background:rgba(2,6,23,.58); border:1px solid rgba(134,239,172,.14); overflow:hidden; margin-top:8px; }
-    .k-bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#22c55e,#bef264); box-shadow:0 0 12px rgba(190,242,100,.35); }
-
-    .hit-animation-wrap { margin-top:10px; background:rgba(2,6,23,.45); border:1px solid rgba(134,239,172,.18); border-radius:18px; padding:9px; position:relative; overflow:hidden; }
-    .hit-animation-title { color:#bef264; font-size:11px; font-weight:950; letter-spacing:.05em; text-transform:uppercase; margin-bottom:5px; }
-    .hit-animation-copy { color:#d1fae5; font-size:12px; line-height:1.3; margin-bottom:5px; }
-    .mini-hit-diamond { width:100%; max-width:230px; height:135px; display:block; margin:0 auto; filter:drop-shadow(0 0 10px rgba(34,197,94,.25)); }
-
-    .loading { background:rgba(2,6,23,.78); border:1px solid rgba(34,197,94,.24); border-radius:26px; padding:16px; color:#bbf7d0; }
-    .footer-note { margin:26px 0 80px; color:#86efac; opacity:.75; font-size:12px; text-align:center; }
-    .profile-modal,.game-modal { position:fixed; inset:0; background:rgba(2,6,23,.78); z-index:999; display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(10px); }
-    .profile-modal.open,.game-modal.open { display:flex; }
-    .profile-panel,.game-panel { width:min(720px,100%); max-height:88vh; overflow-y:auto; background:radial-gradient(circle at top left,rgba(34,197,94,.22),transparent 35%),rgba(2,6,23,.96); border:1px solid rgba(134,239,172,.28); border-radius:28px; padding:18px; box-shadow:0 28px 80px rgba(0,0,0,.55),0 0 36px rgba(34,197,94,.2); }
-    .profile-head,.game-head { display:grid; grid-template-columns:58px 1fr; gap:14px; align-items:center; margin-bottom:14px; }
-    .profile-logo,.game-logo { width:58px; height:58px; border-radius:50%; background:#ecfdf5; padding:8px; object-fit:contain; }
-    .profile-title,.game-title { font-size:24px; font-weight:950; color:#f0fdf4; line-height:1.1; }
-    .profile-sub,.game-sub { margin-top:5px; color:#a7f3d0; font-size:13px; line-height:1.4; }
-    .profile-stat,.game-stat { display:inline-block; padding:8px 12px; border-radius:999px; background:rgba(34,197,94,.16); border:1px solid rgba(134,239,172,.24); color:#bbf7d0; font-weight:950; margin-bottom:12px; margin-right:5px; }
-    .profile-close,.game-close { float:right; border:1px solid rgba(134,239,172,.24); background:rgba(15,23,42,.85); color:#bbf7d0; border-radius:999px; padding:7px 10px; cursor:pointer; font-weight:950; }
-    .game-section { margin-top:16px; }
-    .game-section-title { color:#86efac; font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.08em; margin-bottom:9px; }
-    .game-mini-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .game-mini-title { color:#f0fdf4; font-weight:950; font-size:14px; line-height:1.25; }
-    .game-mini-copy { color:#d1fae5; font-size:12px; line-height:1.35; margin-top:5px; }
-    .watch-factor { display:inline-block; padding:9px 13px; border-radius:999px; background:rgba(190,242,100,.16); border:1px solid rgba(190,242,100,.28); color:#f7fee7; font-weight:950; margin-top:8px; }
-
-    body.stadium-mode .header { position:relative; }
-    body.stadium-mode .key,body.stadium-mode .section-note,body.stadium-mode .filter-wrap,body.stadium-mode .helper-box,body.stadium-mode .desktop-tabs { display:none; }
-    body.stadium-mode .pulse-grid,body.stadium-mode .quick-grid,body.stadium-mode .stat-layout { grid-template-columns:1fr; }
-    body.stadium-mode .tab-panel { display:block; }
-    body.stadium-mode .card,body.stadium-mode .pulse-card,body.stadium-mode .quick-card { border-radius:34px; }
-    body.stadium-mode .num { font-size:48px; } body.stadium-mode .name { font-size:26px; } body.stadium-mode h2 { font-size:28px; }
-
-    @media (max-width:920px){ .helper-grid,.watch-grid,.feed-list{grid-template-columns:repeat(2,minmax(0,1fr));} }
-    @media (max-width:720px){
-      body{padding:10px 10px 86px;} .field-bg{opacity:.34;} .app{max-width:100%;}
-      .header{top:6px;border-radius:22px;padding:14px;} .top-row{display:block;} .stadium-toggle{margin-top:10px;}
-      .brand-wrap{gap:10px;} .brand-watermark{width:84px;height:84px;left:8px;top:-10px;} .brand-logo{width:58px;height:58px;border-radius:22px;} .diamond-logo{width:55px;height:55px;}
-      h1{font-size:26px;} h2{font-size:20px;margin-top:28px;} .desktop-tabs,.key{display:none;}
-      .quick-grid,.pulse-grid,.helper-grid,.watch-grid,.feed-list,.game-mini-grid,.details-grid{grid-template-columns:1fr;}
-      .quick-card,.pulse-card{min-height:auto;border-radius:24px;} .score-strip{border-radius:22px;} .ticker-item{font-size:12px;padding:7px 10px;}
-      .card{border-radius:26px;padding:13px;} .main-row{grid-template-columns:46px 58px minmax(0,1fr);gap:10px;} .dp-team-logo{width:46px;height:46px;} .num-wrap{padding:8px 3px;} .num{font-size:30px;} .name{font-size:17px;} .team,.game,.status,.extra{font-size:12px;} .details{border-radius:20px;padding:10px;}
-      .tab-panel{display:none;} .tab-panel.active{display:block;}
-      .mobile-tabs{position:fixed;z-index:50;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:repeat(6,1fr);gap:5px;background:rgba(2,6,23,.88);border:1px solid rgba(134,239,172,.24);box-shadow:0 0 32px rgba(34,197,94,.18);backdrop-filter:blur(14px);border-radius:22px;padding:8px;}
-      .tab-btn{padding:8px 3px;font-size:10px;} .mini-hit-diamond{max-width:190px;height:120px;}
-      body.stadium-mode .mobile-tabs{display:none;} body.stadium-mode .tab-panel{display:block;} body.stadium-mode .num{font-size:40px;} body.stadium-mode .name{font-size:22px;}
-    }
-  
-
-    /* Integration polish for live dashboard embedded in landing page */
-    #live-dashboard { padding-top: 70px; }
-    #live-dashboard .app { max-width: 1200px; }
-    #live-dashboard .header {
-      position: relative;
-      top: auto;
-      margin-bottom: 18px;
-      background: rgba(13, 27, 47, 0.82);
-      border-color: rgba(47,245,138,0.18);
-    }
-    #live-dashboard .desktop-tabs {
-      top: 74px;
-      background: rgba(13, 27, 47, 0.9);
-      border-color: rgba(47,245,138,0.18);
-    }
-    #live-dashboard .filter-wrap,
-    #live-dashboard .helper-box,
-    #live-dashboard .watchlist-box,
-    #live-dashboard .feed-box,
-    #live-dashboard .key,
-    #live-dashboard .loading {
-      background: rgba(255,255,255,0.045);
-      border-color: var(--border);
-    }
-    #live-dashboard .quick-card,
-    #live-dashboard .pulse-card,
-    #live-dashboard .game-night,
-    #live-dashboard .card {
-      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
-    }
-    #live-dashboard .header h1 {
-      font-size: 34px;
-      letter-spacing: -0.05em;
-      margin-bottom: 0;
-      line-height: 1;
-    }
-    #live-dashboard h2 {
-      letter-spacing: -0.5px;
-    }
-
-/* Original landing page CSS */
-    :root {
-      --bg: #07111f;
-      --panel: #0d1b2f;
-      --panel-light: #13253d;
-      --text: #f4f7fb;
-      --muted: #91a4bd;
-      --green: #2ff58a;
-      --blue: #3aa7ff;
-      --orange: #ffb347;
-      --red: #ff5f6d;
-      --border: rgba(255,255,255,0.1);
-    }
-
-    * {
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: "Inter", sans-serif;
+      min-height: 100vh;
       background:
-        radial-gradient(circle at top left, rgba(47,245,138,0.12), transparent 30%),
-        radial-gradient(circle at top right, rgba(58,167,255,0.14), transparent 32%),
-        var(--bg);
+        radial-gradient(circle at 12% 8%, rgba(34,197,94,.24), transparent 24%),
+        radial-gradient(circle at 80% 12%, rgba(190,242,100,.13), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(20,184,166,.14), transparent 36%),
+        linear-gradient(180deg, #020617 0%, #030712 52%, #020617 100%);
       color: var(--text);
-      line-height: 1.6;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(134,239,172,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(134,239,172,.04) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 78%);
     }
 
-    header {
+    .field-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: .42;
+      pointer-events: none;
+      filter: drop-shadow(0 0 18px rgba(34,197,94,.28));
+    }
+
+    .shell {
+      width: min(1540px, calc(100% - 28px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      padding: 14px 0 40px;
+    }
+
+    .topbar {
       position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(7, 17, 31, 0.86);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      padding: 18px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-    }
-
-    .logo span {
-      color: var(--green);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 26px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-    }
-
-    .nav-cta {
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: var(--green);
-      color: #06101d;
-      font-weight: 800;
-    }
-
-    .hero {
-      max-width: 1200px;
-      margin: auto;
-      padding: 92px 24px 70px;
+      top: 12px;
+      z-index: 50;
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 44px;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 14px;
       align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(134,239,172,.20);
+      background: rgba(2, 6, 23, .76);
+      box-shadow: 0 16px 50px rgba(0,0,0,.35), inset 0 0 24px rgba(34,197,94,.06);
+      backdrop-filter: blur(18px);
+      border-radius: 26px;
     }
 
-    .badge {
-      display: inline-flex;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 250px;
+    }
+
+    .brand-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(190,242,100,.34), transparent 44%),
+        rgba(15,23,42,.72);
+      border: 1px solid rgba(190,242,100,.25);
+      box-shadow: 0 0 28px rgba(34,197,94,.22);
+      overflow: hidden;
+    }
+
+    .brand h1 {
+      margin: 0;
+      line-height: .88;
+      letter-spacing: -.06em;
+      font-size: 28px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .brand h1 span { color: var(--lime); }
+    .brand-sub {
+      margin-top: 6px;
+      color: #9ca3af;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(47,245,138,0.12);
-      color: var(--green);
-      border: 1px solid rgba(47,245,138,0.25);
+      justify-content: flex-end;
+    }
+
+    .refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
       padding: 8px 12px;
       border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 22px;
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(134,239,172,.2);
+      color: #d1fae5;
+      font-size: 11px;
+      font-weight: 850;
+      white-space: nowrap;
     }
 
-    h1 {
-      font-size: clamp(44px, 7vw, 78px);
-      line-height: 0.96;
-      letter-spacing: -3px;
-      margin-bottom: 24px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 18px;
-      max-width: 620px;
-      margin-bottom: 32px;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 14px 20px;
-      border-radius: 12px;
-      font-weight: 800;
-      border: 1px solid var(--border);
-      transition: 0.2s ease;
-    }
-
-    .btn.primary {
-      background: var(--green);
-      color: #06101d;
-      border-color: var(--green);
-    }
-
-    .btn.secondary {
-      background: rgba(255,255,255,0.04);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .dashboard {
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 24px 70px rgba(0,0,0,0.35);
-    }
-
-    .dash-top {
-      display: flex;
-      justify-content: space-between;
+    .live-pill {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 18px;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(190,242,100,.14);
+      border: 1px solid rgba(190,242,100,.32);
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
     }
 
-    .dash-title {
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--lime);
+      box-shadow: 0 0 14px rgba(190,242,100,.9);
+    }
+
+    .stadium-toggle,
+    .profile-btn,
+    .follow-btn,
+    .board-filter-btn,
+    .mini-remove {
+      border: 1px solid rgba(134,239,172,.2);
+      background: rgba(15,23,42,.78);
+      color: #d1fae5;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .16s ease;
+    }
+
+    .stadium-toggle {
+      padding: 9px 12px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .stadium-toggle:hover,
+    .profile-btn:hover,
+    .follow-btn:hover,
+    .board-filter-btn:hover,
+    .mini-remove:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 18px rgba(190,242,100,.12);
+      transform: translateY(-1px);
+    }
+
+    .stadium-toggle.active {
+      color: var(--lime);
+      background: rgba(190,242,100,.14);
+      border-color: rgba(190,242,100,.38);
+    }
+
+    .score-strip {
+      min-width: 0;
+      background: rgba(2,6,23,.56);
+      border: 1px solid rgba(134,239,172,.14);
+      border-radius: 999px;
+      overflow: hidden;
+      padding: 8px;
+      box-shadow: inset 0 0 18px rgba(34,197,94,.05);
+    }
+
+    .score-strip-top { display: none; }
+    .ticker-viewport { overflow: hidden; width: 100%; }
+    .ticker-track { display: inline-flex; gap: 8px; min-width: max-content; animation: tickerScroll 55s linear infinite; }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .ticker-item {
+      appearance: none;
+      border: 1px solid rgba(134,239,172,.16);
+      background: rgba(15,23,42,.74);
+      color: #d1fae5;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: 12px;
       font-weight: 800;
+      cursor: pointer;
+    }
+    .ticker-live { border-color: rgba(190,242,100,.38); box-shadow: 0 0 18px rgba(190,242,100,.11); }
+    .ticker-score { color: #fff; font-size: 14px; font-weight: 950; }
+    .ticker-detail { color: var(--mint); font-size: 11px; font-weight: 900; }
+
+    .team-filter-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+      padding: 10px 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(134,239,172,.14);
+      background: rgba(2,6,23,.55);
+      backdrop-filter: blur(12px);
     }
 
-    .live {
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 800;
+    .filter-title {
+      color: var(--mint);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
-    .edge-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
+    .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 1px; scrollbar-width: thin; }
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border: 1px solid rgba(134,239,172,.15);
+      background: rgba(15,23,42,.72);
+      color: #d1fae5;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-btn img {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #f0fdf4;
+      padding: 3px;
+    }
+    .filter-btn.active { color: #fff; border-color: rgba(190,242,100,.36); background: rgba(34,197,94,.18); }
+
+    .terminal-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .55fr);
+      gap: 14px;
       margin-bottom: 14px;
     }
 
-    .game-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 12px;
-    }
-
-    .teams {
-      font-weight: 800;
-      font-size: 17px;
-    }
-
-    .market {
-      color: var(--muted);
-      font-size: 13px;
-      font-family: "Roboto Mono", monospace;
-    }
-
-    .edge-player {
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 800;
-      margin-top: 3px;
-    }
-
-    .edge-player span {
-      color: var(--green);
-    }
-
-    .edge-value {
-      font-family: "Roboto Mono", monospace;
-      color: var(--green);
-      font-weight: 800;
-    }
-
-    .meter {
-      height: 8px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 99px;
+    .hero-card,
+    .terminal-panel,
+    .drawer-card,
+    .feed-panel,
+    .watch-panel {
+      position: relative;
       overflow: hidden;
-      margin-top: 12px;
+      border: 1px solid rgba(134,239,172,.18);
+      background:
+        linear-gradient(180deg, rgba(15,23,42,.86), rgba(2,6,23,.84)),
+        radial-gradient(circle at 0% 0%, rgba(34,197,94,.20), transparent 38%);
+      box-shadow: var(--shadow), inset 0 0 24px rgba(34,197,94,.05);
+      border-radius: 28px;
+      backdrop-filter: blur(16px);
     }
 
-    .meter span {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, var(--blue), var(--green));
-      border-radius: 99px;
+    .hero-card::before,
+    .terminal-panel::before,
+    .drawer-card::before,
+    .feed-panel::before,
+    .watch-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255,255,255,.09), transparent 38%);
     }
 
-    section {
-      padding: 70px 24px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .section-head {
-      max-width: 680px;
-      margin-bottom: 36px;
-    }
-
-    .section-head small {
-      color: var(--green);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.8px;
-    }
-
-    .section-head h2 {
-      font-size: clamp(32px, 4vw, 52px);
-      line-height: 1;
-      letter-spacing: -2px;
-      margin: 10px 0 14px;
-    }
-
-    .section-head p {
-      color: var(--muted);
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .feature-card,
-    .pricing-card {
-      background: rgba(255,255,255,0.045);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 26px;
-    }
-
-    .feature-card h3,
-    .pricing-card h3 {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .feature-card p,
-    .pricing-card p {
-      color: var(--muted);
-    }
-
-    .stat {
-      font-family: "Roboto Mono", monospace;
-      font-size: 34px;
-      font-weight: 800;
-      color: var(--green);
-      margin-bottom: 8px;
-    }
-
-    .table-wrap {
-      background: rgba(255,255,255,0.045);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      overflow: hidden;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 18px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    td {
-      font-weight: 700;
-    }
-
-    .positive {
-      color: var(--green);
-      font-family: "Roboto Mono", monospace;
-    }
-
-    .warning {
-      color: var(--orange);
-      font-family: "Roboto Mono", monospace;
-    }
-
-    .tag {
-      display: inline-block;
+    .hero-card { padding: 18px; }
+    .eyebrow {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(47,245,138,0.1);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 800;
+      color: var(--lime);
+      background: rgba(2,6,23,.46);
+      border: 1px solid rgba(190,242,100,.22);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .12em;
     }
 
-    .cta {
-      text-align: center;
-      background:
-        linear-gradient(180deg, rgba(47,245,138,0.1), rgba(58,167,255,0.06));
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    .hero-title {
+      position: relative;
+      margin: 14px 0 0;
+      max-width: 900px;
+      font-size: clamp(34px, 5vw, 74px);
+      line-height: .88;
+      letter-spacing: -.08em;
+      font-weight: 950;
+      color: #f8fff8;
+      text-shadow: 0 0 32px rgba(34,197,94,.34);
     }
-
-    .cta h2 {
-      font-size: clamp(34px, 5vw, 58px);
-      line-height: 1;
-      letter-spacing: -2px;
-      margin-bottom: 16px;
-    }
-
-    .cta p {
-      color: var(--muted);
-      max-width: 620px;
-      margin: 0 auto 28px;
-    }
-
-    footer {
-      padding: 34px 24px;
-      text-align: center;
-      color: var(--muted);
+    .hero-title span { color: var(--lime); }
+    .hero-copy {
+      position: relative;
+      margin: 14px 0 0;
+      max-width: 820px;
+      color: #d1fae5;
+      line-height: 1.55;
       font-size: 14px;
     }
 
-    @media (max-width: 900px) {
-      .hero,
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
+    .board-top-cards {
+      position: relative;
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
 
-      .nav-links {
-        display: none;
-      }
+    .top-edge-card {
+      position: relative;
+      min-height: 155px;
+      border: 1px solid rgba(134,239,172,.18);
+      background:
+        radial-gradient(circle at top left, rgba(190,242,100,.16), transparent 34%),
+        rgba(15,23,42,.78);
+      border-radius: 22px;
+      padding: 14px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: .18s ease;
+    }
+    .top-edge-card:hover { transform: translateY(-2px); border-color: rgba(190,242,100,.42); box-shadow: 0 0 24px rgba(190,242,100,.12); }
+    .top-edge-rank {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border-radius: 999px;
+      color: #111827;
+      background: var(--lime);
+      font-weight: 950;
+      margin-bottom: 10px;
+    }
+    .top-edge-score { position: absolute; top: 14px; right: 14px; color: var(--lime); font-size: 30px; font-weight: 950; text-align: right; }
+    .top-edge-score span { display: block; margin-top: -3px; font-size: 9px; color: var(--mint); letter-spacing: .1em; text-transform: uppercase; }
+    .top-edge-player { color: #fff; font-size: 18px; font-weight: 950; line-height: 1.1; padding-right: 55px; }
+    .top-edge-meta { margin-top: 6px; color: var(--mint); font-size: 12px; font-weight: 800; }
+    .top-edge-signal { margin-top: 10px; color: #d1fae5; font-size: 12px; line-height: 1.35; }
 
-      h1 {
-        letter-spacing: -2px;
-      }
+    .snapshot-card { padding: 16px; display: grid; gap: 14px; align-content: start; }
+    .snapshot-grid { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .snapshot-tile { padding: 13px; border-radius: 20px; border: 1px solid rgba(134,239,172,.14); background: rgba(15,23,42,.76); }
+    .snapshot-value { color: var(--lime); font-size: 28px; font-weight: 950; line-height: 1; }
+    .snapshot-label { margin-top: 7px; color: #9ca3af; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; font-weight: 950; }
 
-      table {
-        min-width: 860px;
-      }
+    .terminal-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.48fr) minmax(360px, .74fr);
+      gap: 14px;
+      align-items: start;
+    }
 
-      .table-wrap {
-        overflow-x: auto;
-      }
+    .panel-head {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(134,239,172,.13);
+    }
+    .panel-kicker { color: var(--mint); font-size: 10px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+    .panel-title { margin: 0; color: #fff; font-size: 24px; line-height: 1; letter-spacing: -.05em; }
+    .panel-sub { margin-top: 7px; color: #9ca3af; font-size: 12px; line-height: 1.45; }
+
+    .board-filter-tabs { position: relative; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px 0; }
+    .board-filter-btn { padding: 8px 11px; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; }
+    .board-filter-btn.active { color: #111827; background: var(--lime); border-color: var(--lime); }
+
+    .edge-table-wrap { position: relative; padding: 12px; overflow-x: auto; }
+    .edge-table { width: 100%; min-width: 790px; border-collapse: separate; border-spacing: 0 8px; font-size: 13px; }
+    .edge-table th { padding: 0 10px 5px; color: var(--mint); font-size: 10px; font-weight: 950; text-transform: uppercase; letter-spacing: .1em; text-align: left; }
+    .edge-row { cursor: pointer; transition: .15s ease; }
+    .edge-row td { background: rgba(15,23,42,.78); border-top: 1px solid rgba(134,239,172,.13); border-bottom: 1px solid rgba(134,239,172,.13); padding: 12px 10px; vertical-align: middle; color: #d1fae5; }
+    .edge-row td:first-child { border-left: 1px solid rgba(134,239,172,.13); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+    .edge-row td:last-child { border-right: 1px solid rgba(134,239,172,.13); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+    .edge-row:hover td, .edge-row.active td { border-color: rgba(190,242,100,.40); background: rgba(21, 36, 42, .88); box-shadow: inset 0 0 22px rgba(190,242,100,.04); }
+
+    .edge-rank-pill { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: rgba(190,242,100,.14); border: 1px solid rgba(190,242,100,.25); color: var(--lime); font-weight: 950; }
+    .edge-player-cell { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+    .edge-team-logo { width: 34px; height: 34px; border-radius: 999px; background: #f0fdf4; padding: 4px; object-fit: contain; }
+    .edge-player-name { color: #fff; font-weight: 950; font-size: 13px; }
+    .edge-player-team { margin-top: 3px; color: #9ca3af; font-size: 11px; }
+    .edge-type-pill { display: inline-flex; padding: 5px 8px; border-radius: 999px; background: rgba(34,197,94,.13); border: 1px solid rgba(134,239,172,.18); color: #bbf7d0; font-size: 10px; font-weight: 950; text-transform: uppercase; }
+    .edge-score-cell { color: var(--lime) !important; font-size: 20px; font-weight: 950; font-family: "Roboto Mono", monospace; }
+    .edge-confidence-pill { display: inline-flex; padding: 5px 8px; border-radius: 999px; border: 1px solid rgba(134,239,172,.18); color: #d1fae5; background: rgba(15,23,42,.72); font-size: 10px; font-weight: 950; text-transform: uppercase; white-space: nowrap; }
+    .edge-confidence-pill.high { color: var(--lime); border-color: rgba(190,242,100,.36); background: rgba(190,242,100,.10); }
+    .edge-confidence-pill.mod, .edge-confidence-pill.medium { color: #facc15; border-color: rgba(250,204,21,.32); background: rgba(250,204,21,.10); }
+    .edge-confidence-pill.live { color: #93c5fd; border-color: rgba(147,197,253,.32); background: rgba(59,130,246,.10); }
+    .edge-signal { max-width: 260px; color: #d1fae5; font-size: 12px; line-height: 1.35; }
+
+    .drawer-card { position: sticky; top: 112px; max-height: calc(100vh - 132px); overflow-y: auto; }
+    .drawer-card::-webkit-scrollbar, .edge-table-wrap::-webkit-scrollbar, .filter-bar::-webkit-scrollbar { height: 8px; width: 8px; }
+    .drawer-card::-webkit-scrollbar-thumb, .edge-table-wrap::-webkit-scrollbar-thumb, .filter-bar::-webkit-scrollbar-thumb { background: rgba(134,239,172,.20); border-radius: 999px; }
+    .drawer-body { position: relative; padding: 16px; }
+    .drawer-empty { color: #9ca3af; padding: 20px; border: 1px dashed rgba(134,239,172,.22); border-radius: 22px; text-align: center; }
+    .drawer-player-head { display: grid; grid-template-columns: 56px minmax(0,1fr) auto; gap: 12px; align-items: center; }
+    .drawer-logo { width: 56px; height: 56px; border-radius: 999px; background: #f0fdf4; padding: 8px; object-fit: contain; }
+    .drawer-name { color: #fff; font-size: 24px; font-weight: 950; letter-spacing: -.04em; line-height: 1.05; }
+    .drawer-meta { margin-top: 5px; color: var(--mint); font-size: 12px; font-weight: 800; }
+    .drawer-score { color: var(--lime); font-family: "Roboto Mono", monospace; font-size: 34px; font-weight: 950; text-align: right; }
+    .drawer-score span { display: block; color: var(--mint); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; margin-top: -4px; }
+    .drawer-action-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+    .follow-btn, .profile-btn { padding: 8px 11px; font-size: 11px; }
+    .follow-btn { color: #111827; background: var(--lime); border-color: var(--lime); }
+    .follow-btn.active { background: rgba(190,242,100,.18); color: var(--lime); }
+
+    .drawer-section { margin-top: 14px; padding: 13px; border: 1px solid rgba(134,239,172,.13); background: rgba(2,6,23,.38); border-radius: 20px; }
+    .drawer-section-title, .details-header { color: var(--mint); font-size: 10px; font-weight: 950; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px; }
+    .drawer-section-copy { color: #d1fae5; font-size: 13px; line-height: 1.5; }
+    .drawer-details { margin-top: 14px; }
+
+    .details { position: relative; border-radius: 20px; border: 1px solid rgba(134,239,172,.12); background: rgba(2,6,23,.38); padding: 12px; }
+    .details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .detail-chip { position: relative; padding: 12px; border-radius: 16px; background: rgba(15,23,42,.72); border: 1px solid rgba(134,239,172,.13); }
+    .detail-name { color: #fff; font-size: 13px; font-weight: 900; line-height: 1.25; }
+    .detail-sub { margin-top: 5px; color: #9ca3af; font-size: 11px; line-height: 1.3; }
+    .detail-stat { display: inline-flex; margin-top: 8px; margin-right: 4px; padding: 5px 8px; border-radius: 999px; background: rgba(34,197,94,.12); border: 1px solid rgba(134,239,172,.16); color: #bbf7d0; font-size: 11px; font-weight: 900; }
+    .k-bar { margin-top: 9px; height: 7px; border-radius: 999px; background: rgba(148,163,184,.14); overflow: hidden; }
+    .k-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #22c55e, #bef264); box-shadow: 0 0 14px rgba(190,242,100,.28); }
+    .dot-row { display: flex; gap: 4px; margin-top: 8px; }
+    .stat-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--lime); box-shadow: 0 0 10px rgba(190,242,100,.35); }
+    .stat-dot.empty { background: rgba(134,239,172,.12); box-shadow: none; border: 1px solid rgba(134,239,172,.15); }
+
+    .lower-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .45fr); gap: 14px; margin-top: 14px; align-items: start; }
+    .feed-panel, .watch-panel { padding: 16px; }
+    .feed-list, .watch-grid { position: relative; display: grid; gap: 10px; }
+    .feed-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .feed-item { display: grid; grid-template-columns: 38px minmax(0,1fr); gap: 10px; align-items: center; padding: 11px; border-radius: 18px; background: rgba(15,23,42,.72); border: 1px solid rgba(134,239,172,.13); }
+    .feed-title { color: #fff; font-size: 13px; font-weight: 950; }
+    .feed-copy { margin-top: 4px; color: #9ca3af; font-size: 12px; line-height: 1.35; }
+    .feed-item::before { content: ""; width: 34px; height: 34px; border-radius: 12px; background: rgba(34,197,94,.18); border: 1px solid rgba(134,239,172,.20); grid-row: 1 / span 2; }
+    .watch-chip { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 11px; border-radius: 18px; background: rgba(15,23,42,.72); border: 1px solid rgba(134,239,172,.13); }
+    .watch-chip img { width: 40px; height: 40px; object-fit: contain; background: #f0fdf4; border-radius: 999px; padding: 5px; }
+    .watch-title { color: #fff; font-weight: 950; font-size: 13px; }
+    .watch-copy { margin-top: 4px; color: #9ca3af; font-size: 12px; }
+    .mini-remove { padding: 7px 9px; font-size: 10px; }
+
+    .hit-animation-wrap { margin-top: 10px; border: 1px solid rgba(134,239,172,.13); background: rgba(15,23,42,.64); border-radius: 16px; padding: 10px; }
+    .hit-animation-title { color: var(--lime); font-size: 10px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
+    .hit-animation-copy { margin-top: 5px; color: #d1fae5; font-size: 12px; }
+    .mini-hit-diamond { width: 100%; max-width: 220px; height: 120px; display: block; margin: 4px auto 0; filter: drop-shadow(0 0 10px rgba(34,197,94,.25)); }
+
+    .profile-modal, .game-modal { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(2,6,23,.78); backdrop-filter: blur(12px); }
+    .profile-modal.open, .game-modal.open { display: flex; }
+    .profile-panel, .game-panel { width: min(760px, 100%); max-height: 88vh; overflow-y: auto; border-radius: 26px; background: rgba(7,13,25,.96); border: 1px solid rgba(134,239,172,.22); box-shadow: var(--shadow); padding: 18px; }
+    .profile-close, .game-close { float: right; padding: 8px 11px; border-radius: 999px; border: 1px solid rgba(134,239,172,.18); background: rgba(15,23,42,.78); color: #d1fae5; cursor: pointer; font-weight: 900; }
+    .profile-head, .game-head { display: grid; grid-template-columns: 58px minmax(0,1fr); gap: 14px; align-items: center; }
+    .profile-logo, .game-logo { width: 58px; height: 58px; border-radius: 999px; background: #f0fdf4; padding: 8px; }
+    .profile-title, .game-title { color: #fff; font-size: 24px; font-weight: 950; }
+    .profile-sub, .game-sub { margin-top: 5px; color: #9ca3af; font-size: 13px; }
+    .profile-stat, .game-stat, .watch-factor { display: inline-flex; margin: 10px 6px 0 0; padding: 8px 11px; border-radius: 999px; color: var(--lime); border: 1px solid rgba(190,242,100,.22); background: rgba(190,242,100,.08); font-weight: 950; }
+    .game-section { margin-top: 16px; }
+    .game-section-title { color: var(--mint); font-size: 10px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+    .game-mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .game-mini-card { padding: 12px; border-radius: 18px; background: rgba(15,23,42,.72); border: 1px solid rgba(134,239,172,.13); }
+    .game-mini-title { color: #fff; font-weight: 950; font-size: 13px; }
+    .game-mini-copy { margin-top: 5px; color: #9ca3af; font-size: 12px; line-height: 1.35; }
+
+
+    .pitcher-report { display: grid; gap: 10px; }
+    .pitcher-report-row { padding: 11px; border-radius: 16px; background: rgba(15,23,42,.68); border: 1px solid rgba(134,239,172,.12); }
+    .pitcher-report-label { color: var(--mint); font-size: 10px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+    .pitcher-report-copy { color: #d1fae5; font-size: 13px; line-height: 1.48; }
+    .pitcher-report-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .pitcher-report-pill, .pitcher-confidence { display: inline-flex; padding: 5px 8px; border-radius: 999px; background: rgba(190,242,100,.10); border: 1px solid rgba(190,242,100,.24); color: var(--lime); font-size: 10px; font-weight: 950; text-transform: uppercase; letter-spacing: .06em; }
+
+    .loading { padding: 16px; border-radius: 18px; background: rgba(15,23,42,.72); border: 1px solid rgba(134,239,172,.13); color: var(--mint); }
+    .hidden-legacy { display: none !important; }
+    .footer-note { margin: 22px 0 0; text-align: center; color: #6b7280; font-size: 11px; }
+
+    body.stadium-mode .terminal-hero { display: none; }
+    body.stadium-mode .drawer-card { position: relative; top: auto; max-height: none; }
+    body.stadium-mode .terminal-grid, body.stadium-mode .lower-grid { grid-template-columns: 1fr; }
+    body.stadium-mode .edge-table { font-size: 15px; }
+    body.stadium-mode .drawer-name { font-size: 32px; }
+
+    @media (max-width: 1160px) {
+      .terminal-grid, .terminal-hero, .lower-grid { grid-template-columns: 1fr; }
+      .drawer-card { position: relative; top: auto; max-height: none; }
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 18px, 1540px); padding-top: 9px; }
+      .topbar { grid-template-columns: 1fr; border-radius: 22px; position: relative; top: auto; }
+      .brand { min-width: 0; }
+      .brand h1 { font-size: 25px; }
+      .top-actions { justify-content: flex-start; flex-wrap: wrap; }
+      .team-filter-row { grid-template-columns: 1fr; }
+      .hero-card, .terminal-panel, .drawer-card, .feed-panel, .watch-panel, .snapshot-card { border-radius: 22px; }
+      .hero-title { font-size: 42px; }
+      .board-top-cards, .snapshot-grid, .feed-list, .details-grid, .game-mini-grid { grid-template-columns: 1fr; }
+      .panel-head { display: block; }
+      .edge-table { min-width: 740px; }
+      .drawer-player-head { grid-template-columns: 50px minmax(0,1fr); }
+      .drawer-score { grid-column: 1 / -1; text-align: left; }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js"></script>
 </head>
+<body class="board-mode">
+  <svg class="field-bg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="bgGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="orbGlow" x="-250%" y="-250%" width="600%" height="600%"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="pathGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="50%" stop-color="#bef264"/><stop offset="100%" stop-color="#22c55e"/></linearGradient>
+    </defs>
+    <path d="M120 240 Q500 10 880 240" stroke="rgba(134,239,172,.18)" stroke-width="1.5" fill="none"/>
+    <path d="M30 520 L210 380" stroke="rgba(134,239,172,.14)" stroke-width="1.4"/><path d="M970 520 L790 380" stroke="rgba(134,239,172,.14)" stroke-width="1.4"/>
+    <path d="M500 610 L780 370 L500 160 L220 370 L500 610" stroke="rgba(134,239,172,.15)" stroke-width="18" fill="none" filter="url(#bgGlow)"/>
+    <path d="M500 610 L780 370 L500 160 L220 370 L500 610" stroke="url(#pathGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" filter="url(#bgGlow)"/>
+    <path d="M500 610 L780 370 L500 160 L220 370 L500 610" stroke="#bef264" stroke-width="1.5" stroke-dasharray="40 340" fill="none" opacity=".75" stroke-linecap="round"><animate attributeName="stroke-dashoffset" values="0;-760" dur="7s" repeatCount="indefinite"/></path>
+    <g fill="rgba(2,6,23,.75)" stroke="#86efac" stroke-width="2" filter="url(#bgGlow)"><rect x="762" y="352" width="36" height="36" transform="rotate(45 780 370)"/><rect x="482" y="142" width="36" height="36" transform="rotate(45 500 160)"/><rect x="202" y="352" width="36" height="36" transform="rotate(45 220 370)"/><path d="M476 592 L524 592 L524 626 L500 648 L476 626 Z" fill="rgba(2,6,23,.82)" stroke="#bef264" stroke-width="3"/></g>
+    <circle r="8" fill="#fff" filter="url(#orbGlow)"><animateMotion dur="7s" repeatCount="indefinite" path="M500 610 L780 370 L500 160 L220 370 L500 610" rotate="auto"/></circle>
+    <circle r="24" fill="rgba(190,242,100,.16)" filter="url(#orbGlow)"><animateMotion dur="7s" repeatCount="indefinite" path="M500 610 L780 370 L500 160 L220 370 L500 610" rotate="auto"/></circle>
+  </svg>
 
-<body>
-
-<svg class="field-bg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <filter id="bgGlow" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="6" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
-    <filter id="orbGlow" x="-250%" y="-250%" width="600%" height="600%">
-      <feGaussianBlur stdDeviation="10" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
-    <linearGradient id="pathGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#22c55e"/>
-      <stop offset="50%" stop-color="#bef264"/>
-      <stop offset="100%" stop-color="#22c55e"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="1000" height="700" fill="transparent"/>
-  <path d="M120 240 Q500 10 880 240" stroke="rgba(134,239,172,.22)" stroke-width="1.5" fill="none"/>
-  <path d="M30 520 L210 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
-  <path d="M970 520 L790 380" stroke="rgba(134,239,172,.18)" stroke-width="1.4"/>
-  <path d="M120 620 L500 610 L880 620" stroke="rgba(134,239,172,.12)" stroke-width="1" fill="none"/>
-
-  <path
-    d="M500 610 L780 370 L500 160 L220 370 L500 610"
-    stroke="rgba(134,239,172,.18)"
-    stroke-width="18"
-    fill="none"
-    filter="url(#bgGlow)"
-  />
-
-  <path
-    d="M500 610 L780 370 L500 160 L220 370 L500 610"
-    stroke="url(#pathGrad)"
-    stroke-width="3.5"
-    fill="none"
-    stroke-linecap="round"
-    filter="url(#bgGlow)"
-  />
-
-  <path
-    d="M500 610 L780 370 L500 160 L220 370 L500 610"
-    stroke="#bef264"
-    stroke-width="1.5"
-    stroke-dasharray="40 340"
-    fill="none"
-    opacity=".75"
-    stroke-linecap="round"
-  >
-    <animate attributeName="stroke-dashoffset" values="0;-760" dur="7s" repeatCount="indefinite"/>
-  </path>
-
-  <g opacity=".42">
-    <circle cx="500" cy="360" r="42" stroke="rgba(134,239,172,.38)" stroke-width="1" fill="none"/>
-    <circle cx="500" cy="610" r="68" stroke="rgba(134,239,172,.32)" stroke-width="1" fill="none"/>
-    <circle cx="500" cy="610" r="100" stroke="rgba(134,239,172,.18)" stroke-width="1" fill="none"/>
-    <path d="M250 370 Q500 250 750 370" stroke="rgba(134,239,172,.14)" stroke-width="1" fill="none"/>
-  </g>
-
-  <g fill="rgba(2,6,23,.75)" stroke="#86efac" stroke-width="2" filter="url(#bgGlow)">
-    <rect x="762" y="352" width="36" height="36" transform="rotate(45 780 370)"/>
-    <rect x="482" y="142" width="36" height="36" transform="rotate(45 500 160)"/>
-    <rect x="202" y="352" width="36" height="36" transform="rotate(45 220 370)"/>
-    <path d="M476 592 L524 592 L524 626 L500 648 L476 626 Z" fill="rgba(2,6,23,.82)" stroke="#bef264" stroke-width="3"/>
-  </g>
-
-  <circle cx="780" cy="370" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
-    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="1.75s" repeatCount="indefinite"/>
-  </circle>
-
-  <circle cx="500" cy="160" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
-    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="3.5s" repeatCount="indefinite"/>
-  </circle>
-
-  <circle cx="220" cy="370" r="12" fill="rgba(190,242,100,.18)" filter="url(#orbGlow)">
-    <animate attributeName="opacity" values=".15;.45;.15" dur="7s" begin="5.25s" repeatCount="indefinite"/>
-  </circle>
-
-  <circle cx="500" cy="610" r="20" fill="rgba(190,242,100,.22)" filter="url(#orbGlow)">
-    <animate attributeName="opacity" values=".25;.65;.25" dur="7s" begin="0s" repeatCount="indefinite"/>
-  </circle>
-
-  <circle r="8" fill="#ffffff" filter="url(#orbGlow)">
-    <animateMotion
-      dur="7s"
-      repeatCount="indefinite"
-      path="M500 610 L780 370 L500 160 L220 370 L500 610"
-      rotate="auto"
-    />
-  </circle>
-
-  <circle r="24" fill="rgba(190,242,100,.16)" filter="url(#orbGlow)">
-    <animateMotion
-      dur="7s"
-      repeatCount="indefinite"
-      path="M500 610 L780 370 L500 160 L220 370 L500 610"
-      rotate="auto"
-    />
-  </circle>
-</svg>
-
-
-  <header>
-    <nav class="nav">
-      <a href="#" class="logo">The Diamond <span>Pulse</span></a>
-
-      <div class="nav-links">
-        <a href="#live-dashboard">Today’s Edges</a>
-        <a href="#sample-board">Edge Board</a>
-        <a href="#model-inputs">Model</a>
-        <a href="#live-dashboard">Live Stats</a>
-        <a href="#features">Features</a>
-      </div>
-
-      <div class="auth-nav" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button type="button" class="nav-cta" onclick="showSignup()">Sign Up</button>
-        <button type="button" class="nav-cta" id="loginBtn" onclick="showLogin()">Log In</button>
-        <button type="button" class="nav-cta" id="logoutBtn" onclick="logoutUser()" style="display:none;">Log Out</button>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-
-    <section class="hero">
-      <div>
-        <div class="badge">● Live MLB Model Updates</div>
-
-        <h1>Baseball insights backed by live data.</h1>
-
-        <p>
-          The Diamond Pulse turns live games, pitching matchups, hot bats,
-          team trends, and head-to-head history into clear MLB storylines.
-        </p>
-
-        <div class="btn-row">
-          <a href="#live-dashboard" class="btn primary">View Today’s Edges</a>
-          <a href="#sample-board" class="btn secondary">See Edge Board</a>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="52" height="52">
+            <defs><radialGradient id="logoBall" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#dcfce7"/></radialGradient><radialGradient id="logoRing" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#bef264"/></radialGradient></defs>
+            <circle cx="52" cy="60" r="31" fill="none" stroke="url(#logoRing)" stroke-width="12"/><circle cx="52" cy="60" r="22" fill="url(#logoBall)" stroke="#f0fdf4" stroke-width="2"/>
+            <path d="M40 48 C47 55 47 65 40 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/><path d="M64 48 C57 55 57 65 64 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+            <path d="M76 56 L100 56" stroke="#22c55e" stroke-width="7" stroke-linecap="round"/><path d="M80 67 L106 67" stroke="#bef264" stroke-width="5.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Diamond <span>Pulse</span></h1>
+          <div class="brand-sub">Edge board + player drawer</div>
         </div>
       </div>
 
-      <aside class="dashboard">
-        <div class="dash-top">
-          <div class="dash-title">Today’s Top Edges</div>
-          <div class="live">TODAY</div>
-        </div>
+      <div class="score-strip">
+        <div class="ticker-viewport"><div id="scoreTicker" class="ticker-track"><button class="ticker-item">Loading scores...</button></div></div>
+      </div>
 
-        <div id="heroEdgeCards">
-          <div class="edge-card">
-            <div class="game-row">
-              <div>
-                <div class="teams">Loading today’s matchups...</div>
-                <div class="edge-player"><span>Diamond Pulse:</span> Checking live edges</div>
-                <div class="market">Updates from today’s MLB schedule</div>
-              </div>
-              <div class="edge-value">TODAY</div>
-            </div>
-            <div class="meter"><span style="width: 45%;"></span></div>
-          </div>
+      <div class="top-actions">
+        <div class="live-pill"><span class="live-dot"></span>Live</div>
+        <div id="lastUpdated" class="refresh">Loading live data...</div>
+        <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">Stadium Mode</button>
+      </div>
+    </header>
+
+    <section class="team-filter-row">
+      <div class="filter-title">Team filter</div>
+      <div id="teamFilters" class="filter-bar"><button class="filter-btn active">All Teams</button></div>
+    </section>
+
+    <section class="terminal-hero">
+      <article class="hero-card">
+        <div class="eyebrow">Slate Terminal · Today’s card</div>
+        <h2 class="hero-title">The full slate, rebuilt into <span>one sharp board.</span></h2>
+        <p class="hero-copy">Compare every player edge in one place, then open the right-side drawer for the actual case: primary read, evidence, H2H signal, confidence, live movement, and recent boxscores.</p>
+        <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
+      </article>
+
+      <aside class="drawer-card snapshot-card">
+        <div class="eyebrow">Slate Snapshot</div>
+        <div class="panel-sub">Live feeds, recent boxscores, H2H history, hot forms, and hitter/pitcher boards rolled into one view.</div>
+        <div id="boardSnapshot" class="snapshot-grid">
+          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Edges</div></div>
+          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Live</div></div>
+          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Pitchers</div></div>
+          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Hitters</div></div>
         </div>
       </aside>
     </section>
 
-    <section id="live-dashboard" class="live-dashboard-section">
-      <div class="container">
-        <div class="section-head">
-          <small>Live Dashboard</small>
-          <h2>Today’s stats, live moments, and Edge cards.</h2>
-          <p>
-            This section imports the live stat board and matchup edges we built:
-            live hits, live strikeouts, hot bats, hot pitchers, team trends,
-            The Edge head-to-head cards, last four boxscores, player follows,
-            and live hit basepath animations.
-          </p>
-        </div>
-
-<div class="app">
-  <div class="header">
-    <div class="top-row">
-      <div>
-        <div class="brand-wrap">
-          <svg viewBox="0 0 120 120" class="brand-watermark" aria-hidden="true">
-            <defs><radialGradient id="wmBall" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#d1fae5"/></radialGradient></defs>
-            <circle cx="56" cy="60" r="28" fill="none" stroke="#22c55e" stroke-width="10" opacity="0.8"/><circle cx="56" cy="60" r="21" fill="url(#wmBall)" stroke="#dcfce7" stroke-width="2"/>
-            <path d="M44 48 C51 55 51 65 44 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/><path d="M68 48 C61 55 61 65 68 72" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M78 56 L96 56" stroke="#22c55e" stroke-width="6" stroke-linecap="round"/><path d="M82 66 L102 66" stroke="#bef264" stroke-width="5" stroke-linecap="round"/><path d="M86 46 L102 46" stroke="#86efac" stroke-width="4" stroke-linecap="round"/>
-          </svg>
-          <div class="brand-logo" aria-hidden="true">
-            <svg viewBox="0 0 120 120" class="diamond-logo">
-              <defs><radialGradient id="logoBall" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#dcfce7"/></radialGradient><radialGradient id="logoRing" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#bef264"/></radialGradient></defs>
-              <circle cx="52" cy="60" r="31" fill="none" stroke="url(#logoRing)" stroke-width="12"/><circle cx="52" cy="60" r="22" fill="url(#logoBall)" stroke="#f0fdf4" stroke-width="2"/>
-              <path d="M40 48 C47 55 47 65 40 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/><path d="M64 48 C57 55 57 65 64 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-              <path d="M76 56 L100 56" stroke="#22c55e" stroke-width="7" stroke-linecap="round"/><path d="M80 67 L106 67" stroke="#bef264" stroke-width="5.5" stroke-linecap="round"/><path d="M82 45 L102 45" stroke="#86efac" stroke-width="4.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div><h1>Diamond Pulse</h1><div class="sub">A live baseball companion for tonight’s action</div><div id="lastUpdated" class="refresh">Loading live data...</div></div>
-        </div>
-      </div>
-      <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">🏟 Stadium Mode</button>
-    </div>
-    <div class="score-strip"><div class="score-strip-top"><div class="score-dot"></div><div class="score-title">Live Scoreboard · Tap a game</div></div><div class="ticker-viewport"><div id="scoreTicker" class="ticker-track"><button class="ticker-item">Loading scores...</button></div></div></div>
-  </div>
-
-  <div id="teamFilterWrap" class="filter-wrap"><div class="filter-title">Filter by team playing today</div><div id="teamFilters" class="filter-bar"><button class="filter-btn active">All Teams</button></div></div>
-  <nav class="desktop-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button><button class="tab-btn" data-tab-target="live">📡 Live</button><button class="tab-btn" data-tab-target="bats">🔥 Bats</button><button class="tab-btn" data-tab-target="arms">🌊 Arms</button><button class="tab-btn" data-tab-target="edge">🧬 The Edge</button><button class="tab-btn" data-tab-target="recap">📊 Recap</button></nav>
-
-  <section class="tab-panel active" data-tab="pulse">
-    <details class="helper-box" open><summary>🧢 New to Baseball? Quick Helper</summary><p>This page is built so you can glance and get the main storylines. If someone is hot, they’ve been playing well lately. If a lineup had a lot of strikeouts and a high whiff rate, that means they were swinging and missing a lot.</p><div class="helper-grid"><div class="helper-chip"><div class="helper-chip-title">Strikeouts (K)</div><div class="helper-chip-copy">How many batters a pitcher struck out.</div></div><div class="helper-chip"><div class="helper-chip-title">Whiff%</div><div class="helper-chip-copy">How often hitters swung and missed.</div></div><div class="helper-chip"><div class="helper-chip-title">Hot Bats</div><div class="helper-chip-copy">Hitters who’ve been getting a lot of hits lately.</div></div><div class="helper-chip"><div class="helper-chip-title">Hit Streaks</div><div class="helper-chip-copy">Players with at least one hit in several straight games.</div></div></div></details>
-    <div class="key">⚡ Quick Look = easy storylines · 🔵 Live Ks · 🟢 Live hits · 🔥 Hot Bats · 💗 Hit Streaks<br>🌊 Hot pitchers with Whiff% · 🧬 Head-to-head edges · 🟠 Team strikeout trouble + Whiff% · ⭐ Follow players</div>
-    <h2>⚡ Tonight’s Quick Look</h2><div class="section-note">Fast, simple storylines for tonight’s action.</div><div id="quickLook" class="quick-grid"><div class="loading">Loading quick look...</div></div>
-    <h2>🟢 Just Happened</h2><div class="section-note">Live events only from games in progress.</div><div class="feed-box"><div id="justHappened" class="feed-list"><div class="loading">Loading moments...</div></div></div>
-    <h2>⭐ Your Watchlist</h2><div class="section-note">Use ⭐ Tap to Follow on any player card or profile. Saved on this device.</div><div class="watchlist-box"><div id="watchlist" class="watch-grid"><div class="loading">No followed players yet.</div></div></div>
-    <h2>⚡ Baseball Pulse</h2><div class="section-note">Tap any Pulse card to see the stats behind it.</div><div id="pulseCards" class="pulse-grid"><div class="loading">Loading pulse...</div></div>
-    <h2>🎯 Game of the Night</h2><div id="gameOfNight" class="game-night">Loading game of the night...</div>
-  </section>
-
-  <div class="stat-layout"><div class="stat-column">
-    <section class="tab-panel" data-tab="live"><div class="column-pill">Live Action</div><div class="stat-section"><h2>🔥 Live Strikeouts</h2><div class="section-note">Pitchers in games happening right now.</div><div id="liveKs" class="loading">Loading...</div></div><div class="stat-section"><h2>💥 Live Hits</h2><div class="section-note">Current hit leaders in live games. Latest hit path is animated on each card.</div><div id="liveHits" class="loading">Loading...</div></div></section>
-    <section class="tab-panel" data-tab="arms"><div class="column-pill">Pitching + K Watch</div><div class="stat-section"><h2>🌊 Hot Pitchers</h2><div class="section-note">Probable starters today with 8+ Ks in each of their last 2 starts, plus Whiff%.</div><div id="hotPitchers" class="loading">Loading...</div></div><div class="stat-section"><h2>📊 Previous Game Day — Teams Struck Out Most</h2><div class="section-note">Lineups with the most strikeouts in their last completed game, plus Whiff%.</div><div id="armsPrevKs" class="loading">Loading...</div></div></section>
-    <section class="tab-panel" data-tab="edge"><div class="column-pill">The Edge</div><div class="stat-section"><h2>🧬 Pitcher H2H Edge</h2><div class="section-note">Probable starters with 8+ Ks in 2+ past games against today’s opponent. Expanded cards now include last 4 boxscores.</div><div id="pitcherH2H" class="loading">Loading H2H edges...</div></div><div class="stat-section"><h2>💣 Batter vs Starter Edge</h2><div class="section-note">Batters with 4+ hits or 2+ HR against today’s probable starting pitcher. Expanded cards now include last 4 boxscores.</div><div id="batterH2H" class="loading">Loading H2H edges...</div></div></section>
-  </div><div class="stat-column">
-    <section class="tab-panel" data-tab="bats"><div class="column-pill">Hitting + Hot Bats</div><div class="stat-section"><h2>🔥 Hot Bats</h2><div class="section-note">Hitters with 5+ hits over the last 4 completed game days.</div><div id="hotHitters" class="loading">Loading...</div></div><div class="stat-section"><h2>💗 Hit Streaks</h2><div class="section-note">Players with hits in 3+ straight completed games.</div><div id="streakingHitters" class="loading">Loading...</div></div><div class="stat-section"><h2>📈 Previous Game Day — Teams With Most Hits</h2><div class="section-note">Tap a team to see the player hit breakdown.</div><div id="batsPrevHits" class="loading">Loading...</div></div></section>
-    <section class="tab-panel" data-tab="recap"><div class="column-pill">Yesterday’s Recap</div><div class="stat-section"><h2>📊 Team Strikeouts</h2><div class="section-note">Previous completed game day with Whiff% included.</div><div id="recapKs" class="loading">Loading...</div></div><div class="stat-section"><h2>📈 Team Hits</h2><div class="section-note">Tap to see player details.</div><div id="recapHits" class="loading">Loading...</div></div></section>
-  </div></div>
-  <div class="footer-note">Unofficial fan dashboard using public baseball data. Not affiliated with MLB.</div>
-</div>
-
-
-      </div>
-    </section>
-
-    <section id="features">
-      <div class="container">
-        <div class="section-head">
-          <small>What You Get</small>
-          <h2>Built for sharper MLB game reads.</h2>
-          <p>
-            Replace guesswork with a cleaner view of the matchups, trends,
-            and players shaping tonight’s games.
-          </p>
-        </div>
-
-        <div class="grid-3">
-          <div class="feature-card">
-            <div class="stat">01</div>
-            <h3>Projected Win Probability</h3>
-            <p>Track live games, probable starters, recent form, and matchup context in one place.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="stat">02</div>
-            <h3>Pitching Matchup Grades</h3>
-            <p>Evaluate probable starters, recent strikeout form, whiff rates, and head-to-head success.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="stat">03</div>
-            <h3>Market Movement Signals</h3>
-            <p>See hitters on streaks, hot bats, and live hit paths as games unfold.</p>
+    <section class="terminal-grid">
+      <article class="terminal-panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-kicker">The Edge Board</div>
+            <h2 class="panel-title">Sortable slate signals</h2>
+            <div class="panel-sub">Click any player row. The drawer opens with the full explanation and boxscore trail.</div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section id="sample-board">
-      <div class="container">
-        <div class="section-head">
-          <small>Live Edge Board</small>
-          <h2>Today’s Diamond Pulse edges.</h2>
-          <p>
-            This board now uses the same live Diamond Pulse edge engine as your dashboard:
-            pitcher H2H, batter vs starter, hot bats, hit streaks, live hits, and K-watch signals.
-          </p>
+        <div class="board-filter-tabs">
+          <button class="board-filter-btn active" data-board-filter="all" onclick="setEdgeBoardFilter('all')">All Edges</button>
+          <button class="board-filter-btn" data-board-filter="pitchers" onclick="setEdgeBoardFilter('pitchers')">Pitchers</button>
+          <button class="board-filter-btn" data-board-filter="hitters" onclick="setEdgeBoardFilter('hitters')">Hitters</button>
+          <button class="board-filter-btn" data-board-filter="live" onclick="setEdgeBoardFilter('live')">Live</button>
+          <button class="board-filter-btn" data-board-filter="h2h" onclick="setEdgeBoardFilter('h2h')">H2H</button>
+          <button class="board-filter-btn" data-board-filter="watchlist" onclick="setEdgeBoardFilter('watchlist')">Watchlist</button>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Game</th>
-                <th>Player</th>
-                <th>Edge Type</th>
-                <th>Signal</th>
-                <th>Context</th>
-                <th>Rating</th>
-                <th>Open</th>
-              </tr>
-            </thead>
-
-            <tbody id="edgeBoardRows">
-              <tr>
-                <td colspan="7">Loading today’s Diamond Pulse edges...</td>
-              </tr>
-            </tbody>
+        <div class="edge-table-wrap">
+          <table class="edge-table">
+            <thead><tr><th>#</th><th>Player</th><th>Type</th><th>Game</th><th>Edge</th><th>Confidence</th><th>Key Signal</th></tr></thead>
+            <tbody id="edgeBoardBody"><tr><td colspan="7"><div class="loading">Loading board...</div></td></tr></tbody>
           </table>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <section id="model-inputs">
-      <div class="container">
-        <div class="section-head">
-          <small>Model Inputs</small>
-          <h2>More than picks. A complete read on the game.</h2>
-        </div>
-
-        <div class="grid-3">
-          <div class="feature-card">
-            <h3>Starting Pitchers</h3>
-            <p>Recent pitch quality, strikeout rate, walk rate, hard contact, and splits.</p>
-          </div>
-
-          <div class="feature-card">
-            <h3>Lineups & Splits</h3>
-            <p>Projected lineups, handedness advantages, injuries, and offensive form.</p>
-          </div>
-
-          <div class="feature-card">
-            <h3>Weather & Park Factors</h3>
-            <p>Wind, temperature, humidity, park dimensions, and run environment adjustments.</p>
+      <aside class="drawer-card">
+        <div class="panel-head">
+          <div>
+            <div class="panel-kicker">Player Drawer</div>
+            <h2 class="panel-title">Full read</h2>
+            <div class="panel-sub">Evidence, boxscores, H2H history, live paths, and follow controls.</div>
           </div>
         </div>
-      </div>
+        <div id="edgeDrawerContent" class="drawer-body"><div class="drawer-empty">Select a player from the board to open the full read.</div></div>
+      </aside>
     </section>
 
-    <section class="cta">
-      <div class="container">
-        <h2>Follow the game with a sharper view.</h2>
-        <p>
-          Get a cleaner daily MLB dashboard with live stats, followable players,
-          matchup edges, and data-driven game insights.
-        </p>
+    <section class="lower-grid">
+      <article class="feed-panel">
+        <div class="panel-kicker">Live Pulse Feed</div>
+        <h2 class="panel-title">Just happened</h2>
+        <div class="panel-sub">Live events only. No past trends mixed into this feed.</div>
+        <div id="boardLiveFeed" class="feed-list" style="margin-top:12px;"><div class="loading">Waiting for live events...</div></div>
+      </article>
 
-        <div class="btn-row" style="justify-content:center;">
-          <a href="#" class="btn primary">Open The Live Dashboard</a>
-          <a href="#sample-board" class="btn secondary">View Edge Board</a>
-        </div>
-      </div>
+      <aside class="watch-panel">
+        <div class="panel-kicker">Watchlist</div>
+        <h2 class="panel-title">Followed players</h2>
+        <div class="panel-sub">Tap follow in the drawer to keep players here.</div>
+        <div id="boardWatchlist" class="watch-grid" style="margin-top:12px;"><div class="loading">No followed players yet.</div></div>
+      </aside>
     </section>
 
+    <div class="footer-note">Unofficial baseball research dashboard. Not affiliated with MLB or any sportsbook.</div>
   </main>
 
-  <footer>
-    The Diamond Pulse © 2026 · Baseball analytics, live stats, and matchup edges.
-  </footer>
+  <div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)"><div class="profile-panel"><button class="profile-close" onclick="closeProfile()">Close</button><div id="profileContent"></div></div></div>
+  <div id="gameModal" class="game-modal" onclick="closeGameHubFromBackdrop(event)"><div class="game-panel"><button class="game-close" onclick="closeGameHub()">Close</button><div id="gameHubContent"></div></div></div>
 
-<nav class="mobile-tabs"><button class="tab-btn active" data-tab-target="pulse">⚡ Pulse</button><button class="tab-btn" data-tab-target="live">📡 Live</button><button class="tab-btn" data-tab-target="bats">🔥 Bats</button><button class="tab-btn" data-tab-target="arms">🌊 Arms</button><button class="tab-btn" data-tab-target="edge">🧬 Edge</button><button class="tab-btn" data-tab-target="recap">📊 Recap</button></nav>
-<div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)"><div class="profile-panel"><button class="profile-close" onclick="closeProfile()">Close</button><div id="profileContent"></div></div></div>
-<div id="gameModal" class="game-modal" onclick="closeGameHubFromBackdrop(event)"><div class="game-panel"><button class="game-close" onclick="closeGameHub()">Close</button><div id="gameHubContent"></div></div></div>
+  <div class="hidden-legacy" aria-hidden="true">
+    <div id="justHappened"></div><div id="watchlist"></div><div id="liveKs"></div><div id="liveHits"></div><div id="quickLook"></div><div id="pulseCards"></div><div id="gameOfNight"></div><div id="pitcherPulseReads"></div>
+    <div id="hotPitchers"></div><div id="armsPrevKs"></div><div id="hotHitters"></div><div id="streakingHitters"></div><div id="batsPrevHits"></div><div id="pitcherH2H"></div><div id="batterH2H"></div><div id="recapKs"></div><div id="recapHits"></div>
+  </div>
 
-<script>
+  <script>
+
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 const H2H_YEARS_BACK = 8;
 const H2H_CACHE_VERSION = 5;
@@ -1014,7 +709,6 @@ let recentBoxscoreCache = {};
 let appState = { selectedTeamId:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[] };
 
 function h(value){ return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
-function playerPageLink(personId,name,extra=""){ if(!personId) return h(name)+extra; return '<a class="player-page-link" href="player.html?id='+encodeURIComponent(personId)+'" onclick="event.stopPropagation()" style="color:inherit;text-decoration:none;">'+h(name)+extra+'</a>'; }
 function val(value){ return value === undefined || value === null || value === "" ? "-" : value; }
 function nyDate(offsetDays=0){ const ny = new Date(new Date().toLocaleString("en-US",{timeZone:"America/New_York"})); ny.setDate(ny.getDate()+offsetDays); return ny.getFullYear()+"-"+String(ny.getMonth()+1).padStart(2,"0")+"-"+String(ny.getDate()).padStart(2,"0"); }
 function currentSeason(){ return Number(nyDate(0).slice(0,4)); }
@@ -1086,36 +780,56 @@ function filterRows(rows){ if(appState.selectedTeamId==="all") return rows||[]; 
 function gameMatchesFilter(game){ if(appState.selectedTeamId==="all") return true; return String(game.teams.away.team.id)===String(appState.selectedTeamId)||String(game.teams.home.team.id)===String(appState.selectedTeamId); }
 function collectTodayTeams(games){ const map={}; games.forEach(game=>["away","home"].forEach(side=>{ const team=game.teams[side].team; map[team.id]={id:team.id,name:team.name,abbreviation:team.abbreviation||team.teamName||team.name}; })); appState.todaysTeams=Object.values(map).sort((a,b)=>a.abbreviation.localeCompare(b.abbreviation)); }
 function renderTeamFilters(){ const teams=appState.todaysTeams||[]; let html='<button class="filter-btn '+(appState.selectedTeamId==="all"?"active":"")+'" data-team-id="all">All Teams</button>'; teams.forEach(team=>{ html += '<button class="filter-btn '+(String(appState.selectedTeamId)===String(team.id)?"active":"")+'" data-team-id="'+h(team.id)+'"><img src="'+logo(team.id)+'"><span>'+h(team.abbreviation)+'</span></button>'; }); const bar=document.getElementById("teamFilters"); bar.innerHTML=html; bar.querySelectorAll(".filter-btn").forEach(btn=>btn.addEventListener("click",()=>setTeamFilter(btn.dataset.teamId))); }
-function tickerStatus(game){ const detailed=game.status.detailedState||""; if(isActuallyLiveGame(game)){ const line=game.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return line.inningState+" "+line.currentInningOrdinal; return detailed||"Live"; } if(isFinalGame(game)) return detailed||"Final"; if(detailed && !/scheduled/i.test(detailed)) return detailed; const dt=new Date(game.gameDate); return dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); }
-function scoreValue(game,side){ const score=game.teams[side].score; if(score===undefined||score===null) return isActuallyLiveGame(game) || isFinalGame(game) ? "0" : "–"; return score; }
+function tickerStatus(game){ const state=game.status.abstractGameState; const detailed=game.status.detailedState||""; if(state==="Live"){ const line=game.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return line.inningState+" "+line.currentInningOrdinal; return detailed||"Live"; } if(state==="Final") return detailed||"Final"; const dt=new Date(game.gameDate); return dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); }
+function scoreValue(game,side){ const score=game.teams[side].score; if(score===undefined||score===null) return game.status.abstractGameState==="Preview" ? "–" : "0"; return score; }
 function scoreNumber(game,side){ const score=Number(game.teams[side].score); return Number.isFinite(score)?score:0; }
-function renderScoreTicker(games){ games=(games||[]).filter(gameMatchesFilter); if(!games.length){ document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">No games found for this filter.</button>'; return; } const items=games.map(game=>{ const state=game.status.abstractGameState; const cls=isActuallyLiveGame(game)?"ticker-live":isFinalGame(game)?"ticker-final":"ticker-preview"; const away=teamName(game.teams.away.team), home=teamName(game.teams.home.team); return '<button class="ticker-item '+cls+'" data-game-pk="'+h(game.gamePk)+'"><span>'+h(away)+'</span><span class="ticker-score">'+h(scoreValue(game,"away"))+'</span><span>@</span><span>'+h(home)+'</span><span class="ticker-score">'+h(scoreValue(game,"home"))+'</span><span class="ticker-detail">'+h(tickerStatus(game))+'</span></button>'; }); const track=document.getElementById("scoreTicker"); track.innerHTML=items.concat(items).join(""); track.querySelectorAll("[data-game-pk]").forEach(btn=>btn.addEventListener("click",()=>openGameHub(btn.dataset.gamePk))); }
+function renderScoreTicker(games){ games=(games||[]).filter(gameMatchesFilter); if(!games.length){ document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">No games found for this filter.</button>'; return; } const items=games.map(game=>{ const state=game.status.abstractGameState; const cls=state==="Live"?"ticker-live":state==="Final"?"ticker-final":"ticker-preview"; const away=teamName(game.teams.away.team), home=teamName(game.teams.home.team); return '<button class="ticker-item '+cls+'" data-game-pk="'+h(game.gamePk)+'"><span>'+h(away)+'</span><span class="ticker-score">'+h(scoreValue(game,"away"))+'</span><span>@</span><span>'+h(home)+'</span><span class="ticker-score">'+h(scoreValue(game,"home"))+'</span><span class="ticker-detail">'+h(tickerStatus(game))+'</span></button>'; }); const track=document.getElementById("scoreTicker"); track.innerHTML=items.concat(items).join(""); track.querySelectorAll("[data-game-pk]").forEach(btn=>btn.addEventListener("click",()=>openGameHub(btn.dataset.gamePk))); }
 async function loadScoreTicker(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today+"&hydrate=linescore"); let games=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>games.push(game))); games.sort((a,b)=>({Live:0,Preview:1,Final:2}[a.status.abstractGameState]??3)-(({Live:0,Preview:1,Final:2}[b.status.abstractGameState]??3))); appState.scoreGames=games; collectTodayTeams(games); }
 function statLabel(label){ if(label.includes("H2H")) return "Edge"; if(label.includes("Whiff")) return "Whiff"; if(label.includes("Ks")||label.includes("Strikeout")||label.includes("Pitcher")) return "Ks"; if(label.includes("Streak")) return "Games"; return "Hits"; }
 function tier(label,value){ value=Number(value); if(label.includes("H2H")) return "elite"; if(label.includes("Pitcher Ks")&&value>=10) return "elite"; if(label.includes("Pitcher Ks")&&value>=7) return "good"; if(label.includes("Live Player Hits")&&value>=4) return "elite"; if(label.includes("Live Player Hits")&&value>=3) return "good"; if(label.includes("Hot Bat")&&value>=8) return "elite"; if(label.includes("Hot Bat")&&value>=5) return "good"; if(label.includes("Hit Streak")&&value>=4) return "elite"; if(label.includes("Hit Streak")&&value>=3) return "good"; if(label.includes("Hot Pitcher")&&value>=18) return "elite"; if(label.includes("Hot Pitcher")&&value>=16) return "good"; if(label.includes("Team Ks")&&value>=7) return "bad"; if(label.includes("Team Hits")&&value>=12) return "elite"; if(label.includes("Team Hits")&&value>=9) return "good"; return ""; }
 function registerProfile(row,label){ const id=profileStore.length; profileStore.push({row,label}); return id; }
-function makeCard(row,label,colorClass,detailsHtml){ const displayValue=row.displayValue!==undefined?row.displayValue:row.value; const displayLabel=row.displayLabel||statLabel(label); const profileId=registerProfile(row,label); const followed=row.personId&&isFollowed(row.personId); const icon=label.includes("Hot Pitcher")?" 🌊":label.includes("Hit Streak")?" 💗":label.includes("Hot Bat")?" 🔥":label.includes("H2H")?" 🧬":label.includes("Team Ks")&&Number(row.value)>=7?" 🔥":""; const hasFollow=!!row.personId; const followTop=hasFollow?'<button class="follow-btn card-follow-top '+(followed?"active":"")+'" onclick="event.preventDefault(); event.stopPropagation(); toggleFollowFromProfile('+profileId+')">'+(followed?"⭐ Following":"⭐ Tap to Follow")+'</button>':""; const hitBlock=label.includes("Live Player Hits")?hitAnimationBlock(row):""; const top='<div class="main-row"><img class="dp-team-logo" src="'+logo(row.teamId)+'"><div class="num-wrap"><div class="num">'+h(val(displayValue))+'</div><div class="stat-label">'+h(displayLabel)+'</div></div><div class="info"><div class="name">'+playerPageLink(row.personId,row.name,icon)+'</div><div class="team">'+h(row.team||"")+'</div><div class="game">'+h(row.game||"")+'</div><div class="status">'+h(row.status||"")+'</div>'+(row.extra?'<div class="extra">'+h(row.extra)+'</div>':'')+hitBlock+'<div><span class="label">'+h(label)+(detailsHtml?" · tap to expand":"")+'</span>'+(row.personId?'<a class="profile-btn" onclick="event.stopPropagation()" href="player.html?id='+encodeURIComponent(row.personId)+'">View Breakdown</a>':'<button class="profile-btn" onclick="event.preventDefault(); event.stopPropagation(); openProfile('+profileId+')">Profile</button>')+'</div></div></div>'; const followClass=hasFollow?' has-follow':''; if(detailsHtml) return '<details class="card '+colorClass+' '+tier(label,row.value)+(row.leader?' leader':'')+followClass+'"><summary>'+followTop+top+'</summary><div class="details">'+detailsHtml+'</div></details>'; return '<div class="card '+colorClass+' '+tier(label,row.value)+(row.leader?' leader':'')+followClass+'">'+followTop+top+'</div>'; }
+function makeCard(row,label,colorClass,detailsHtml){ const displayValue=row.displayValue!==undefined?row.displayValue:row.value; const displayLabel=row.displayLabel||statLabel(label); const profileId=registerProfile(row,label); const followed=row.personId&&isFollowed(row.personId); const icon=label.includes("Hot Pitcher")?" 🌊":label.includes("Hit Streak")?" 💗":label.includes("Hot Bat")?" 🔥":label.includes("H2H")?" 🧬":label.includes("Team Ks")&&Number(row.value)>=7?" 🔥":""; const hasFollow=!!row.personId; const followTop=hasFollow?'<button class="follow-btn card-follow-top '+(followed?"active":"")+'" onclick="event.preventDefault(); event.stopPropagation(); toggleFollowFromProfile('+profileId+')">'+(followed?"⭐ Following":"⭐ Tap to Follow")+'</button>':""; const hitBlock=label.includes("Live Player Hits")?hitAnimationBlock(row):""; const top='<div class="main-row"><img class="dp-team-logo" src="'+logo(row.teamId)+'"><div class="num-wrap"><div class="num">'+h(val(displayValue))+'</div><div class="stat-label">'+h(displayLabel)+'</div></div><div class="info"><div class="name">'+h(row.name)+icon+'</div><div class="team">'+h(row.team||"")+'</div><div class="game">'+h(row.game||"")+'</div><div class="status">'+h(row.status||"")+'</div>'+(row.extra?'<div class="extra">'+h(row.extra)+'</div>':'')+hitBlock+'<div><span class="label">'+h(label)+(detailsHtml?" · tap to expand":"")+'</span><button class="profile-btn" onclick="event.preventDefault(); event.stopPropagation(); openProfile('+profileId+')">Profile</button></div></div></div>'; const followClass=hasFollow?' has-follow':''; if(detailsHtml) return '<details class="card '+colorClass+' '+tier(label,row.value)+(row.leader?' leader':'')+followClass+'"><summary>'+followTop+top+'</summary><div class="details">'+detailsHtml+'</div></details>'; return '<div class="card '+colorClass+' '+tier(label,row.value)+(row.leader?' leader':'')+followClass+'">'+followTop+top+'</div>'; }
 function hitDots(hits){ const max=4; let html='<div class="dot-row">'; for(let i=0;i<max;i++) html+='<span class="stat-dot '+(i<Number(hits||0)?"":"empty")+'"></span>'; return html+'</div>'; }
 function kBar(ks){ const pct=Math.min(100,(Number(ks||0)/12)*100); return '<div class="k-bar"><div class="k-bar-fill" style="width:'+pct+'%"></div></div>'; }
 function recentBoxscoresBlock(row,groupOverride){ const rows=(row&&row.recentBoxscores)||[]; if(!rows.length) return ''; const group=groupOverride || row.boxscoreGroup || (rows[0]&&rows[0].ip!==undefined?'pitching':'hitting'); const title=rows.length>=3 ? 'Last '+rows.length+' boxscores' : 'Recent boxscores'; if(group==='pitching'){ return '<div class="details-header" style="margin-top:14px;">'+title+'</div><div class="details-grid">'+rows.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.date)+'</div><div class="detail-sub">'+h(g.game||'Game')+'</div><div class="detail-stat">'+h(g.ip)+' IP</div><div class="detail-stat">'+h(g.ks)+' K</div><div class="detail-stat">'+h(g.hits)+' H</div><div class="detail-stat">'+h(g.er)+' ER</div><div class="detail-stat">'+h(g.bb)+' BB</div>'+kBar(g.ks)+'</div>').join('')+'</div>'; } return '<div class="details-header" style="margin-top:14px;">'+title+'</div><div class="details-grid">'+rows.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.date)+'</div><div class="detail-sub">'+h(g.game||'Game')+'</div><div class="detail-stat">'+h(g.atBats)+' AB</div><div class="detail-stat">'+h(g.hits)+' H</div><div class="detail-stat">'+h(g.hr)+' HR</div><div class="detail-stat">'+h(g.rbi)+' RBI</div><div class="detail-stat">'+h(g.bb)+' BB</div><div class="detail-stat">'+h(g.so)+' K</div>'+hitDots(g.hits)+'</div>').join('')+'</div>'; }
 function recentMiniBoxscoresHtml(row,groupOverride){ const rows=(row&&row.recentBoxscores)||[]; if(!rows.length) return ''; const group=groupOverride || row.boxscoreGroup || (rows[0]&&rows[0].ip!==undefined?'pitching':'hitting'); if(group==='pitching') return '<div class="details-header" style="margin-top:10px;">Last 3 boxscores</div>'+rows.slice(0,3).map(g=>'<div class="detail-sub">'+h(g.date)+' · '+h(g.ip)+' IP · '+h(g.ks)+' K · '+h(g.er)+' ER</div>').join(''); return '<div class="details-header" style="margin-top:10px;">Last 3 boxscores</div>'+rows.slice(0,3).map(g=>'<div class="detail-sub">'+h(g.date)+' · '+h(g.hits)+' H · '+h(g.hr)+' HR · '+h(g.rbi)+' RBI</div>').join(''); }
 function render(id,rows,label,colorClass,detailsType){ rows=(rows||[]).slice(0,5).map((row,index)=>({...row,leader:index===0,lastLabel:label})); if(!rows.length){ document.getElementById(id).innerHTML='<div class="card '+colorClass+'">No data right now.</div>'; return; } document.getElementById(id).innerHTML=rows.map(row=>makeCard(row,label,colorClass,buildDetails(row,detailsType))).join(""); }
-function buildDetails(row,detailsType){ let details=""; if(detailsType==="players"&&row.players){ details='<div class="details-header">Player hit breakdown</div><div class="details-grid">'+row.players.map(p=>{ const fr=p.personId?{personId:p.personId,name:p.name,team:p.team||row.name,teamId:p.teamId||row.teamId}:null; return '<div class="detail-chip '+(p.personId?'has-follow':'')+'">'+followButtonForRow(fr)+'<div class="detail-name">'+playerPageLink(p.personId,p.name)+'</div><div class="detail-stat">'+h(p.hits)+' H</div>'+hitDots(p.hits)+'</div>'; }).join("")+'</div>'; }
+function buildDetails(row,detailsType){ let details=""; if(detailsType==="players"&&row.players){ details='<div class="details-header">Player hit breakdown</div><div class="details-grid">'+row.players.map(p=>{ const fr=p.personId?{personId:p.personId,name:p.name,team:p.team||row.name,teamId:p.teamId||row.teamId}:null; return '<div class="detail-chip '+(p.personId?'has-follow':'')+'">'+followButtonForRow(fr)+'<div class="detail-name">'+h(p.name)+'</div><div class="detail-stat">'+h(p.hits)+' H</div>'+hitDots(p.hits)+'</div>'; }).join("")+'</div>'; }
   if(detailsType==="logs"&&row.logs){ details='<div class="details-header">Stat game log</div><div class="details-grid">'+row.logs.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.game)+'</div><div class="detail-sub">'+h(g.date)+'</div><div class="detail-stat">'+h(g.hits)+' H</div>'+hitDots(g.hits)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"hitting"); }
-  if(detailsType==="pitcherlogs"&&row.logs){ details='<div class="details-header">Stat game log</div><div class="details-grid">'+row.logs.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.opponent)+'</div><div class="detail-sub">'+h(g.date)+'</div><div class="detail-stat">'+h(g.ks)+' K</div><div class="detail-stat">'+h(g.whiffPct||"0.0")+'% Whiff</div>'+kBar(g.ks)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"pitching"); }
-  if(detailsType==="pitcherboxscores"){ details='<div class="details-header">Current live stat</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+playerPageLink(row.personId,row.name)+'</div><div class="detail-sub">'+h(row.team||"")+' · '+h(row.game||"")+'</div><div class="detail-stat">'+h(row.value)+' K</div><div class="detail-sub">'+h(row.status||"")+'</div>'+kBar(row.value)+'</div></div>'+recentBoxscoresBlock(row,"pitching"); }
-  if(detailsType==="batterboxscores"){ details='<div class="details-header">Current live stat</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+playerPageLink(row.personId,row.name)+'</div><div class="detail-sub">'+h(row.team||"")+' · '+h(row.game||"")+'</div><div class="detail-stat">'+h(row.value)+' H</div><div class="detail-sub">'+h(row.status||"")+'</div>'+hitDots(row.value)+hitAnimationBlock(row)+'</div></div>'+recentBoxscoresBlock(row,"hitting"); }
-  if(detailsType==="teamks"){ details='<div class="details-header">Swing-and-miss detail</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+playerPageLink(row.personId,row.name)+'</div><div class="detail-sub">'+h(row.status||"")+'</div><div class="detail-stat">'+h(row.value)+' Ks</div><div class="detail-stat">'+h(row.whiffPct||"0.0")+'% Whiff</div><div class="detail-sub">'+h(row.misses||0)+' misses on '+h(row.swings||0)+' swings</div></div></div>'; }
-  if(detailsType==="pitcherh2h"){ details='<div class="details-header">H2H qualifying starts</div><div class="details-grid">'+(row.logs||[]).map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.date)+'</div><div class="detail-sub">'+h(g.game)+'</div><div class="detail-stat">'+h(g.ip)+' IP</div><div class="detail-stat">'+h(g.ks)+' K</div><div class="detail-stat">'+h(g.hits)+' H</div><div class="detail-stat">'+h(g.er)+' ER</div><div class="detail-stat">'+h(g.bb)+' BB</div>'+kBar(g.ks)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"pitching"); }
+  if(detailsType==="pitcherlogs"&&row.logs){ details=pitcherReportHtml(row,"Current Form Edge")+'<div class="details-header" style="margin-top:14px;">Stat game log</div><div class="details-grid">'+row.logs.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.opponent)+'</div><div class="detail-sub">'+h(g.date)+'</div><div class="detail-stat">'+h(g.ks)+' K</div><div class="detail-stat">'+h(g.whiffPct||"0.0")+'% Whiff</div>'+kBar(g.ks)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"pitching"); }
+  if(detailsType==="pitcherboxscores"){ details=pitcherReportHtml(row,"Live K Pace")+'<div class="details-header" style="margin-top:14px;">Current live stat</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+h(row.name)+'</div><div class="detail-sub">'+h(row.team||"")+' · '+h(row.game||"")+'</div><div class="detail-stat">'+h(row.value)+' K</div><div class="detail-sub">'+h(row.status||"")+'</div>'+kBar(row.value)+'</div></div>'+recentBoxscoresBlock(row,"pitching"); }
+  if(detailsType==="batterboxscores"){ details='<div class="details-header">Current live stat</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+h(row.name)+'</div><div class="detail-sub">'+h(row.team||"")+' · '+h(row.game||"")+'</div><div class="detail-stat">'+h(row.value)+' H</div><div class="detail-sub">'+h(row.status||"")+'</div>'+hitDots(row.value)+hitAnimationBlock(row)+'</div></div>'+recentBoxscoresBlock(row,"hitting"); }
+  if(detailsType==="teamks"){ details='<div class="details-header">Swing-and-miss detail</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">'+h(row.name)+'</div><div class="detail-sub">'+h(row.status||"")+'</div><div class="detail-stat">'+h(row.value)+' Ks</div><div class="detail-stat">'+h(row.whiffPct||"0.0")+'% Whiff</div><div class="detail-sub">'+h(row.misses||0)+' misses on '+h(row.swings||0)+' swings</div></div></div>'; }
+  if(detailsType==="pitcherh2h"){ details=pitcherReportHtml(row,"Pitcher H2H Edge")+'<div class="details-header" style="margin-top:14px;">H2H qualifying starts</div><div class="details-grid">'+(row.logs||[]).map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.date)+'</div><div class="detail-sub">'+h(g.game)+'</div><div class="detail-stat">'+h(g.ip)+' IP</div><div class="detail-stat">'+h(g.ks)+' K</div><div class="detail-stat">'+h(g.hits)+' H</div><div class="detail-stat">'+h(g.er)+' ER</div><div class="detail-stat">'+h(g.bb)+' BB</div>'+kBar(g.ks)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"pitching"); }
   if(detailsType==="batterh2h"){ details='<div class="details-header">Games vs today’s probable starter</div><div class="details-grid">'+(row.logs||[]).map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.date)+'</div><div class="detail-sub">'+h(g.game)+'</div><div class="detail-stat">'+h(g.hits)+' H</div><div class="detail-stat">'+h(g.hr)+' HR</div>'+hitDots(g.hits)+'</div>').join("")+'</div>'+recentBoxscoresBlock(row,"hitting"); }
   return details; }
-function profileDetails(row){ let html=""; if(row.whiffPct!==undefined) html+='<div class="details-header">Swing-and-miss detail</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">Whiff percentage</div><div class="detail-sub">'+h(row.misses||0)+' misses on '+h(row.swings||0)+' swings</div><div class="detail-stat">'+h(row.whiffPct)+'%</div></div></div>'; if(row.lastHitType) html+='<div class="details-header">Latest hit path</div>'+hitAnimationBlock(row); if(row.recentBoxscores&&row.recentBoxscores.length) html+=recentBoxscoresBlock(row,row.boxscoreGroup); if(row.players&&row.players.length) html+='<div class="details-header">Player hit breakdown</div><div class="details-grid">'+row.players.map(p=>'<div class="detail-chip"><div class="detail-name">'+playerPageLink(p.personId,p.name)+'</div><div class="detail-stat">'+h(p.hits)+' H</div>'+hitDots(p.hits)+'</div>').join("")+'</div>'; if(row.logs&&row.logs.length) html+='<div class="details-header">Stat-specific log</div><div class="details-grid">'+row.logs.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.game||g.opponent||g.date||"Game")+'</div><div class="detail-sub">'+h(g.date||"")+'</div>'+(g.ip!==undefined?'<div class="detail-stat">'+h(g.ip)+' IP</div>':'')+(g.ks!==undefined?'<div class="detail-stat">'+h(g.ks)+' K</div>':'')+(g.hits!==undefined?'<div class="detail-stat">'+h(g.hits)+' H</div>':'')+(g.hr!==undefined?'<div class="detail-stat">'+h(g.hr)+' HR</div>':'')+(g.whiffPct!==undefined?'<div class="detail-stat">'+h(g.whiffPct)+'% Whiff</div>':'')+(g.hits!==undefined?hitDots(g.hits):g.ks!==undefined?kBar(g.ks):'')+'</div>').join("")+'</div>'; return html||'<div class="detail-chip"><div class="detail-name">No extra profile details yet.</div></div>'; }
+function profileDetails(row){ let html=""; if(row.whiffPct!==undefined) html+='<div class="details-header">Swing-and-miss detail</div><div class="details-grid"><div class="detail-chip"><div class="detail-name">Whiff percentage</div><div class="detail-sub">'+h(row.misses||0)+' misses on '+h(row.swings||0)+' swings</div><div class="detail-stat">'+h(row.whiffPct)+'%</div></div></div>'; if(row.lastHitType) html+='<div class="details-header">Latest hit path</div>'+hitAnimationBlock(row); if(row.recentBoxscores&&row.recentBoxscores.length) html+=recentBoxscoresBlock(row,row.boxscoreGroup); if(row.players&&row.players.length) html+='<div class="details-header">Player hit breakdown</div><div class="details-grid">'+row.players.map(p=>'<div class="detail-chip"><div class="detail-name">'+h(p.name)+'</div><div class="detail-stat">'+h(p.hits)+' H</div>'+hitDots(p.hits)+'</div>').join("")+'</div>'; if(row.logs&&row.logs.length) html+='<div class="details-header">Stat-specific log</div><div class="details-grid">'+row.logs.map(g=>'<div class="detail-chip"><div class="detail-name">'+h(g.game||g.opponent||g.date||"Game")+'</div><div class="detail-sub">'+h(g.date||"")+'</div>'+(g.ip!==undefined?'<div class="detail-stat">'+h(g.ip)+' IP</div>':'')+(g.ks!==undefined?'<div class="detail-stat">'+h(g.ks)+' K</div>':'')+(g.hits!==undefined?'<div class="detail-stat">'+h(g.hits)+' H</div>':'')+(g.hr!==undefined?'<div class="detail-stat">'+h(g.hr)+' HR</div>':'')+(g.whiffPct!==undefined?'<div class="detail-stat">'+h(g.whiffPct)+'% Whiff</div>':'')+(g.hits!==undefined?hitDots(g.hits):g.ks!==undefined?kBar(g.ks):'')+'</div>').join("")+'</div>'; return html||'<div class="detail-chip"><div class="detail-name">No extra profile details yet.</div></div>'; }
 function openProfile(id){ const item=profileStore[id]; if(!item) return; const row=item.row, label=item.label, followed=row.personId&&isFollowed(row.personId); const displayValue=row.displayValue!==undefined?row.displayValue:row.value; const displayLabel=row.displayLabel||statLabel(label); document.getElementById("profileContent").innerHTML='<div class="profile-head"><img class="profile-logo" src="'+logo(row.teamId)+'"><div><div class="profile-title">'+h(row.name)+'</div><div class="profile-sub">'+h(row.team||"")+'</div><div class="profile-sub">'+h(row.game||"")+'</div><div class="profile-sub">'+h(row.status||"")+'</div></div></div><div class="profile-stat">'+h(val(displayValue))+' '+h(displayLabel)+'</div>'+(row.whiffPct!==undefined?'<div class="profile-stat">'+h(row.whiffPct)+'% Whiff</div>':'')+(row.extra?'<div class="profile-sub" style="margin-bottom:12px;">'+h(row.extra)+'</div>':'')+'<div class="label">'+h(label)+'</div>'+(row.personId?'<button class="follow-btn '+(followed?"active":"")+'" onclick="toggleFollowFromProfile('+id+')">'+(followed?"⭐ Following":"⭐ Tap to Follow")+'</button>':'')+'<div style="margin-top:14px;">'+profileDetails(row)+'</div>'; document.getElementById("profileModal").classList.add("open"); }
 function closeProfile(){ document.getElementById("profileModal").classList.remove("open"); }
 function closeProfileFromBackdrop(event){ if(event.target.id==="profileModal") closeProfile(); }
-function pulseCard(icon,title,main,sub,tag,detailsHtml,row){ const followButton=followButtonForRow(row); const followClass=(row&&row.personId)?" has-follow":""; const mainHtml=(row&&row.personId)?playerPageLink(row.personId,main):h(main); return '<details class="pulse-card'+followClass+'"><summary>'+followButton+'<div class="pulse-icon">'+icon+'</div><div class="pulse-title">'+h(title)+'</div><div class="pulse-main">'+mainHtml+'</div><div class="pulse-sub">'+h(sub)+'</div><div class="pulse-tag">'+h(tag)+' · tap to expand</div></summary><div class="pulse-details">'+detailsHtml+'</div></details>'; }
+function pulseCard(icon,title,main,sub,tag,detailsHtml,row){ const followButton=followButtonForRow(row); const followClass=(row&&row.personId)?" has-follow":""; return '<details class="pulse-card'+followClass+'"><summary>'+followButton+'<div class="pulse-icon">'+icon+'</div><div class="pulse-title">'+h(title)+'</div><div class="pulse-main">'+h(main)+'</div><div class="pulse-sub">'+h(sub)+'</div><div class="pulse-tag">'+h(tag)+' · tap to expand</div></summary><div class="pulse-details">'+detailsHtml+'</div></details>'; }
 function quickCard(tag,headline,copy){ return '<div class="quick-card"><div class="quick-tag">'+h(tag)+'</div><div class="quick-headline">'+h(headline)+'</div><div class="quick-copy">'+h(copy)+'</div></div>'; }
 function feedItem(icon,title,copy){ return '<div class="feed-item"><div class="feed-title">'+icon+' '+h(title)+'</div><div class="feed-copy">'+h(copy)+'</div></div>'; }
+
+function ipToOuts(ip){ const parts=String(ip||"0").split("."); const whole=Number(parts[0]||0); const frac=Number(parts[1]||0); return (whole*3)+(Number.isFinite(frac)?frac:0); }
+function outsToIp(outs){ outs=Number(outs||0); return Math.floor(outs/3)+"."+(outs%3); }
+function sumPitchingRows(rows){ const list=(rows||[]).slice(0,4); let outs=0,ks=0,er=0,hits=0,bb=0; list.forEach(g=>{ outs+=ipToOuts(g.ip); ks+=Number(g.ks||0); er+=Number(g.er||0); hits+=Number(g.hits||0); bb+=Number(g.bb||0); }); return {games:list.length,ip:outsToIp(outs),outs,ks,er,hits,bb}; }
+function pitcherRecentLine(row){ const recent=(row&&row.recentBoxscores&&row.recentBoxscores.length)?row.recentBoxscores:(row&&row.logs?row.logs:[]); const s=sumPitchingRows(recent); if(!s.games) return "Recent boxscore sample unavailable"; return s.ip+" IP · "+s.ks+" K · "+s.er+" ER · "+s.hits+" H · "+s.bb+" BB"; }
+function pitcherH2HLine(row){ if(!row || !(row.qualifiedGames || (row.logs&&row.logs.length))) return "No qualifying H2H strikeout history in the current filter."; const games=Number(row.qualifiedGames || (row.logs||[]).length || 0); const total=Number(row.totalKs || (row.logs||[]).reduce((sum,g)=>sum+Number(g.ks||0),0)); const best=Number(row.bestKs || Math.max(...(row.logs||[{ks:0}]).map(g=>Number(g.ks||0)))); const kpg=games?((total/games).toFixed(1)):"0.0"; return games+" qualifying 8+ K games · "+kpg+" K/G in those spots · best game: "+best+" K"; }
+function pitcherConfidence(row,sourceLabel){ const whiff=Number(row&&row.whiffPct||0); const recent=(row&&row.recentBoxscores&&row.recentBoxscores.length)?sumPitchingRows(row.recentBoxscores.slice(0,3)):sumPitchingRows(row&&row.logs?row.logs.slice(0,3):[]); const h2hGames=Number(row&&row.qualifiedGames||0); const liveKs=sourceLabel&&sourceLabel.includes("Live")?Number(row&&row.value||0):0; let score=0; if(whiff>=34) score+=3; else if(whiff>=30) score+=2; else if(whiff>=26) score+=1; if(recent.ks>=18) score+=3; else if(recent.ks>=14) score+=2; else if(recent.ks>=10) score+=1; if(h2hGames>=4) score+=3; else if(h2hGames>=2) score+=2; if(liveKs>=7) score+=2; else if(liveKs>=5) score+=1; if(score>=7) return "High confidence"; if(score>=4) return "Solid confidence"; return "Moderate confidence"; }
+function pitcherPrimaryRead(row,sourceLabel){ const whiff=Number(row&&row.whiffPct||0); const recent=(row&&row.recentBoxscores&&row.recentBoxscores.length)?sumPitchingRows(row.recentBoxscores.slice(0,3)):sumPitchingRows(row&&row.logs?row.logs.slice(0,3):[]); const h2hGames=Number(row&&row.qualifiedGames||0); if(h2hGames>=2) return "Opponent-specific strikeout history is the strongest part of this profile."; if(sourceLabel&&sourceLabel.includes("Live")) return "The live strikeout pace is the immediate signal, so the read depends on whether the whiffs continue through the middle innings."; if(whiff>=30) return "The swing-and-miss quality is carrying the case more than a generic hot-streak label."; if(recent.ks>=14) return "Recent strikeout volume gives this profile a real foundation entering the matchup."; return "This is a watch-list arm, but the edge needs early count leverage and swing-and-miss to fully confirm."; }
+function pitcherMatchupContext(row,sourceLabel){ const opp=row&&row.opponent ? row.opponent : "today’s opponent"; const whiff=Number(row&&row.whiffPct||0); const h2hGames=Number(row&&row.qualifiedGames||0); if(h2hGames>=2) return "The matchup angle is not just current form: this pitcher has already shown the ability to miss bats against "+opp+"."; if(whiff>=30) return "The opponent-specific history is lighter, but the whiff estimate points to a pitch-quality edge that can travel into this start."; if(sourceLabel&&sourceLabel.includes("Live")) return "Because this is live, the key context is pace: strikeouts are already showing up, but pitch count and lineup adjustments still matter."; return "This is more of a form-based pitching read than a proven head-to-head edge."; }
+function pitcherReportHtml(row,sourceLabel){ if(!row || !row.personId) return ""; const confidence=pitcherConfidence(row,sourceLabel||""); const line=pitcherRecentLine(row); const h2h=(row.qualifiedGames||sourceLabel&&sourceLabel.includes("H2H"))?pitcherH2HLine(row):"Not the main driver on this card."; return '<div class="pitcher-report">'+
+    '<div class="pitcher-report-row"><div class="pitcher-report-label">Primary Read</div><div class="pitcher-report-copy">'+h(pitcherPrimaryRead(row,sourceLabel||""))+'</div></div>'+ 
+    '<div class="pitcher-report-row"><div class="pitcher-report-label">Matchup Context</div><div class="pitcher-report-copy">'+h(pitcherMatchupContext(row,sourceLabel||""))+'</div></div>'+ 
+    '<div class="pitcher-report-row"><div class="pitcher-report-label">Evidence</div><div class="pitcher-report-copy">'+h(line)+'</div><div class="pitcher-report-line">'+(row.whiffPct!==undefined?'<span class="pitcher-report-pill">Whiff Est. '+h(row.whiffPct)+'%</span>':'')+(row.value!==undefined?'<span class="pitcher-report-pill">Card K Signal '+h(row.value)+'</span>':'')+'</div></div>'+ 
+    '<div class="pitcher-report-row"><div class="pitcher-report-label">H2H Signal</div><div class="pitcher-report-copy">'+h(h2h)+'</div></div>'+ 
+    '<div class="pitcher-report-row"><div class="pitcher-report-label">Confidence</div><div class="pitcher-report-copy"><span class="pitcher-confidence">'+h(confidence)+'</span></div></div>'+ 
+  '</div>'; }
+function pitcherReadScore(row,sourceLabel){ const conf=pitcherConfidence(row,sourceLabel||""); if(conf==="High confidence") return 92; if(conf==="Solid confidence") return 84; return 76; }
+function pitcherReadCard(row,sourceLabel,rank){ const score=pitcherReadScore(row,sourceLabel); return '<article class="pitcher-read-card has-follow">'+followButtonForRow(row)+'<div class="pitcher-read-rank">Read '+rank+' · '+h(sourceLabel)+'</div><div class="pitcher-read-score">'+score+'<span>Read</span></div><div class="pitcher-read-name">'+h(row.name)+'</div><div class="pitcher-read-matchup">'+h(row.team||'')+(row.game?' · '+h(row.game):'')+'</div>'+pitcherReportHtml(row,sourceLabel)+'</article>'; }
+function topPitcherReads(){ const combined=[]; const seen=new Set(); function addRows(rows,label){ (rows||[]).forEach(row=>{ if(!row||!row.personId) return; const key=String(row.personId)+'|'+label; if(seen.has(key)) return; seen.add(key); combined.push({row,label,score:pitcherReadScore(row,label)+(label.includes('H2H')?8:0)+(Number(row.whiffPct||0)>=30?4:0)+(Number(row.value||0)>=16?3:0)}); }); } addRows(filterRows(appState.pitcherH2H),'Pitcher H2H Edge'); addRows(filterRows(appState.hotPitchers),'Current Form Edge'); addRows(filterRows(appState.liveKs).filter(p=>Number(p.value)>=4),'Live K Pace'); combined.sort((a,b)=>b.score-a.score); return combined.slice(0,3); }
+function renderPitcherPulseReads(){ const el=document.getElementById('pitcherPulseReads'); if(!el) return; const reads=topPitcherReads(); if(!reads.length){ el.innerHTML='<div class="loading">No pitcher read is strong enough yet. Once probable starters, H2H history, or live K pace loads, this board will update.</div>'; return; } el.innerHTML=reads.map((item,index)=>pitcherReadCard(item.row,item.label,index+1)).join(''); }
 function chooseGameOfNightData(){ const games=(appState.scoreGames||[]).filter(gameMatchesFilter); if(!games.length) return null; const live=games.filter(g=>g.status.abstractGameState==="Live"); if(live.length){ live.sort((a,b)=>{ const diffA=Math.abs(scoreNumber(a,"away")-scoreNumber(a,"home")), diffB=Math.abs(scoreNumber(b,"away")-scoreNumber(b,"home")); const totalA=scoreNumber(a,"away")+scoreNumber(a,"home"), totalB=scoreNumber(b,"away")+scoreNumber(b,"home"); return diffA-diffB||totalB-totalA; }); return live[0]; } return games[0]; }
 function getPitcherKSpot(){ const h2h=filterRows(appState.pitcherH2H)[0]; if(h2h) return {pitcher:h2h,h2h:true}; const hotPitchers=filterRows(appState.hotPitchers); const prevKs=appState.prevKs||[]; const candidates=hotPitchers.map(p=>{ const opp=prevKs.find(t=>String(t.teamId)===String(p.opponentId)); if(!opp||Number(opp.value)<7) return null; const score=Number(p.whiffPct||0)+Number(opp.whiffPct||0)+Number(opp.value||0); return {pitcher:p,opponentTeamTrend:opp,score}; }).filter(Boolean); candidates.sort((a,b)=>b.score-a.score); return candidates[0]||null; }
 function renderQuickLook(){ const cards=[]; const bestGame=chooseGameOfNightData(); const liveHits=filterRows(appState.liveHits); const hotPitchers=filterRows(appState.hotPitchers); const hotHitters=filterRows(appState.hotHitters); const streaking=filterRows(appState.streakingHitters); const batterEdge=filterRows(appState.batterH2H)[0]; const prevKs=filterRows(appState.prevKs); if(bestGame){ const away=teamName(bestGame.teams.away.team), home=teamName(bestGame.teams.home.team); cards.push(quickCard("Best Game to Watch",away+" "+scoreValue(bestGame,"away")+" @ "+home+" "+scoreValue(bestGame,"home"),bestGame.status.abstractGameState==="Live"?"Status: "+tickerStatus(bestGame):"Start time: "+tickerStatus(bestGame))); } const pitcherSpot=getPitcherKSpot()||(hotPitchers.length?{pitcher:hotPitchers[0]}:null); if(pitcherSpot&&pitcherSpot.pitcher){ const p=pitcherSpot.pitcher; cards.push(quickCard(pitcherSpot.h2h?"Pitcher H2H Edge":"Pitcher to Watch",p.name+" vs "+p.opponent,pitcherSpot.h2h?p.qualifiedGames+" games with 8+ Ks vs "+p.opponent+" · Best: "+p.bestKs+" Ks":"Last 2 games: "+p.value+" total strikeouts · Whiff%: "+(p.whiffPct||"0.0")+"%")); } if(batterEdge){ cards.push(quickCard("Batter H2H Edge",batterEdge.name+" vs "+batterEdge.pitcherName,batterEdge.hits+" H · "+batterEdge.hr+" HR vs today’s probable starter")); } else { const hotBat=liveHits[0]||hotHitters[0]; if(hotBat) cards.push(quickCard("Hot Bat",hotBat.name,liveHits[0]===hotBat?hotBat.team+" · "+hotBat.value+" hit"+(hotBat.value===1?"":"s")+" live"+(hotBat.lastHitLabel?" · Latest: "+hotBat.lastHitLabel:""):hotBat.team+" · "+hotBat.value+" hits over the last 4 completed game days")); } const streak=streaking[0]; if(streak) cards.push(quickCard("Hit Streak Watch",streak.name,streak.team+" · "+streak.value+" straight completed games with a hit")); else { const troubleTeam=prevKs.find(t=>Number(t.value)>=7)||prevKs[0]; if(troubleTeam) cards.push(quickCard("Team Strikeout Watch",troubleTeam.name,troubleTeam.value+" strikeouts last game · Whiff%: "+(troubleTeam.whiffPct||"0.0")+"%")); } document.getElementById("quickLook").innerHTML=cards.length?cards.slice(0,4).join(""):'<div class="loading">No quick look storylines yet.</div>'; }
@@ -1150,493 +864,86 @@ function openGameHub(gamePk){ const game=appState.scoreGames.find(g=>String(g.ga
 function closeGameHub(){ document.getElementById("gameModal").classList.remove("open"); }
 function closeGameHubFromBackdrop(event){ if(event.target.id==="gameModal") closeGameHub(); }
 
-
-function gameByPk(gamePk){
-  if(!gamePk) return null;
-  return (appState.scoreGames || []).find(game => String(game.gamePk) === String(gamePk)) || null;
+function clamp(num,min,max){ return Math.max(min, Math.min(max, Number(num||0))); }
+function shortTeamName(name){ return String(name||"").replace("New York ","NY ").replace("Los Angeles ","LA ").replace("San Francisco ","SF ").replace("Tampa Bay ","TB ").replace("Boston Red Sox","BOS").replace("New York Yankees","NYY"); }
+function boardFilter(){ return appState.edgeBoardFilter || "all"; }
+function setEdgeBoardFilter(filter){ appState.edgeBoardFilter = filter || "all"; document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===appState.edgeBoardFilter)); renderEdgeTerminal(); }
+function edgeConfidenceLabel(score,item){ if(item && item.category==='live') return 'Live'; if(score>=92) return 'High'; if(score>=84) return 'Solid'; return 'Watch'; }
+function confidenceClass(label){ label=String(label||'').toLowerCase(); if(label.includes('live')) return 'live'; if(label.includes('high')) return 'high'; if(label.includes('solid')) return 'high'; return 'watch'; }
+function pitcherEdgeScore(row,source){ let score=78; const whiff=Number(row&&row.whiffPct||0); const recent=sumPitchingRows((row&&row.recentBoxscores&&row.recentBoxscores.length?row.recentBoxscores:row&&row.logs?row.logs:[]).slice(0,3)); if(source.includes('H2H')) score=90 + Math.min(9, Number(row.qualifiedGames||0)*2 + Number(row.bestKs||0)/4); else if(source.includes('Live')) score=72 + Number(row.value||0)*4 + (whiff>=30?4:0); else score=82 + Math.min(14, Number(row.value||0)/2 + whiff/6 + recent.ks/8); return Math.round(clamp(score,70,99)); }
+function hitterEdgeScore(row,source){ let score=76; if(source.includes('Batter H2H')) score=86 + Math.min(12, Number(row.hits||0)*1.2 + Number(row.hr||0)*3); else if(source.includes('Live')) score=72 + Number(row.value||0)*6 + (row.lastHitType==='home_run'?8:row.lastHitType==='triple'?5:row.lastHitType==='double'?3:0); else if(source.includes('Streak')) score=78 + Number(row.value||0)*4; else score=80 + Math.min(15, Number(row.value||0)*1.8); return Math.round(clamp(score,68,99)); }
+function edgeSignal(row,source){ if(source.includes('Pitcher H2H')) return (row.qualifiedGames||0)+' games with 8+ Ks vs '+(row.opponent||'opponent'); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'starter'); if(source.includes('Current Form')) return (row.status||'Recent K form')+(row.whiffPct?' · '+row.whiffPct+'% Whiff Est.':''); if(source.includes('Live K')) return (row.value||0)+' strikeouts live · '+(row.status||'in progress'); if(source.includes('Live Hit')) return (row.value||0)+' hits live'+(row.lastHitLabel?' · Latest: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over recent completed games'; if(source.includes('Hit Streak')) return (row.value||0)+' game hit streak'; return row.extra || row.status || 'Player signal'; }
+function boardPrimaryRead(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherPrimaryRead(row, source); if(source.includes('Batter H2H')) return (row.name||'This hitter')+' has a verified batter-vs-starter history worth surfacing before first pitch.'; if(source.includes('Live Hit')) return (row.name||'This hitter')+' is already influencing the live board with contact showing up in-game.'; if(source.includes('Hot Bat')) return 'The case is recent production: this hitter has been stacking hits across the recent completed-game sample.'; if(source.includes('Hit Streak')) return 'The read is consistency rather than one-game noise: the hit streak keeps this player on the watch board.'; return 'This player has enough current signal to remain on the board.'; }
+function boardEvidence(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherRecentLine(row)+(row.whiffPct!==undefined?' · Whiff Est. '+row.whiffPct+'%':''); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'today’s probable starter'); if(source.includes('Live Hit')) return (row.value||0)+' H tonight'+(row.lastHitLabel?' · Latest hit: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over the last 4 completed game days'; if(source.includes('Hit Streak')) return (row.value||0)+' straight completed games with a hit'; return row.extra || row.status || 'Evidence loading'; }
+function boardH2HLine(item){ const row=item.row, source=item.source; if(source.includes('Pitcher H2H')) return pitcherH2HLine(row); if(source.includes('Batter H2H')) return (row.logs||[]).length+' qualifying games vs '+(row.pitcherName||'starter')+' shown below.'; return item.group==='pitcher' ? 'H2H is not the primary driver on this row.' : 'No qualifying H2H note is attached to this row.'; }
+function makeBoardItem(row,source,type,group,category,detailType){ const score=group==='pitcher'?pitcherEdgeScore(row,source):hitterEdgeScore(row,source); return {row,source,type,group,category,detailType,score,confidence:edgeConfidenceLabel(score,{category}),signal:edgeSignal(row,source),game:row.game||'', id:''}; }
+function buildUnifiedEdgeRows(){ const rows=[]; function add(list,source,type,group,category,detailType,limit){ (list||[]).slice(0,limit||50).forEach(row=>{ if(!row||!row.personId) return; rows.push(makeBoardItem(row,source,type,group,category,detailType)); }); }
+  add(filterRows(appState.pitcherH2H),'Pitcher H2H Edge','Pitcher Edge','pitcher','h2h','pitcherh2h',10);
+  add(filterRows(appState.batterH2H),'Batter H2H Edge','Batter Edge','hitter','h2h','batterh2h',10);
+  add(filterRows(appState.hotPitchers),'Current Form Edge','Pitcher Edge','pitcher','pitchers','pitcherlogs',10);
+  add(filterRows(appState.liveKs).filter(p=>Number(p.value)>=3),'Live K Pace','Live K','pitcher','live','pitcherboxscores',10);
+  add(filterRows(appState.liveHits).filter(p=>Number(p.value)>=1),'Live Hit Edge','Live Hit','hitter','live','batterboxscores',10);
+  add(filterRows(appState.hotHitters),'Hot Bat Edge','Hitter Edge','hitter','hitters','logs',10);
+  add(filterRows(appState.streakingHitters),'Hit Streak Edge','Streak Edge','hitter','hitters','logs',10);
+  const activeFilter=boardFilter(); let filtered=rows;
+  if(activeFilter==='pitchers') filtered=rows.filter(r=>r.group==='pitcher');
+  if(activeFilter==='hitters') filtered=rows.filter(r=>r.group==='hitter');
+  if(activeFilter==='live') filtered=rows.filter(r=>r.category==='live');
+  if(activeFilter==='h2h') filtered=rows.filter(r=>r.category==='h2h');
+  if(activeFilter==='watchlist') filtered=rows.filter(r=>r.row&&rowIsFollowed(r.row));
+  filtered.sort((a,b)=>b.score-a.score || String(a.row.name||'').localeCompare(String(b.row.name||'')));
+  filtered.forEach((item,index)=>item.id='edge_'+index+'_'+String(item.row.personId));
+  return filtered.slice(0,30);
 }
+function rowIsFollowed(row){ return row&&row.personId&&isFollowed(row.personId); }
+function boardFollowButton(item){ if(!item||!item.row||!item.row.personId) return ''; const followed=isFollowed(item.row.personId); const index=edgeBoardStore.findIndex(x=>x.id===item.id); return '<button class="follow-btn '+(followed?'active':'')+'" onclick="event.stopPropagation(); toggleFollow(edgeBoardStore['+index+'].row); renderEdgeTerminal();">'+(followed?'⭐ Following':'⭐ Tap to Follow')+'</button>'; }
+function boardProfileButton(item){ const profileId=registerProfile(item.row,item.source); return '<button class="profile-btn" onclick="event.stopPropagation(); openProfile('+profileId+')">Profile</button>'; }
+function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' active':''; return '<tr class="edge-row'+active+'" onclick="openEdgeDrawer(\''+h(item.id)+'\')">'+
+  '<td><span class="edge-rank-pill">'+(index+1)+'</span></td>'+
+  '<td><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(item.row.team||'')+'</div></div></div></td>'+
+  '<td><span class="edge-type-pill">'+h(item.type)+'</span></td>'+
+  '<td>'+h(item.game||'Today')+'</td>'+
+  '<td class="edge-score-cell">'+h(item.score)+'</td>'+
+  '<td><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></td>'+
+  '<td><div class="edge-signal">'+h(item.signal)+'</div></td>'+
+  '</tr>'; }
+function renderTopEdgeCards(){ const el=document.getElementById('boardTopEdges'); if(!el) return; const top=edgeBoardStore.slice(0,3); if(!top.length){ el.innerHTML='<div class="loading">Top edges will load once today’s data arrives.</div>'; return; } el.innerHTML=top.map((item,index)=>'<article class="top-edge-card" onclick="openEdgeDrawer(\''+h(item.id)+'\')"><div class="top-edge-rank">'+(index+1)+'</div><div class="top-edge-score">'+h(item.score)+'<span>Edge</span></div><div class="top-edge-player">'+h(item.row.name)+'</div><div class="top-edge-meta">'+h(item.type)+' · '+h(item.game||item.row.team||'Today')+'</div><div class="top-edge-signal">'+h(item.signal)+'</div></article>').join(''); }
+function renderBoardSnapshot(){ const el=document.getElementById('boardSnapshot'); if(!el) return; const all=buildUnifiedEdgeRows(); const live=all.filter(x=>x.category==='live').length; const pitchers=all.filter(x=>x.group==='pitcher').length; const hitters=all.filter(x=>x.group==='hitter').length; el.innerHTML='<div class="snapshot-tile"><div class="snapshot-value">'+all.length+'</div><div class="snapshot-label">Edges</div></div><div class="snapshot-tile"><div class="snapshot-value">'+live+'</div><div class="snapshot-label">Live</div></div><div class="snapshot-tile"><div class="snapshot-value">'+pitchers+'</div><div class="snapshot-label">Pitchers</div></div><div class="snapshot-tile"><div class="snapshot-value">'+hitters+'</div><div class="snapshot-label">Hitters</div></div>'; }
+function renderEdgeBoard(){ const body=document.getElementById('edgeBoardBody'); if(!body) return; edgeBoardStore=buildUnifiedEdgeRows(); document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===boardFilter())); if(!edgeBoardStore.length){ body.innerHTML='<tr><td colspan="7"><div class="loading">No edges found for this filter yet.</div></td></tr>'; renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(null); return; } if(!activeEdgeRowId || !edgeBoardStore.some(item=>item.id===activeEdgeRowId)) activeEdgeRowId=edgeBoardStore[0].id; body.innerHTML=edgeBoardStore.map(edgeRowHtml).join(''); renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(edgeBoardStore.find(item=>item.id===activeEdgeRowId)); }
+function openEdgeDrawer(id){ activeEdgeRowId=id; renderEdgeBoard(); const drawer=document.getElementById('edgeDrawerContent'); if(drawer && window.innerWidth<980) drawer.scrollIntoView({behavior:'smooth',block:'start'}); }
+function renderEdgeDrawer(item){ const el=document.getElementById('edgeDrawerContent'); if(!el) return; if(!item){ el.innerHTML='<div class="drawer-empty">Select a player from the board to open the full read.</div>'; return; } const row=item.row; const detail=buildDetails(row,item.detailType)||''; const report=item.group==='pitcher'?pitcherReportHtml(row,item.source):''; el.innerHTML='<div class="drawer-player-head"><img class="drawer-logo" src="'+logo(row.teamId)+'"><div><div class="drawer-name">'+h(row.name)+'</div><div class="drawer-meta">'+h(item.type)+' | '+h(row.team||'')+(item.game?' · '+h(item.game):'')+'</div></div><div class="drawer-score">'+h(item.score)+'<span>Edge</span></div></div>'+
+  '<div class="drawer-action-row">'+boardFollowButton(item)+boardProfileButton(item)+'</div>'+
+  '<div class="drawer-section"><div class="drawer-section-title">Primary Read</div><div class="drawer-section-copy">'+h(boardPrimaryRead(item))+'</div></div>'+
+  '<div class="drawer-section"><div class="drawer-section-title">Evidence</div><div class="drawer-section-copy">'+h(boardEvidence(item))+'</div></div>'+
+  '<div class="drawer-section"><div class="drawer-section-title">H2H Signal</div><div class="drawer-section-copy">'+h(boardH2HLine(item))+'</div></div>'+
+  '<div class="drawer-section"><div class="drawer-section-title">Confidence</div><div class="drawer-section-copy"><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></div></div>'+
+  (row.lastHitType?'<div class="drawer-section"><div class="drawer-section-title">Latest Hit Path</div>'+hitAnimationBlock(row)+'</div>':'')+
+  (report&&item.group==='pitcher'?'<div class="drawer-section"><div class="drawer-section-title">Pitcher Read</div>'+report+'</div>':'')+
+  '<div class="drawer-details"><div class="details">'+detail+'</div></div>'; }
+function renderBoardLiveFeed(){ const el=document.getElementById('boardLiveFeed'); if(!el) return; const liveKs=filterRows(appState.liveKs).filter(p=>Number(p.value)>=4); const liveHits=filterRows(appState.liveHits).filter(p=>Number(p.value)>=1); let items=[]; liveKs.slice(0,5).forEach(p=>items.push(feedItem('K',p.name+' · '+p.value+' Ks',p.team+' · '+p.status))); liveHits.slice(0,5).forEach(p=>items.push(feedItem('H',p.name+' · '+p.value+' hits',p.team+' · '+p.status+(p.lastHitLabel?' · Latest: '+p.lastHitLabel:'')))); el.innerHTML=items.length?items.slice(0,8).join(''):'<div class="loading">No live events yet. This feed only shows in-progress game events.</div>'; }
+function renderBoardWatchlist(){ const el=document.getElementById('boardWatchlist'); if(!el) return; const list=appState.followedPlayers||[]; if(!list.length){ el.innerHTML='<div class="watch-chip"><div></div><div><div class="watch-title">No followed players yet</div><div class="watch-copy">Tap ⭐ Tap to Follow on a board row or drawer.</div></div></div>'; return; } el.innerHTML=list.map(p=>'<div class="watch-chip"><img src="'+logo(p.teamId)+'"><div><div class="watch-title">'+h(p.name)+'</div><div class="watch-copy">'+h(p.team||'')+'</div></div><button class="mini-remove" onclick="removeFollow('+h(p.personId)+')">Remove</button></div>').join(''); }
+function renderEdgeTerminal(){ renderEdgeBoard(); renderBoardLiveFeed(); renderBoardWatchlist(); }
 
-function isActuallyLiveGame(game){
-  if(!game || !game.status) return false;
-  const abstractState = String(game.status.abstractGameState || "").toLowerCase();
-  const codedState = String(game.status.codedGameState || "").toUpperCase();
-  const detailed = String(game.status.detailedState || "").toLowerCase();
-
-  if(abstractState !== "live") return false;
-
-  const notLiveWords = ["scheduled", "pre-game", "pre game", "warmup", "postponed", "delayed start", "cancelled", "canceled"];
-  if(notLiveWords.some(word => detailed.includes(word))) return false;
-
-  if(["S", "P", "PW", "D", "DR", "C", "F", "O"].includes(codedState)) return false;
-
-  return true;
+function renderAllData(){
+  profileStore=[];
+  renderTeamFilters();
+  renderScoreTicker(appState.scoreGames);
+  renderJustHappened();
+  renderWatchlist();
+  renderEdgeTerminal();
 }
-
-function isFinalGame(game){
-  if(!game || !game.status) return false;
-  const abstractState = String(game.status.abstractGameState || "").toLowerCase();
-  const codedState = String(game.status.codedGameState || "").toUpperCase();
-  return abstractState === "final" || ["F", "O"].includes(codedState);
-}
-
-function rowGameStatusLabel(row){
-  const game = gameByPk(row && (row.gamePk || row.todayGamePk));
-  if(!game) return "TODAY";
-  if(isActuallyLiveGame(game)) return "LIVE";
-  if(isFinalGame(game)) return "FINAL";
-
-  const detailed = game.status && game.status.detailedState ? String(game.status.detailedState) : "";
-  if(detailed && !/scheduled/i.test(detailed)) return detailed.toUpperCase();
-
-  const dt = new Date(game.gameDate);
-  if(!isNaN(dt.getTime())) {
-    return dt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
-  }
-
-  return "TODAY";
-}
-
-function heroEdgeCard(row, label, percent){
-  if(!row) return "";
-  const playerLink = row.personId ? ' href="player.html?id='+h(row.personId)+'"' : ' href="#live-dashboard"';
-  const playerName = row.name || "Today’s Edge";
-  const gameText = row.game || (row.opponent ? "Today vs "+row.opponent : row.team || "MLB matchup");
-  const detail = row.status || row.extra || label;
-  const statusLabel = rowGameStatusLabel(row);
-  return '<a class="edge-card"'+playerLink+' style="display:block;color:inherit;text-decoration:none;">'
-    + '<div class="game-row"><div>'
-    + '<div class="teams">'+h(gameText)+'</div>'
-    + '<div class="edge-player"><span>Player:</span> '+h(playerName)+'</div>'
-    + '<div class="market">'+h(label)+' · '+h(detail)+'</div>'
-    + '</div><div class="edge-value">'+h(statusLabel)+'</div></div>'
-    + '<div class="meter"><span style="width:'+Math.max(35, Math.min(92, percent || 65))+'%;"></span></div>'
-    + '</a>';
-}
-
-function renderHeroEdges(){
-  const target = document.getElementById("heroEdgeCards");
-  if(!target) return;
-
-  const edges = [];
-  const pitcherEdge = (appState.pitcherH2H || [])[0];
-  const batterEdge = (appState.batterH2H || [])[0];
-  const liveHit = (appState.liveHits || [])[0];
-  const liveK = (appState.liveKs || [])[0];
-  const hotBat = (appState.hotHitters || [])[0];
-  const hotPitcher = (appState.hotPitchers || [])[0];
-
-  if(pitcherEdge) edges.push(heroEdgeCard(pitcherEdge, "Pitcher H2H Edge", 88));
-  if(batterEdge) edges.push(heroEdgeCard(batterEdge, "Batter vs Starter Edge", 84));
-  if(liveHit) edges.push(heroEdgeCard(liveHit, "Live Hit Leader", 76));
-  if(liveK) edges.push(heroEdgeCard(liveK, "Live Strikeout Leader", 74));
-  if(hotBat) edges.push(heroEdgeCard(hotBat, "Hot Bat Watch", 68));
-  if(hotPitcher) edges.push(heroEdgeCard(hotPitcher, "Pitcher K Watch", 66));
-
-  if(!edges.length){
-    target.innerHTML = '<div class="edge-card"><div class="game-row"><div><div class="teams">Today’s matchups loading...</div><div class="edge-player"><span>Diamond Pulse:</span> Edges update daily</div><div class="market">Probable starters, H2H, live hits, and K trends will appear here.</div></div><div class="edge-value">LIVE</div></div><div class="meter"><span style="width:45%;"></span></div></div>';
-    return;
-  }
-
-  target.innerHTML = edges.slice(0,3).join("");
-}
-
-
-function edgeRating(score){
-  if(score >= 85) return '<span class="tag">Elite</span>';
-  if(score >= 72) return '<span class="tag">Strong</span>';
-  if(score >= 58) return '<span class="tag">Watch</span>';
-  return '<span class="tag">Monitor</span>';
-}
-
-function playerEdgeLink(row, text){
-  if(row && row.personId){
-    return '<a href="player.html?id='+h(row.personId)+'" style="color:inherit;text-decoration:none;font-weight:900;">'+h(text || row.name)+'</a>';
-  }
-  return h(text || (row && row.name) || 'Team');
-}
-
-function edgeBoardRow(row, type, signal, context, score){
-  if(!row) return '';
-  const game = row.game || (row.opponent ? 'Today vs '+row.opponent : row.team || 'Today');
-  const player = playerEdgeLink(row, row.name || 'Today’s Edge');
-  const open = row.personId
-    ? '<a class="tag" href="player.html?id='+h(row.personId)+'">Breakdown</a>'
-    : '<span class="tag">Team</span>';
-
-  return '<tr>'
-    + '<td>'+h(game)+'</td>'
-    + '<td>'+player+'</td>'
-    + '<td>'+h(type)+'</td>'
-    + '<td>'+h(signal)+'</td>'
-    + '<td>'+h(context || row.status || row.extra || '')+'</td>'
-    + '<td class="'+(score >= 58 ? 'positive' : 'warning')+'">'+edgeRating(score)+'</td>'
-    + '<td>'+open+'</td>'
-    + '</tr>';
-}
-
-function renderEdgeBoard(){
-  const target = document.getElementById('edgeBoardRows');
-  if(!target) return;
-
-  const rows = [];
-
-  filterRows(appState.pitcherH2H || []).slice(0,8).forEach(row => {
-    const score = Math.min(96, 76 + Number(row.qualifiedGames || 0) * 4 + Math.min(10, Number(row.bestKs || 0)));
-    rows.push(edgeBoardRow(
-      row,
-      'Pitcher H2H Edge',
-      (row.qualifiedGames || 0)+' qualifying 8+ K games',
-      row.status || ('Best: '+(row.bestKs || row.value || '-')+' Ks vs '+(row.opponent || 'opponent')),
-      score
-    ));
-  });
-
-  filterRows(appState.batterH2H || []).slice(0,8).forEach(row => {
-    const score = Math.min(96, 72 + Number(row.hr || 0) * 8 + Math.min(12, Number(row.hits || 0)));
-    rows.push(edgeBoardRow(
-      row,
-      'Batter vs Starter Edge',
-      (row.hits || 0)+' H · '+(row.hr || 0)+' HR',
-      row.status || ('History vs '+(row.pitcherName || 'today’s starter')),
-      score
-    ));
-  });
-
-  filterRows(appState.hotHitters || []).slice(0,6).forEach(row => {
-    const score = Math.min(88, 52 + Number(row.value || 0) * 5);
-    rows.push(edgeBoardRow(
-      row,
-      'Hot Bat Watch',
-      (row.value || 0)+' hits recently',
-      row.status || 'Recent completed game trend',
-      score
-    ));
-  });
-
-  filterRows(appState.streakingHitters || []).slice(0,6).forEach(row => {
-    const score = Math.min(86, 54 + Number(row.value || 0) * 7);
-    rows.push(edgeBoardRow(
-      row,
-      'Hit Streak',
-      (row.value || 0)+' straight games',
-      row.status || 'Active recent hit streak',
-      score
-    ));
-  });
-
-  filterRows(appState.hotPitchers || []).slice(0,6).forEach(row => {
-    const score = Math.min(90, 55 + Number(row.value || 0) + Math.min(10, Number(row.whiffPct || 0) / 3));
-    rows.push(edgeBoardRow(
-      row,
-      'Pitcher K Watch',
-      (row.value || 0)+' Ks last 2 starts',
-      row.status || ('Whiff%: '+(row.whiffPct || '0.0')+'%'),
-      score
-    ));
-  });
-
-  filterRows(appState.liveHits || []).slice(0,5).forEach(row => {
-    const score = Math.min(82, 50 + Number(row.value || 0) * 9);
-    rows.push(edgeBoardRow(
-      row,
-      'Live Hit Leader',
-      (row.value || 0)+' hits live',
-      row.status || (row.lastHitLabel ? 'Latest: '+row.lastHitLabel : 'Game in progress'),
-      score
-    ));
-  });
-
-  filterRows(appState.liveKs || []).slice(0,5).forEach(row => {
-    const score = Math.min(84, 50 + Number(row.value || 0) * 6);
-    rows.push(edgeBoardRow(
-      row,
-      'Live Strikeout Leader',
-      (row.value || 0)+' Ks live',
-      row.status || 'Game in progress',
-      score
-    ));
-  });
-
-  if(!rows.length){
-    target.innerHTML = '<tr><td colspan="7">Today’s edge board is loading. It will populate from today’s matchups once schedules, probable starters, and recent stats are available.</td></tr>';
-    return;
-  }
-
-  target.innerHTML = rows.slice(0,24).join('');
-}
-
-function renderAllData(){ profileStore=[]; renderHeroEdges(); renderEdgeBoard(); renderTeamFilters(); renderScoreTicker(appState.scoreGames); render("liveKs",filterRows(appState.liveKs),"Pitcher Ks","ks","pitcherboxscores"); render("liveHits",filterRows(appState.liveHits),"Live Player Hits","hits","batterboxscores"); render("hotPitchers",filterRows(appState.hotPitchers),"Hot Pitcher Ks","hotpitcher","pitcherlogs"); render("armsPrevKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("hotHitters",filterRows(appState.hotHitters),"Hot Bat Hits","hot","logs"); render("streakingHitters",filterRows(appState.streakingHitters),"Hit Streak","streak","logs"); render("batsPrevHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); render("pitcherH2H",filterRows(appState.pitcherH2H),"Pitcher H2H Edge","edgecard","pitcherh2h"); render("batterH2H",filterRows(appState.batterH2H),"Batter H2H Edge","edgecard","batterh2h"); render("recapKs",filterRows(appState.prevKs),"Team Ks","prevks","teamks"); render("recapHits",filterRows(appState.prevHits),"Team Hits","prevhits","players"); renderQuickLook(); renderJustHappened(); renderWatchlist(); renderBaseballPulse(); renderGameOfNight(); }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
-async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(isActuallyLiveGame(game)) liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
+async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
 async function findPreviousCompletedGameDay(){ for(let i=1;i<=10;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(finals.length) return {dateString,games:finals}; } return {dateString:"",games:[]}; }
 async function loadPreviousGameDayStats(){ const previous=await findPreviousCompletedGameDay(); const pitchMap=await getPitchCodeMap(); let prevKs=[], prevHits=[]; for(const game of previous.games){ const live=await getGameFeed(game.gamePk); const box=live.liveData.boxscore; const whiffStats=computeTeamWhiffStats(live,pitchMap); ["away","home"].forEach(side=>{ const team=game.teams[side].team; const opponent=side==="away"?game.teams.home.team:game.teams.away.team; const battingStats=box.teams[side].teamStats.batting; const teamKs=Number(battingStats.strikeOuts||0); const teamHits=Number(battingStats.hits||0); const whiff=whiffStats[team.id]||{swings:0,misses:0,whiffPct:"0.0"}; let players=[]; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(batting&&Number(batting.hits||0)>0) players.push({name:player.person.fullName,personId:player.person.id,team:team.name,teamId:team.id,hits:Number(batting.hits||0)}); }); players.sort((a,b)=>b.hits-a.hits); prevKs.push({value:teamKs,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses,extra:teamKs+" team strikeouts · Whiff%: "+whiff.whiffPct+"%"}); prevHits.push({value:teamHits,name:team.name,team:"vs "+opponent.name,game:gameLabel(game),status:previous.dateString,teamId:team.id,players}); }); } prevKs.sort((a,b)=>b.value-a.value); prevHits.sort((a,b)=>b.value-a.value); appState.prevKs=prevKs; appState.prevHits=prevHits; renderAllData(); }
 async function loadHotHitters(){ let days=[], hotMap={}, appearanceMap={}; for(let i=1;i<=14&&days.length<4;i++){ const dateString=nyDate(-i); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+dateString); let finals=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Final") finals.push(game); })); if(!finals.length) continue; days.push(dateString); for(const game of finals){ const box=await getJson("https://statsapi.mlb.com/api/v1/game/"+game.gamePk+"/boxscore"); ["away","home"].forEach(side=>{ const team=game.teams[side].team; Object.values(box.teams[side].players||{}).forEach(player=>{ const batting=player.stats&&player.stats.batting; if(!batting) return; const hits=Number(batting.hits||0); const atBats=Number(batting.atBats||0); const plateAppearances=Number(batting.plateAppearances||0); if(atBats<=0&&plateAppearances<=0) return; const id=player.person.id; if(!hotMap[id]) hotMap[id]={value:0,name:player.person.fullName,personId:id,team:team.name,game:"Last 4 completed game days",status:"",teamId:team.id,logs:[],boxscoreGroup:"hitting"}; hotMap[id].value+=hits; hotMap[id].logs.push({date:dateString,game:gameLabel(game),hits}); if(!appearanceMap[id]) appearanceMap[id]={name:player.person.fullName,personId:id,team:team.name,teamId:team.id,logsByDate:{},boxscoreGroup:"hitting"}; appearanceMap[id].logsByDate[dateString]={date:dateString,game:gameLabel(game),hits}; }); }); } } const hotHitters=Object.values(hotMap).filter(hit=>hit.value>=5).sort((a,b)=>b.value-a.value); let streakingHitters=[]; Object.values(appearanceMap).forEach(player=>{ let streak=0, logs=[]; for(const day of days){ const log=player.logsByDate[day]; if(!log) continue; if(log.hits>0){ streak++; logs.push(log); } else break; } if(streak>=3) streakingHitters.push({value:streak,name:player.name,personId:player.personId,team:player.team,game:"Hit in "+streak+" straight completed games",status:"",teamId:player.teamId,logs,boxscoreGroup:"hitting"}); }); streakingHitters.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(hotHitters,"hitting",3); await attachRecentBoxscores(streakingHitters,"hitting",3); appState.hotHitters=hotHitters; appState.streakingHitters=streakingHitters; renderAllData(); }
 async function loadHotPitchersToday(){ const pitchMap=await getPitchCodeMap(); const probables=await getTodaysProbables(); let hotPitchers=[]; for(const p of probables){ const logs=await fetchPitcherGameLogs(p.id,1); const splits=logs.filter(s=>s.stat&&s.stat.strikeOuts!==undefined).sort((a,b)=>new Date(b.date)-new Date(a.date)); const lastTwo=splits.slice(0,2); if(lastTwo.length<2) continue; const k1=Number(lastTwo[0].stat.strikeOuts||0), k2=Number(lastTwo[1].stat.strikeOuts||0); if(k1>=8&&k2>=8){ let totalSwings=0,totalMisses=0,rowLogs=[]; for(const split of lastTwo){ const gamePk=getSplitGamePk(split); const whiff=await computePitcherWhiffForGame(gamePk,p.id,pitchMap); const ks=Number(split.stat.strikeOuts||0); totalSwings+=whiff.swings; totalMisses+=whiff.misses; rowLogs.push({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses}); } const totalWhiffPct=totalSwings>0?((totalMisses/totalSwings)*100).toFixed(1):"0.0"; hotPitchers.push({value:k1+k2,name:p.name,personId:p.personId,team:p.team,game:"Today vs "+p.opponent,status:"Last 2 games: "+k1+" K, "+k2+" K",teamId:p.teamId,opponent:p.opponent,opponentId:p.opponentId,todayGamePk:p.todayGamePk,whiffPct:totalWhiffPct,swings:totalSwings,misses:totalMisses,extra:"Probable starter today · Whiff%: "+totalWhiffPct+"% ("+totalMisses+"/"+totalSwings+")",logs:rowLogs,recentBoxscores:pitcherRecentBoxscoresFromSplits(logs,p.team,3),boxscoreGroup:"pitching"}); } } hotPitchers.sort((a,b)=>b.value-a.value); appState.hotPitchers=hotPitchers; renderAllData(); }
 async function loadStaticSectionsOnce(){ try{ await loadPreviousGameDayStats(); }catch(err){ console.error(err); } try{ await loadHotHitters(); }catch(err){ console.error(err); } try{ await loadHotPitchersToday(); }catch(err){ console.error(err); } renderAllData(); }
-async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); }catch(err){ console.error(err); document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">Error loading scoreboard</button>'; } try{ await loadLiveStats(); }catch(err){ console.error(err); document.getElementById("liveKs").innerHTML='<div class="card ks">Error loading live data. Refresh page.</div>'; document.getElementById("liveHits").innerHTML='<div class="card hits">Error loading live data. Refresh page.</div>'; } }
+async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); }catch(err){ console.error(err); document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">Error loading scoreboard</button>'; } try{ await loadLiveStats(); }catch(err){ console.error(err); if(document.getElementById("liveKs")) document.getElementById("liveKs").innerHTML='<div class="card ks">Error loading live data. Refresh page.</div>'; if(document.getElementById("liveHits")) document.getElementById("liveHits").innerHTML='<div class="card hits">Error loading live data. Refresh page.</div>'; } }
 appState.followedPlayers=loadFollowedPlayers();
 loadDashboard(); loadStaticSectionsOnce(); loadHeadToHeadEdges();
 setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
-</script>
 
-
-<div id="authModal" style="position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:99999;padding:18px;">
-  <div style="width:min(430px,100%);background:#0d1b2f;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.55);">
-    <h2 id="authTitle" style="margin:0 0 14px;color:#f4f7fb;">Log In</h2>
-    <p id="authMessage" style="color:#91a4bd;margin:0 0 16px;font-size:14px;"></p>
-
-    <input id="authEmail" type="email" placeholder="Email" autocomplete="email" style="width:100%;margin-bottom:12px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;" />
-
-    <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;margin-bottom:16px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:white;" />
-
-    <button type="button" id="authSubmit" class="nav-cta" style="width:100%;border:none;cursor:pointer;">Continue</button>
-
-    <button type="button" onclick="closeAuthModal()" style="width:100%;margin-top:12px;background:none;border:none;color:#a7f3d0;cursor:pointer;font-weight:800;">Cancel</button>
-  </div>
-</div>
-
-<script>
-(function () {
-  let authMode = "login";
-
-  function hasSupabase() {
-    return typeof supabaseClient !== "undefined" && supabaseClient && supabaseClient.auth;
-  }
-
-  function setAuthMessage(message) {
-    const authMessage = document.getElementById("authMessage");
-    if (authMessage) authMessage.innerText = message || "";
-  }
-
-  window.showLogin = function () {
-    authMode = "login";
-    setAuthMessage("");
-    document.getElementById("authModal").style.display = "flex";
-    document.getElementById("authTitle").innerText = "Log In";
-    document.getElementById("authSubmit").innerText = "Log In";
-  };
-
-  window.showSignup = function () {
-    authMode = "signup";
-    setAuthMessage("Create an account to save favorite players and teams.");
-    document.getElementById("authModal").style.display = "flex";
-    document.getElementById("authTitle").innerText = "Create Account";
-    document.getElementById("authSubmit").innerText = "Create Account";
-  };
-
-  window.closeAuthModal = function () {
-    document.getElementById("authModal").style.display = "none";
-  };
-
-  async function createUserProfile(user) {
-    if (!user || !hasSupabase()) return;
-
-    try {
-      await supabaseClient
-        .from("profiles")
-        .upsert({
-          id: user.id,
-          email: user.email
-        });
-    } catch (err) {
-      console.warn("Profile save skipped:", err);
-    }
-  }
-
-  window.logoutUser = async function () {
-    if (!hasSupabase()) {
-      alert("Supabase is not connected. Check supabase.js.");
-      return;
-    }
-
-    await supabaseClient.auth.signOut();
-    await window.checkUser();
-  };
-
-  window.checkUser = async function () {
-    if (!hasSupabase()) return;
-
-    const {
-      data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    const logoutBtn = document.getElementById("logoutBtn");
-    const loginBtn = document.getElementById("loginBtn");
-
-    if (user) {
-      if (logoutBtn) logoutBtn.style.display = "inline-block";
-      if (loginBtn) loginBtn.style.display = "none";
-    } else {
-      if (logoutBtn) logoutBtn.style.display = "none";
-      if (loginBtn) loginBtn.style.display = "inline-block";
-    }
-  };
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const authSubmit = document.getElementById("authSubmit");
-
-    if (authSubmit) {
-      authSubmit.addEventListener("click", async function () {
-        if (!hasSupabase()) {
-          alert("Supabase is not connected. Check supabase.js.");
-          return;
-        }
-
-        const email = document.getElementById("authEmail").value.trim();
-        const password = document.getElementById("authPassword").value;
-
-        if (!email || !password) {
-          alert("Enter an email and password.");
-          return;
-        }
-
-        let result;
-
-        if (authMode === "signup") {
-          result = await supabaseClient.auth.signUp({
-            email,
-            password
-          });
-        } else {
-          result = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
-        }
-
-        if (result.error) {
-          alert(result.error.message);
-          return;
-        }
-
-        if (result.data && result.data.user) {
-          await createUserProfile(result.data.user);
-        }
-
-        alert(authMode === "signup" ? "Account created!" : "Logged in!");
-        window.closeAuthModal();
-        await window.checkUser();
-      });
-    }
-
-    window.checkUser();
-  });
-})();
-</script>
-
-
-<script>
-/* Team Pulse link helper
-   Adds clickable team links to visible MLB team logos and team-name text.
-   Team pages open as: team.html?id=TEAM_ID
-*/
-(function () {
-  const TEAM_IDS = {
-    "Arizona Diamondbacks":109, "Atlanta Braves":144, "Baltimore Orioles":110,
-    "Boston Red Sox":111, "Chicago Cubs":112, "Chicago White Sox":145,
-    "Cincinnati Reds":113, "Cleveland Guardians":114, "Colorado Rockies":115,
-    "Detroit Tigers":116, "Houston Astros":117, "Kansas City Royals":118,
-    "Los Angeles Angels":108, "Los Angeles Dodgers":119, "Miami Marlins":146,
-    "Milwaukee Brewers":158, "Minnesota Twins":142, "New York Mets":121,
-    "New York Yankees":147, "Athletics":133, "Oakland Athletics":133,
-    "Philadelphia Phillies":143, "Pittsburgh Pirates":134, "San Diego Padres":135,
-    "San Francisco Giants":137, "Seattle Mariners":136, "St. Louis Cardinals":138,
-    "Tampa Bay Rays":139, "Texas Rangers":140, "Toronto Blue Jays":141,
-    "Washington Nationals":120
-  };
-
-  const TEAM_ALIASES = {
-    "D-backs":"Arizona Diamondbacks", "Diamondbacks":"Arizona Diamondbacks",
-    "Braves":"Atlanta Braves", "Orioles":"Baltimore Orioles", "Red Sox":"Boston Red Sox",
-    "Cubs":"Chicago Cubs", "White Sox":"Chicago White Sox", "Reds":"Cincinnati Reds",
-    "Guardians":"Cleveland Guardians", "Rockies":"Colorado Rockies", "Tigers":"Detroit Tigers",
-    "Astros":"Houston Astros", "Royals":"Kansas City Royals", "Angels":"Los Angeles Angels",
-    "Dodgers":"Los Angeles Dodgers", "Marlins":"Miami Marlins", "Brewers":"Milwaukee Brewers",
-    "Twins":"Minnesota Twins", "Mets":"New York Mets", "Yankees":"New York Yankees",
-    "A's":"Athletics", "Athletics":"Athletics", "Phillies":"Philadelphia Phillies",
-    "Pirates":"Pittsburgh Pirates", "Padres":"San Diego Padres", "Giants":"San Francisco Giants",
-    "Mariners":"Seattle Mariners", "Cardinals":"St. Louis Cardinals", "Rays":"Tampa Bay Rays",
-    "Rangers":"Texas Rangers", "Blue Jays":"Toronto Blue Jays", "Nationals":"Washington Nationals",
-    "ARI":"Arizona Diamondbacks", "ATL":"Atlanta Braves", "BAL":"Baltimore Orioles",
-    "BOS":"Boston Red Sox", "CHC":"Chicago Cubs", "CWS":"Chicago White Sox",
-    "CIN":"Cincinnati Reds", "CLE":"Cleveland Guardians", "COL":"Colorado Rockies",
-    "DET":"Detroit Tigers", "HOU":"Houston Astros", "KC":"Kansas City Royals",
-    "LAA":"Los Angeles Angels", "LAD":"Los Angeles Dodgers", "MIA":"Miami Marlins",
-    "MIL":"Milwaukee Brewers", "MIN":"Minnesota Twins", "NYM":"New York Mets",
-    "NYY":"New York Yankees", "OAK":"Athletics", "ATH":"Athletics",
-    "PHI":"Philadelphia Phillies", "PIT":"Pittsburgh Pirates", "SD":"San Diego Padres",
-    "SF":"San Francisco Giants", "SEA":"Seattle Mariners", "STL":"St. Louis Cardinals",
-    "TB":"Tampa Bay Rays", "TEX":"Texas Rangers", "TOR":"Toronto Blue Jays",
-    "WSH":"Washington Nationals"
-  };
-
-  function teamIdFromText(text) {
-    const clean = String(text || "").replace(/\s+/g, " ").trim();
-    if (TEAM_IDS[clean]) return TEAM_IDS[clean];
-    if (TEAM_ALIASES[clean] && TEAM_IDS[TEAM_ALIASES[clean]]) return TEAM_IDS[TEAM_ALIASES[clean]];
-
-    for (const [name, id] of Object.entries(TEAM_IDS)) {
-      if (clean.includes(name)) return id;
-    }
-
-    for (const [alias, name] of Object.entries(TEAM_ALIASES)) {
-      if (clean === alias || clean.includes(" " + alias + " ") || clean.includes(alias + " @") || clean.includes("@ " + alias)) {
-        return TEAM_IDS[name];
-      }
-    }
-
-    return null;
-  }
-
-  function wrapElement(el, teamId) {
-    if (!teamId || !el || el.closest("a")) return;
-
-    const a = document.createElement("a");
-    a.href = "team.html?id=" + teamId;
-    a.style.color = "inherit";
-    a.style.textDecoration = "none";
-    a.title = "Open Team Pulse";
-
-    el.parentNode.insertBefore(a, el);
-    a.appendChild(el);
-  }
-
-  function linkTeamText() {
-    document.querySelectorAll(".team, .teams, .game, .ticker-item, .filter-btn").forEach(el => {
-      if (el.dataset.teamLinked === "1") return;
-      const id = teamIdFromText(el.textContent);
-      if (!id) return;
-
-      el.dataset.teamLinked = "1";
-      wrapElement(el, id);
-    });
-  }
-
-  function linkTeamLogos() {
-    document.querySelectorAll('img[src*="mlbstatic.com/team-logos/"]').forEach(img => {
-      if (img.dataset.teamLinked === "1") return;
-
-      const match = img.src.match(/team-logos\/(\d+)\.svg/);
-      if (!match) return;
-
-      img.dataset.teamLinked = "1";
-      wrapElement(img, match[1]);
-    });
-  }
-
-  function linkTeams() {
-    linkTeamText();
-    linkTeamLogos();
-  }
-
-  document.addEventListener("DOMContentLoaded", linkTeams);
-  window.addEventListener("load", linkTeams);
-  setInterval(linkTeams, 2500);
-})();
-</script>
-
-<script>
-(function(){function add(){document.querySelectorAll(".nav-links").forEach(nav=>{if(!nav.querySelector('[href="mypulse.html"]')){const a=document.createElement("a");a.href="mypulse.html";a.textContent="My Pulse";nav.appendChild(a)}});document.querySelectorAll(".btn-row").forEach(row=>{if(!row.querySelector('[href="mypulse.html"]')){const a=document.createElement("a");a.href="mypulse.html";a.className="btn secondary";a.textContent="⭐ My Pulse";row.appendChild(a)}})}document.addEventListener("DOMContentLoaded",add);window.addEventListener("load",add);setInterval(add,2500)})();
-</script>
+  </script>
 </body>
 </html>
