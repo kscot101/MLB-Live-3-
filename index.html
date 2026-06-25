@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Diamond Pulse | TRUE Option 4 Rebuild</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -559,6 +558,12 @@
       .drawer-player-head { grid-template-columns: 50px minmax(0,1fr); }
       .drawer-score { grid-column: 1 / -1; text-align: left; }
     }
+
+    /* No-blank safety: the rebuilt shell must stay visible even if live data fails. */
+    .shell { display: block !important; opacity: 1 !important; visibility: visible !important; }
+    .fatal-card { margin: 12px 0; padding: 14px; border-radius: 18px; background: rgba(127,29,29,.34); border: 1px solid rgba(248,113,113,.38); color: #fecaca; font-size: 13px; line-height: 1.45; }
+    .fallback-board-row { opacity: .92; }
+
   </style>
 </head>
 <body class="board-mode">
@@ -579,6 +584,7 @@
   </svg>
 
   <main class="shell">
+    <div id="fatalFallback" style="display:none"></div>
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">
@@ -909,7 +915,7 @@ function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' activ
   '</tr>'; }
 function renderTopEdgeCards(){ const el=document.getElementById('boardTopEdges'); if(!el) return; const top=edgeBoardStore.slice(0,3); if(!top.length){ el.innerHTML='<div class="loading">Top edges will load once today’s data arrives.</div>'; return; } el.innerHTML=top.map((item,index)=>'<article class="top-edge-card" onclick="openEdgeDrawer(\''+h(item.id)+'\')"><div class="top-edge-rank">'+(index+1)+'</div><div class="top-edge-score">'+h(item.score)+'<span>Edge</span></div><div class="top-edge-player">'+h(item.row.name)+'</div><div class="top-edge-meta">'+h(item.type)+' · '+h(item.game||item.row.team||'Today')+'</div><div class="top-edge-signal">'+h(item.signal)+'</div></article>').join(''); }
 function renderBoardSnapshot(){ const el=document.getElementById('boardSnapshot'); if(!el) return; const all=buildUnifiedEdgeRows(); const live=all.filter(x=>x.category==='live').length; const pitchers=all.filter(x=>x.group==='pitcher').length; const hitters=all.filter(x=>x.group==='hitter').length; el.innerHTML='<div class="snapshot-tile"><div class="snapshot-value">'+all.length+'</div><div class="snapshot-label">Edges</div></div><div class="snapshot-tile"><div class="snapshot-value">'+live+'</div><div class="snapshot-label">Live</div></div><div class="snapshot-tile"><div class="snapshot-value">'+pitchers+'</div><div class="snapshot-label">Pitchers</div></div><div class="snapshot-tile"><div class="snapshot-value">'+hitters+'</div><div class="snapshot-label">Hitters</div></div>'; }
-function renderEdgeBoard(){ const body=document.getElementById('edgeBoardBody'); if(!body) return; edgeBoardStore=buildUnifiedEdgeRows(); document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===boardFilter())); if(!edgeBoardStore.length){ body.innerHTML='<tr><td colspan="7"><div class="loading">No edges found for this filter yet.</div></td></tr>'; renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(null); return; } if(!activeEdgeRowId || !edgeBoardStore.some(item=>item.id===activeEdgeRowId)) activeEdgeRowId=edgeBoardStore[0].id; body.innerHTML=edgeBoardStore.map(edgeRowHtml).join(''); renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(edgeBoardStore.find(item=>item.id===activeEdgeRowId)); }
+function renderEdgeBoard(){ const body=document.getElementById('edgeBoardBody'); if(!body) return; edgeBoardStore=buildUnifiedEdgeRows(); document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===boardFilter())); if(!edgeBoardStore.length){ body.innerHTML='<tr><td colspan="7"><div class="loading">No edge rows are loaded yet. Live data may still be loading, or there may be no qualifying games in this filter.</div></td></tr>'; renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(null); return; } if(!activeEdgeRowId || !edgeBoardStore.some(item=>item.id===activeEdgeRowId)) activeEdgeRowId=edgeBoardStore[0].id; body.innerHTML=edgeBoardStore.map(edgeRowHtml).join(''); renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(edgeBoardStore.find(item=>item.id===activeEdgeRowId)); }
 function openEdgeDrawer(id){ activeEdgeRowId=id; renderEdgeBoard(); const drawer=document.getElementById('edgeDrawerContent'); if(drawer && window.innerWidth<980) drawer.scrollIntoView({behavior:'smooth',block:'start'}); }
 function renderEdgeDrawer(item){ const el=document.getElementById('edgeDrawerContent'); if(!el) return; if(!item){ el.innerHTML='<div class="drawer-empty">Select a player from the board to open the full read.</div>'; return; } const row=item.row; const detail=buildDetails(row,item.detailType)||''; const report=item.group==='pitcher'?pitcherReportHtml(row,item.source):''; el.innerHTML='<div class="drawer-player-head"><img class="drawer-logo" src="'+logo(row.teamId)+'"><div><div class="drawer-name">'+h(row.name)+'</div><div class="drawer-meta">'+h(item.type)+' | '+h(row.team||'')+(item.game?' · '+h(item.game):'')+'</div></div><div class="drawer-score">'+h(item.score)+'<span>Edge</span></div></div>'+
   '<div class="drawer-action-row">'+boardFollowButton(item)+boardProfileButton(item)+'</div>'+
@@ -940,9 +946,35 @@ async function loadHotHitters(){ let days=[], hotMap={}, appearanceMap={}; for(l
 async function loadHotPitchersToday(){ const pitchMap=await getPitchCodeMap(); const probables=await getTodaysProbables(); let hotPitchers=[]; for(const p of probables){ const logs=await fetchPitcherGameLogs(p.id,1); const splits=logs.filter(s=>s.stat&&s.stat.strikeOuts!==undefined).sort((a,b)=>new Date(b.date)-new Date(a.date)); const lastTwo=splits.slice(0,2); if(lastTwo.length<2) continue; const k1=Number(lastTwo[0].stat.strikeOuts||0), k2=Number(lastTwo[1].stat.strikeOuts||0); if(k1>=8&&k2>=8){ let totalSwings=0,totalMisses=0,rowLogs=[]; for(const split of lastTwo){ const gamePk=getSplitGamePk(split); const whiff=await computePitcherWhiffForGame(gamePk,p.id,pitchMap); const ks=Number(split.stat.strikeOuts||0); totalSwings+=whiff.swings; totalMisses+=whiff.misses; rowLogs.push({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses}); } const totalWhiffPct=totalSwings>0?((totalMisses/totalSwings)*100).toFixed(1):"0.0"; hotPitchers.push({value:k1+k2,name:p.name,personId:p.personId,team:p.team,game:"Today vs "+p.opponent,status:"Last 2 games: "+k1+" K, "+k2+" K",teamId:p.teamId,opponent:p.opponent,opponentId:p.opponentId,todayGamePk:p.todayGamePk,whiffPct:totalWhiffPct,swings:totalSwings,misses:totalMisses,extra:"Probable starter today · Whiff%: "+totalWhiffPct+"% ("+totalMisses+"/"+totalSwings+")",logs:rowLogs,recentBoxscores:pitcherRecentBoxscoresFromSplits(logs,p.team,3),boxscoreGroup:"pitching"}); } } hotPitchers.sort((a,b)=>b.value-a.value); appState.hotPitchers=hotPitchers; renderAllData(); }
 async function loadStaticSectionsOnce(){ try{ await loadPreviousGameDayStats(); }catch(err){ console.error(err); } try{ await loadHotHitters(); }catch(err){ console.error(err); } try{ await loadHotPitchersToday(); }catch(err){ console.error(err); } renderAllData(); }
 async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); }catch(err){ console.error(err); document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">Error loading scoreboard</button>'; } try{ await loadLiveStats(); }catch(err){ console.error(err); if(document.getElementById("liveKs")) document.getElementById("liveKs").innerHTML='<div class="card ks">Error loading live data. Refresh page.</div>'; if(document.getElementById("liveHits")) document.getElementById("liveHits").innerHTML='<div class="card hits">Error loading live data. Refresh page.</div>'; } }
-appState.followedPlayers=loadFollowedPlayers();
-loadDashboard(); loadStaticSectionsOnce(); loadHeadToHeadEdges();
-setInterval(loadDashboard,30000); setInterval(loadStaticSectionsOnce,600000);
+function showSiteError(err){
+  try {
+    const box=document.getElementById("fatalFallback");
+    if(!box) return;
+    box.style.display="block";
+    box.innerHTML='<div class="fatal-card"><strong>Diamond Pulse loaded, but one script/data call failed.</strong><br>The page is being kept visible so it does not go blank. Refresh once, and if this remains, send a screenshot of this message.<br><code style="color:#fff">'+h((err && (err.message||err.reason||err)) || "Unknown error")+'</code></div>';
+  } catch(e){}
+}
+window.addEventListener("error", function(e){ showSiteError(e.error || e.message); });
+window.addEventListener("unhandledrejection", function(e){ showSiteError(e.reason || e); });
+
+function bootDiamondPulse(){
+  try {
+    appState.followedPlayers=loadFollowedPlayers();
+    renderAllData();
+  } catch(err) {
+    showSiteError(err);
+  }
+
+  loadDashboard().catch(showSiteError);
+  loadStaticSectionsOnce().catch(showSiteError);
+  loadHeadToHeadEdges().catch(showSiteError);
+
+  setInterval(function(){ loadDashboard().catch(showSiteError); },30000);
+  setInterval(function(){ loadStaticSectionsOnce().catch(showSiteError); },600000);
+}
+
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootDiamondPulse);
+else bootDiamondPulse();
 
   </script>
 </body>
