@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diamond Pulse | TRUE Option 4 Rebuild</title>
+  <title>The Diamond Pulse | Baseball Analytics & Edges</title>
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -559,6 +559,23 @@
       .drawer-score { grid-column: 1 / -1; text-align: left; }
     }
 
+
+    .data-dock { margin-top: 18px; border: 1px solid rgba(125,211,252,.18); background: linear-gradient(180deg, rgba(15,23,42,.86), rgba(2,6,23,.78)); border-radius: 28px; padding: 18px; box-shadow: 0 22px 70px rgba(0,0,0,.32); }
+    .data-dock-head { padding: 4px 4px 16px; }
+    .data-dock-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .data-dock-card { border: 1px solid rgba(148,163,184,.18); border-radius: 22px; background: rgba(2,6,23,.42); padding: 14px; min-height: 230px; }
+    .dock-title { color: var(--green); font-size: 12px; font-weight: 1000; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px; }
+    .dock-list { display: grid; gap: 9px; }
+    .dock-item { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 10px; border-radius: 16px; background: rgba(15,23,42,.72); border: 1px solid rgba(148,163,184,.14); cursor: pointer; transition: transform .15s ease, border-color .15s ease, background .15s ease; }
+    .dock-item:hover { transform: translateY(-1px); border-color: rgba(190,242,100,.42); background: rgba(22,163,74,.09); }
+    .dock-logo { width: 30px; height: 30px; object-fit: contain; border-radius: 999px; background: rgba(255,255,255,.06); padding: 3px; }
+    .dock-main { font-size: 13px; font-weight: 900; color: #eff6ff; line-height: 1.2; }
+    .dock-sub { margin-top: 3px; font-size: 11px; color: var(--muted); line-height: 1.25; }
+    .dock-score { color: var(--green); font-family: var(--mono); font-size: 18px; font-weight: 1000; text-align: right; }
+    .dock-score span { display: block; color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; margin-top: 1px; }
+    @media (max-width: 1180px){ .data-dock-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 720px){ .data-dock-grid{ grid-template-columns: 1fr; } }
+
     /* No-blank safety: the rebuilt shell must stay visible even if live data fails. */
     .shell { display: block !important; opacity: 1 !important; visibility: visible !important; }
     .fatal-card { margin: 12px 0; padding: 14px; border-radius: 18px; background: rgba(127,29,29,.34); border: 1px solid rgba(248,113,113,.38); color: #fecaca; font-size: 13px; line-height: 1.45; }
@@ -597,7 +614,7 @@
         </div>
         <div>
           <h1>Diamond <span>Pulse</span></h1>
-          <div class="brand-sub">OPTION 4 ACTIVE EDGE FIX · Edge board + player drawer</div>
+          <div class="brand-sub">Live MLB Model Updates · Edge Board + Signal Drawer</div>
         </div>
       </div>
 
@@ -606,7 +623,7 @@
       </div>
 
       <div class="top-actions">
-        <div class="live-pill"><span class="live-dot"></span>OPTION 4 LIVE</div>
+        <div class="live-pill"><span class="live-dot"></span>LIVE MLB MODEL</div>
         <div id="lastUpdated" class="refresh">Loading live data...</div>
         <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">Stadium Mode</button>
       </div>
@@ -619,9 +636,9 @@
 
     <section class="terminal-hero">
       <article class="hero-card">
-        <div class="eyebrow">Slate Terminal · Today’s card</div>
-        <h2 class="hero-title">Option 4 is active: <span>Edge Board + Player Drawer.</span></h2>
-        <p class="hero-copy">This is the total rebuild version. If you do not see this exact message on the live site, GitHub or Cloudflare is still serving your old index.html.</p>
+        <div class="eyebrow">Live MLB Model Updates</div>
+        <h2 class="hero-title">Baseball insights backed by <span>live data.</span></h2>
+        <p class="hero-copy">The Diamond Pulse turns live games, pitching matchups, hot bats, team trends, and head-to-head history into clear MLB storylines.</p>
         <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
       </article>
 
@@ -643,7 +660,7 @@
           <div>
             <div class="panel-kicker">The Edge Board</div>
             <h2 class="panel-title">Sortable slate signals</h2>
-            <div class="panel-sub">Click any player row. The drawer opens with the full explanation and boxscore trail.</div>
+            <div class="panel-sub">Click any player or team signal. The drawer opens with the full explanation, boxscore trail, H2H notes, and live context.</div>
           </div>
         </div>
 
@@ -653,12 +670,13 @@
           <button class="board-filter-btn" data-board-filter="hitters" onclick="setEdgeBoardFilter('hitters')">Hitters</button>
           <button class="board-filter-btn" data-board-filter="live" onclick="setEdgeBoardFilter('live')">Live</button>
           <button class="board-filter-btn" data-board-filter="h2h" onclick="setEdgeBoardFilter('h2h')">H2H</button>
+          <button class="board-filter-btn" data-board-filter="teams" onclick="setEdgeBoardFilter('teams')">Teams</button>
           <button class="board-filter-btn" data-board-filter="watchlist" onclick="setEdgeBoardFilter('watchlist')">Watchlist</button>
         </div>
 
         <div class="edge-table-wrap">
           <table class="edge-table">
-            <thead><tr><th>#</th><th>Player</th><th>Type</th><th>Game</th><th>Edge</th><th>Confidence</th><th>Key Signal</th></tr></thead>
+            <thead><tr><th>#</th><th>Player / Signal</th><th>Type</th><th>Game</th><th>Edge</th><th>Confidence</th><th>Key Signal</th></tr></thead>
             <tbody id="edgeBoardBody"><tr><td colspan="7"><div class="loading">Loading board...</div></td></tr></tbody>
           </table>
         </div>
@@ -667,12 +685,12 @@
       <aside class="drawer-card">
         <div class="panel-head">
           <div>
-            <div class="panel-kicker">Player Drawer</div>
+            <div class="panel-kicker">Signal Drawer</div>
             <h2 class="panel-title">Full read</h2>
-            <div class="panel-sub">Evidence, boxscores, H2H history, live paths, and follow controls.</div>
+            <div class="panel-sub">Evidence, boxscores, H2H history, live paths, team trends, and follow controls.</div>
           </div>
         </div>
-        <div id="edgeDrawerContent" class="drawer-body"><div class="drawer-empty">Select a player from the board to open the full read.</div></div>
+        <div id="edgeDrawerContent" class="drawer-body"><div class="drawer-empty">Select a player or team signal from the board to open the full read.</div></div>
       </aside>
     </section>
 
@@ -691,6 +709,23 @@
         <div id="boardWatchlist" class="watch-grid" style="margin-top:12px;"><div class="loading">No followed players yet.</div></div>
       </aside>
     </section>
+
+    <section class="data-dock">
+      <div class="panel-head data-dock-head">
+        <div>
+          <div class="panel-kicker">Full Data Dock</div>
+          <h2 class="panel-title">Everything from the original build, rebuilt into compact panels</h2>
+          <div class="panel-sub">Live leaders, hot arms, hot bats, H2H edges, previous-game team trends, and today's game hubs all stay available here.</div>
+        </div>
+      </div>
+      <div class="data-dock-grid">
+        <article class="data-dock-card"><div class="dock-title">Arms</div><div id="dockArms" class="dock-list"><div class="loading">Loading pitching data...</div></div></article>
+        <article class="data-dock-card"><div class="dock-title">Bats</div><div id="dockBats" class="dock-list"><div class="loading">Loading hitting data...</div></div></article>
+        <article class="data-dock-card"><div class="dock-title">H2H Matchups</div><div id="dockH2H" class="dock-list"><div class="loading">Loading H2H data...</div></div></article>
+        <article class="data-dock-card"><div class="dock-title">Today's Games</div><div id="dockGames" class="dock-list"><div class="loading">Loading games...</div></div></article>
+      </div>
+    </section>
+
 
     <div class="footer-note">Unofficial baseball research dashboard. Not affiliated with MLB or any sportsbook.</div>
   </main>
@@ -880,47 +915,51 @@ function edgeConfidenceLabel(score,item){ if(item && item.category==='live') ret
 function confidenceClass(label){ label=String(label||'').toLowerCase(); if(label.includes('live')) return 'live'; if(label.includes('high')) return 'high'; if(label.includes('solid')) return 'high'; return 'watch'; }
 function pitcherEdgeScore(row,source){ let score=78; const whiff=Number(row&&row.whiffPct||0); const recent=sumPitchingRows((row&&row.recentBoxscores&&row.recentBoxscores.length?row.recentBoxscores:row&&row.logs?row.logs:[]).slice(0,3)); if(source.includes('H2H')) score=90 + Math.min(9, Number(row.qualifiedGames||0)*2 + Number(row.bestKs||0)/4); else if(source.includes('Live')) score=72 + Number(row.value||0)*4 + (whiff>=30?4:0); else score=82 + Math.min(14, Number(row.value||0)/2 + whiff/6 + recent.ks/8); return Math.round(clamp(score,70,99)); }
 function hitterEdgeScore(row,source){ let score=76; if(source.includes('Batter H2H')) score=86 + Math.min(12, Number(row.hits||0)*1.2 + Number(row.hr||0)*3); else if(source.includes('Live')) score=72 + Number(row.value||0)*6 + (row.lastHitType==='home_run'?8:row.lastHitType==='triple'?5:row.lastHitType==='double'?3:0); else if(source.includes('Streak')) score=78 + Number(row.value||0)*4; else score=80 + Math.min(15, Number(row.value||0)*1.8); return Math.round(clamp(score,68,99)); }
-function edgeSignal(row,source){ if(source.includes('Pitcher H2H')) return (row.qualifiedGames||0)+' games with 8+ Ks vs '+(row.opponent||'opponent'); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'starter'); if(source.includes('Current Form')) return (row.status||'Recent K form')+(row.whiffPct?' · '+row.whiffPct+'% Whiff Est.':''); if(source.includes('Live K')) return (row.value||0)+' strikeouts live · '+(row.status||'in progress'); if(source.includes('Live Hit')) return (row.value||0)+' hits live'+(row.lastHitLabel?' · Latest: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over recent completed games'; if(source.includes('Hit Streak')) return (row.value||0)+' game hit streak'; return row.extra || row.status || 'Player signal'; }
-function boardPrimaryRead(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherPrimaryRead(row, source); if(source.includes('Batter H2H')) return (row.name||'This hitter')+' has a verified batter-vs-starter history worth surfacing before first pitch.'; if(source.includes('Live Hit')) return (row.name||'This hitter')+' is already influencing the live board with contact showing up in-game.'; if(source.includes('Hot Bat')) return 'The case is recent production: this hitter has been stacking hits across the recent completed-game sample.'; if(source.includes('Hit Streak')) return 'The read is consistency rather than one-game noise: the hit streak keeps this player on the watch board.'; return 'This player has enough current signal to remain on the board.'; }
-function boardEvidence(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherRecentLine(row)+(row.whiffPct!==undefined?' · Whiff Est. '+row.whiffPct+'%':''); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'today’s probable starter'); if(source.includes('Live Hit')) return (row.value||0)+' H tonight'+(row.lastHitLabel?' · Latest hit: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over the last 4 completed game days'; if(source.includes('Hit Streak')) return (row.value||0)+' straight completed games with a hit'; return row.extra || row.status || 'Evidence loading'; }
-function boardH2HLine(item){ const row=item.row, source=item.source; if(source.includes('Pitcher H2H')) return pitcherH2HLine(row); if(source.includes('Batter H2H')) return (row.logs||[]).length+' qualifying games vs '+(row.pitcherName||'starter')+' shown below.'; return item.group==='pitcher' ? 'H2H is not the primary driver on this row.' : 'No qualifying H2H note is attached to this row.'; }
-function makeBoardItem(row,source,type,group,category,detailType){ const score=group==='pitcher'?pitcherEdgeScore(row,source):hitterEdgeScore(row,source); return {row,source,type,group,category,detailType,score,confidence:edgeConfidenceLabel(score,{category}),signal:edgeSignal(row,source),game:row.game||'', id:''}; }
-function buildUnifiedEdgeRows(){ const rows=[]; function add(list,source,type,group,category,detailType,limit){ (list||[]).slice(0,limit||50).forEach(row=>{ if(!row||!row.personId) return; rows.push(makeBoardItem(row,source,type,group,category,detailType)); }); }
-  add(filterRows(appState.pitcherH2H),'Pitcher H2H Edge','Pitcher Edge','pitcher','h2h','pitcherh2h',10);
-  add(filterRows(appState.batterH2H),'Batter H2H Edge','Batter Edge','hitter','h2h','batterh2h',10);
-  add(filterRows(appState.hotPitchers),'Current Form Edge','Pitcher Edge','pitcher','pitchers','pitcherlogs',10);
-  add(filterRows(appState.liveKs).filter(p=>Number(p.value)>=3),'Live K Pace','Live K','pitcher','live','pitcherboxscores',10);
-  add(filterRows(appState.liveHits).filter(p=>Number(p.value)>=1),'Live Hit Edge','Live Hit','hitter','live','batterboxscores',10);
-  add(filterRows(appState.hotHitters),'Hot Bat Edge','Hitter Edge','hitter','hitters','logs',10);
-  add(filterRows(appState.streakingHitters),'Hit Streak Edge','Streak Edge','hitter','hitters','logs',10);
+function teamTrendScore(row,source){ let score=74; if(source.includes('Strikeout')) score=78 + Math.min(18, Number(row.value||0)*1.6 + Number(row.whiffPct||0)/4); if(source.includes('Hits')) score=76 + Math.min(18, Number(row.value||0)*1.25); return Math.round(clamp(score,70,96)); }
+function edgeSignal(row,source){ if(source.includes('Pitcher H2H')) return (row.qualifiedGames||0)+' games with 8+ Ks vs '+(row.opponent||'opponent'); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'starter'); if(source.includes('Current Form')) return (row.status||'Recent K form')+(row.whiffPct?' · '+row.whiffPct+'% Whiff Est.':''); if(source.includes('Live K')) return (row.value||0)+' strikeouts live · '+(row.status||'in progress'); if(source.includes('Live Hit')) return (row.value||0)+' hits live'+(row.lastHitLabel?' · Latest: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over recent completed games'; if(source.includes('Hit Streak')) return (row.value||0)+' game hit streak'; if(source.includes('Team Strikeout')) return (row.value||0)+' team Ks last completed game · '+(row.whiffPct||'0.0')+'% whiff'; if(source.includes('Team Hits')) return (row.value||0)+' team hits last completed game'; return row.extra || row.status || 'Signal'; }
+function boardPrimaryRead(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherPrimaryRead(row, source); if(item.group==='team' && source.includes('Strikeout')) return (row.name||'This team')+' brings a team-level strikeout trend into the slate view from the previous completed game.'; if(item.group==='team' && source.includes('Hits')) return (row.name||'This team')+' is included because the previous completed-game boxscore showed concentrated team offense.'; if(source.includes('Batter H2H')) return (row.name||'This hitter')+' has a verified batter-vs-starter history worth surfacing before first pitch.'; if(source.includes('Live Hit')) return (row.name||'This hitter')+' is already influencing the live board with contact showing up in-game.'; if(source.includes('Hot Bat')) return 'The case is recent production: this hitter has been stacking hits across the recent completed-game sample.'; if(source.includes('Hit Streak')) return 'The read is consistency rather than one-game noise: the hit streak keeps this player on the watch board.'; return 'This signal has enough current data to remain on the board.'; }
+function boardEvidence(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherRecentLine(row)+(row.whiffPct!==undefined?' · Whiff Est. '+row.whiffPct+'%':''); if(item.group==='team' && source.includes('Strikeout')) return (row.value||0)+' team strikeouts · '+(row.whiffPct||'0.0')+'% whiff estimate · '+(row.status||'previous completed game'); if(item.group==='team' && source.includes('Hits')) return (row.value||0)+' team hits · '+(row.players&&row.players.length?row.players.slice(0,3).map(p=>p.name+' '+p.hits+' H').join(' · '):'player breakdown loading'); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'today’s probable starter'); if(source.includes('Live Hit')) return (row.value||0)+' H tonight'+(row.lastHitLabel?' · Latest hit: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over the last 4 completed game days'; if(source.includes('Hit Streak')) return (row.value||0)+' straight completed games with a hit'; return row.extra || row.status || 'Evidence loading'; }
+function boardH2HLine(item){ const row=item.row, source=item.source; if(source.includes('Pitcher H2H')) return pitcherH2HLine(row); if(source.includes('Batter H2H')) return (row.logs||[]).length+' qualifying games vs '+(row.pitcherName||'starter')+' shown below.'; if(item.group==='team') return 'Team trend row. H2H is not the driver; this comes from the previous completed team boxscore.'; return item.group==='pitcher' ? 'H2H is not the primary driver on this row.' : 'No qualifying H2H note is attached to this row.'; }
+function makeBoardItem(row,source,type,group,category,detailType){ const score=group==='pitcher'?pitcherEdgeScore(row,source):(group==='team'?teamTrendScore(row,source):hitterEdgeScore(row,source)); return {row,source,type,group,category,detailType,score,confidence:edgeConfidenceLabel(score,{category}),signal:edgeSignal(row,source),game:row.game||'', id:''}; }
+function buildUnifiedEdgeRows(){ const rows=[]; function add(list,source,type,group,category,detailType,limit,requirePerson=true){ (list||[]).slice(0,limit||50).forEach(row=>{ if(!row) return; if(requirePerson && !row.personId) return; rows.push(makeBoardItem(row,source,type,group,category,detailType)); }); }
+  add(filterRows(appState.pitcherH2H),'Pitcher H2H Edge','Pitcher Edge','pitcher','h2h','pitcherh2h',20);
+  add(filterRows(appState.batterH2H),'Batter H2H Edge','Batter Edge','hitter','h2h','batterh2h',20);
+  add(filterRows(appState.hotPitchers),'Current Form Edge','Pitcher Edge','pitcher','pitchers','pitcherlogs',20);
+  add(filterRows(appState.liveKs).filter(p=>Number(p.value)>=1),'Live K Pace','Live K','pitcher','live','pitcherboxscores',20);
+  add(filterRows(appState.liveHits).filter(p=>Number(p.value)>=1),'Live Hit Edge','Live Hit','hitter','live','batterboxscores',20);
+  add(filterRows(appState.hotHitters),'Hot Bat Edge','Hitter Edge','hitter','hitters','logs',20);
+  add(filterRows(appState.streakingHitters),'Hit Streak Edge','Streak Edge','hitter','hitters','logs',20);
+  add(filterRows(appState.prevKs),'Team Strikeout Trend','Team K Trend','team','teams','teamks',12,false);
+  add(filterRows(appState.prevHits),'Team Hits Trend','Team Hit Trend','team','teams','players',12,false);
   const activeFilter=boardFilter(); let filtered=rows;
   if(activeFilter==='pitchers') filtered=rows.filter(r=>r.group==='pitcher');
   if(activeFilter==='hitters') filtered=rows.filter(r=>r.group==='hitter');
   if(activeFilter==='live') filtered=rows.filter(r=>r.category==='live');
   if(activeFilter==='h2h') filtered=rows.filter(r=>r.category==='h2h');
+  if(activeFilter==='teams') filtered=rows.filter(r=>r.category==='teams');
   if(activeFilter==='watchlist') filtered=rows.filter(r=>r.row&&rowIsFollowed(r.row));
   filtered.sort((a,b)=>b.score-a.score || String(a.row.name||'').localeCompare(String(b.row.name||'')));
-  filtered.forEach((item,index)=>item.id='edge_'+index+'_'+String(item.row.personId));
-  return filtered.slice(0,30);
+  filtered.forEach((item,index)=>item.id='edge_'+index+'_'+(item.row.personId?String(item.row.personId):'team_'+String(item.row.teamId||item.row.name).replace(/[^a-z0-9]+/gi,'_')));
+  return filtered.slice(0,60);
 }
 function rowIsFollowed(row){ return row&&row.personId&&isFollowed(row.personId); }
 function boardFollowButton(item){ if(!item||!item.row||!item.row.personId) return ''; const followed=isFollowed(item.row.personId); const index=edgeBoardStore.findIndex(x=>x.id===item.id); return '<button class="follow-btn '+(followed?'active':'')+'" onclick="event.stopPropagation(); toggleFollow(edgeBoardStore['+index+'].row); renderEdgeTerminal();">'+(followed?'⭐ Following':'⭐ Tap to Follow')+'</button>'; }
-function boardProfileButton(item){ const profileId=registerProfile(item.row,item.source); return '<button class="profile-btn" onclick="event.stopPropagation(); openProfile('+profileId+')">Profile</button>'; }
-function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' active':''; return '<tr class="edge-row'+active+'" onclick="openEdgeDrawer(\''+h(item.id)+'\')">'+
+function boardProfileButton(item){ if(!item||!item.row||!item.row.personId) return ''; const profileId=registerProfile(item.row,item.source); return '<button class="profile-btn" onclick="event.stopPropagation(); openProfile('+profileId+')">Profile</button>'; }
+function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' active':''; const isTeam=item.group==='team'; return '<tr class="edge-row'+active+'" onclick="openEdgeDrawer(\''+h(item.id)+'\')">'+
   '<td><span class="edge-rank-pill">'+(index+1)+'</span></td>'+
-  '<td><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(item.row.team||'')+'</div></div></div></td>'+
+  '<td><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(isTeam?(item.source||'Team trend'):(item.row.team||''))+'</div></div></div></td>'+
   '<td><span class="edge-type-pill">'+h(item.type)+'</span></td>'+
-  '<td>'+h(item.game||'Today')+'</td>'+
+  '<td>'+h(item.game||item.row.game||item.row.status||'Today')+'</td>'+
   '<td class="edge-score-cell">'+h(item.score)+'</td>'+
   '<td><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></td>'+
   '<td><div class="edge-signal">'+h(item.signal)+'</div></td>'+
   '</tr>'; }
 function renderTopEdgeCards(){ const el=document.getElementById('boardTopEdges'); if(!el) return; const top=edgeBoardStore.slice(0,3); if(!top.length){ el.innerHTML='<div class="loading">Top edges will load once today’s data arrives.</div>'; return; } el.innerHTML=top.map((item,index)=>'<article class="top-edge-card" onclick="openEdgeDrawer(\''+h(item.id)+'\')"><div class="top-edge-rank">'+(index+1)+'</div><div class="top-edge-score">'+h(item.score)+'<span>Edge</span></div><div class="top-edge-player">'+h(item.row.name)+'</div><div class="top-edge-meta">'+h(item.type)+' · '+h(item.game||item.row.team||'Today')+'</div><div class="top-edge-signal">'+h(item.signal)+'</div></article>').join(''); }
-function renderBoardSnapshot(){ const el=document.getElementById('boardSnapshot'); if(!el) return; const all=buildUnifiedEdgeRows(); const live=all.filter(x=>x.category==='live').length; const pitchers=all.filter(x=>x.group==='pitcher').length; const hitters=all.filter(x=>x.group==='hitter').length; el.innerHTML='<div class="snapshot-tile"><div class="snapshot-value">'+all.length+'</div><div class="snapshot-label">Edges</div></div><div class="snapshot-tile"><div class="snapshot-value">'+live+'</div><div class="snapshot-label">Live</div></div><div class="snapshot-tile"><div class="snapshot-value">'+pitchers+'</div><div class="snapshot-label">Pitchers</div></div><div class="snapshot-tile"><div class="snapshot-value">'+hitters+'</div><div class="snapshot-label">Hitters</div></div>'; }
+function renderBoardSnapshot(){ const el=document.getElementById('boardSnapshot'); if(!el) return; const active=appState.edgeBoardFilter; appState.edgeBoardFilter='all'; const all=buildUnifiedEdgeRows(); appState.edgeBoardFilter=active; const live=all.filter(x=>x.category==='live').length; const pitchers=all.filter(x=>x.group==='pitcher').length; const hitters=all.filter(x=>x.group==='hitter').length; const teams=all.filter(x=>x.group==='team').length; el.innerHTML='<div class="snapshot-tile"><div class="snapshot-value">'+all.length+'</div><div class="snapshot-label">Signals</div></div><div class="snapshot-tile"><div class="snapshot-value">'+live+'</div><div class="snapshot-label">Live</div></div><div class="snapshot-tile"><div class="snapshot-value">'+pitchers+'</div><div class="snapshot-label">Pitchers</div></div><div class="snapshot-tile"><div class="snapshot-value">'+(hitters+teams)+'</div><div class="snapshot-label">Hitters/Teams</div></div>'; }
 function renderEdgeBoard(){ const body=document.getElementById('edgeBoardBody'); if(!body) return; edgeBoardStore=buildUnifiedEdgeRows(); document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===boardFilter())); if(!edgeBoardStore.length){ body.innerHTML='<tr><td colspan="7"><div class="loading">No edge rows are loaded yet. Live data may still be loading, or there may be no qualifying games in this filter.</div></td></tr>'; renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(null); return; } if(!activeEdgeRowId || !edgeBoardStore.some(item=>item.id===activeEdgeRowId)) activeEdgeRowId=edgeBoardStore[0].id; body.innerHTML=edgeBoardStore.map(edgeRowHtml).join(''); renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(edgeBoardStore.find(item=>item.id===activeEdgeRowId)); }
 function openEdgeDrawer(id){ activeEdgeRowId=id; renderEdgeBoard(); const drawer=document.getElementById('edgeDrawerContent'); if(drawer && window.innerWidth<980) drawer.scrollIntoView({behavior:'smooth',block:'start'}); }
-function renderEdgeDrawer(item){ const el=document.getElementById('edgeDrawerContent'); if(!el) return; if(!item){ el.innerHTML='<div class="drawer-empty">Select a player from the board to open the full read.</div>'; return; } const row=item.row; const detail=buildDetails(row,item.detailType)||''; const report=item.group==='pitcher'?pitcherReportHtml(row,item.source):''; el.innerHTML='<div class="drawer-player-head"><img class="drawer-logo" src="'+logo(row.teamId)+'"><div><div class="drawer-name">'+h(row.name)+'</div><div class="drawer-meta">'+h(item.type)+' | '+h(row.team||'')+(item.game?' · '+h(item.game):'')+'</div></div><div class="drawer-score">'+h(item.score)+'<span>Edge</span></div></div>'+
-  '<div class="drawer-action-row">'+boardFollowButton(item)+boardProfileButton(item)+'</div>'+
+function renderEdgeDrawer(item){ const el=document.getElementById('edgeDrawerContent'); if(!el) return; if(!item){ el.innerHTML='<div class="drawer-empty">Select a player or team signal from the board to open the full read.</div>'; return; } const row=item.row; const detail=buildDetails(row,item.detailType)||''; const report=item.group==='pitcher'?pitcherReportHtml(row,item.source):''; const actions=boardFollowButton(item)+boardProfileButton(item); el.innerHTML='<div class="drawer-player-head"><img class="drawer-logo" src="'+logo(row.teamId)+'"><div><div class="drawer-name">'+h(row.name)+'</div><div class="drawer-meta">'+h(item.type)+' | '+h(item.group==='team'?(item.source||'Team trend'):(row.team||''))+(item.game?' · '+h(item.game):'')+'</div></div><div class="drawer-score">'+h(item.score)+'<span>Edge</span></div></div>'+
+  (actions?'<div class="drawer-action-row">'+actions+'</div>':'')+
   '<div class="drawer-section"><div class="drawer-section-title">Primary Read</div><div class="drawer-section-copy">'+h(boardPrimaryRead(item))+'</div></div>'+
   '<div class="drawer-section"><div class="drawer-section-title">Evidence</div><div class="drawer-section-copy">'+h(boardEvidence(item))+'</div></div>'+
   '<div class="drawer-section"><div class="drawer-section-title">H2H Signal</div><div class="drawer-section-copy">'+h(boardH2HLine(item))+'</div></div>'+
@@ -932,6 +971,22 @@ function renderBoardLiveFeed(){ const el=document.getElementById('boardLiveFeed'
 function renderBoardWatchlist(){ const el=document.getElementById('boardWatchlist'); if(!el) return; const list=appState.followedPlayers||[]; if(!list.length){ el.innerHTML='<div class="watch-chip"><div></div><div><div class="watch-title">No followed players yet</div><div class="watch-copy">Tap ⭐ Tap to Follow on a board row or drawer.</div></div></div>'; return; } el.innerHTML=list.map(p=>'<div class="watch-chip"><img src="'+logo(p.teamId)+'"><div><div class="watch-title">'+h(p.name)+'</div><div class="watch-copy">'+h(p.team||'')+'</div></div><button class="mini-remove" onclick="removeFollow('+h(p.personId)+')">Remove</button></div>').join(''); }
 function renderEdgeTerminal(){ renderEdgeBoard(); renderBoardLiveFeed(); renderBoardWatchlist(); }
 
+
+function findBoardItemForRow(row,sourceHint){ if(!row) return null; const source=sourceHint||''; return (edgeBoardStore||[]).find(item=> item.row===row || (row.personId&&item.row&&String(item.row.personId)===String(row.personId)&&(!source||item.source===source)) || (!row.personId&&row.teamId&&item.row&&String(item.row.teamId)===String(row.teamId)&&(!source||item.source===source)) ); }
+function dockItemHtml(row,label,sub,score,sourceHint){ const item=findBoardItemForRow(row,sourceHint); const onclick=item?"openEdgeDrawer('"+h(item.id)+"')":(row&&row.personId?"openProfile("+registerProfile(row,label)+")":""); return '<div class="dock-item" '+(onclick?'onclick="'+onclick+'"':'')+'><img class="dock-logo" src="'+logo(row&&row.teamId)+'"><div><div class="dock-main">'+h(label)+'</div><div class="dock-sub">'+h(sub)+'</div></div><div class="dock-score">'+h(score)+'<span>signal</span></div></div>'; }
+function renderDataDock(){
+  const arms=document.getElementById('dockArms'), bats=document.getElementById('dockBats'), h2h=document.getElementById('dockH2H'), games=document.getElementById('dockGames');
+  if(!arms||!bats||!h2h||!games) return;
+  const armRows=[]; filterRows(appState.pitcherH2H).slice(0,3).forEach(p=>armRows.push(dockItemHtml(p,p.name,p.qualifiedGames+' 8+ K H2H games vs '+p.opponent,p.bestKs+' K','Pitcher H2H Edge'))); filterRows(appState.hotPitchers).slice(0,3).forEach(p=>armRows.push(dockItemHtml(p,p.name,p.status+' · '+(p.whiffPct||'0.0')+'% whiff',p.value+' K','Current Form Edge'))); filterRows(appState.liveKs).filter(p=>Number(p.value)>=1).slice(0,3).forEach(p=>armRows.push(dockItemHtml(p,p.name,p.team+' · '+p.status,p.value+' K','Live K Pace'))); filterRows(appState.prevKs).slice(0,3).forEach(t=>armRows.push(dockItemHtml(t,t.name,t.value+' team Ks · '+(t.whiffPct||'0.0')+'% whiff',t.value,'Team Strikeout Trend')));
+  const batRows=[]; filterRows(appState.batterH2H).slice(0,3).forEach(b=>batRows.push(dockItemHtml(b,b.name,b.hits+' H · '+b.hr+' HR vs '+b.pitcherName,b.hits+' H','Batter H2H Edge'))); filterRows(appState.liveHits).filter(p=>Number(p.value)>=1).slice(0,3).forEach(p=>batRows.push(dockItemHtml(p,p.name,p.team+' · '+p.status+(p.lastHitLabel?' · '+p.lastHitLabel:''),p.value+' H','Live Hit Edge'))); filterRows(appState.hotHitters).slice(0,3).forEach(p=>batRows.push(dockItemHtml(p,p.name,p.team+' · last 4 completed game days',p.value+' H','Hot Bat Edge'))); filterRows(appState.streakingHitters).slice(0,3).forEach(p=>batRows.push(dockItemHtml(p,p.name,p.team+' · hit streak',p.value+' G','Hit Streak Edge'))); filterRows(appState.prevHits).slice(0,3).forEach(t=>batRows.push(dockItemHtml(t,t.name,t.status+' · previous completed game day',t.value+' H','Team Hits Trend')));
+  const h2hRows=[]; filterRows(appState.pitcherH2H).slice(0,5).forEach(p=>h2hRows.push(dockItemHtml(p,p.name+' vs '+p.opponent,p.qualifiedGames+' qualifying 8+ K games · best '+p.bestKs+' K',p.qualifiedGames,'Pitcher H2H Edge'))); filterRows(appState.batterH2H).slice(0,5).forEach(b=>h2hRows.push(dockItemHtml(b,b.name+' vs '+b.pitcherName,b.hits+' H · '+b.hr+' HR in past matchups',b.hr+' HR','Batter H2H Edge')));
+  const gameRows=[]; (appState.scoreGames||[]).filter(gameMatchesFilter).slice(0,8).forEach(g=>{ const away=teamName(g.teams.away.team), home=teamName(g.teams.home.team); const label=shortTeamName(away)+' @ '+shortTeamName(home); const sub=tickerStatus(g); const score=g.status.abstractGameState==='Live'?scoreValue(g,'away')+'-'+scoreValue(g,'home'):computeWatchFactor(g)+'/100'; gameRows.push('<div class="dock-item" onclick="openGameHub('+h(g.gamePk)+')"><img class="dock-logo" src="'+logo(g.teams.home.team.id)+'"><div><div class="dock-main">'+h(label)+'</div><div class="dock-sub">'+h(sub)+'</div></div><div class="dock-score">'+h(score)+'<span>'+(g.status.abstractGameState==='Live'?'score':'watch')+'</span></div></div>'); });
+  arms.innerHTML=armRows.length?armRows.slice(0,10).join(''):'<div class="loading">Pitcher and team K data will appear once the feeds finish loading.</div>';
+  bats.innerHTML=batRows.length?batRows.slice(0,10).join(''):'<div class="loading">Hitter and team hit data will appear once the feeds finish loading.</div>';
+  h2h.innerHTML=h2hRows.length?h2hRows.slice(0,10).join(''):'<div class="loading">H2H edges will appear when today\'s probables and past logs qualify.</div>';
+  games.innerHTML=gameRows.length?gameRows.join(''):'<div class="loading">Today\'s games will appear after the scoreboard loads.</div>';
+}
+
 function renderAllData(){
   profileStore=[];
   renderTeamFilters();
@@ -939,6 +994,7 @@ function renderAllData(){
   renderJustHappened();
   renderWatchlist();
   renderEdgeTerminal();
+  renderDataDock();
 }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
