@@ -597,7 +597,7 @@
         </div>
         <div>
           <h1>Diamond <span>Pulse</span></h1>
-          <div class="brand-sub">TRUE OPTION 4 REBUILD · Edge board + player drawer</div>
+          <div class="brand-sub">OPTION 4 ACTIVE EDGE FIX · Edge board + player drawer</div>
         </div>
       </div>
 
@@ -712,7 +712,9 @@ let profileStore = [];
 let pitchCodeMapCache = null;
 let gameFeedCache = {};
 let recentBoxscoreCache = {};
-let appState = { selectedTeamId:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[] };
+let appState = { selectedTeamId:"all", edgeBoardFilter:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[] };
+let edgeBoardStore = [];
+let activeEdgeRowId = null;
 
 function h(value){ return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
 function val(value){ return value === undefined || value === null || value === "" ? "-" : value; }
