@@ -608,6 +608,7 @@
     /* No-blank safety: the rebuilt shell must stay visible even if live data fails. */
     .shell { display: block !important; opacity: 1 !important; visibility: visible !important; }
     .fatal-card { margin: 12px 0; padding: 14px; border-radius: 18px; background: rgba(127,29,29,.34); border: 1px solid rgba(248,113,113,.38); color: #fecaca; font-size: 13px; line-height: 1.45; }
+    .page-nav-link { text-decoration: none; display: inline-flex; align-items: center; }
     .fallback-board-row { opacity: .92; }
 
   </style>
@@ -643,7 +644,7 @@
         </div>
         <div>
           <h1>Diamond <span>Pulse</span></h1>
-          <div class="brand-sub">Live MLB Model Updates · Edge Board + Signal Drawer</div>
+          <div class="brand-sub">Daily Pulse · Save the slate to Daily Recap</div>
         </div>
       </div>
 
@@ -652,7 +653,9 @@
       </div>
 
       <div class="top-actions">
-        <div class="live-pill"><span class="live-dot"></span>LIVE MLB MODEL</div>
+        <a class="stadium-toggle page-nav-link" href="index.html">Main Board</a>
+        <a class="stadium-toggle page-nav-link" href="daily-recap.html">Daily Recap</a>
+        <div class="live-pill"><span class="live-dot"></span>DAILY PULSE</div>
         <div id="lastUpdated" class="refresh">Loading live data...</div>
         <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">Stadium Mode</button>
       </div>
@@ -665,9 +668,9 @@
 
     <section class="terminal-hero">
       <article class="hero-card">
-        <div class="eyebrow">Live MLB Model Updates</div>
-        <h2 class="hero-title">Baseball insights backed by <span>live data.</span></h2>
-        <p class="hero-copy">The Diamond Pulse turns live games, pitching matchups, hot bats, team trends, and head-to-head history into clear MLB storylines.</p>
+        <div class="eyebrow">Daily Pulse</div>
+        <h2 class="hero-title">Daily Pulse <span>slate board.</span></h2>
+        <p class="hero-copy">This page is where you build the Daily Pulse. Review the live board, then save today’s slate so the Daily Recap page can load the same snapshot from any device.</p>
         <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
       </article>
 
@@ -743,9 +746,9 @@
     <section class="daily-save-panel">
       <div class="daily-save-head">
         <div>
-          <div class="panel-kicker">Daily Recap</div>
-          <h2 class="panel-title">Saved recap workspace</h2>
-          <div class="panel-sub">Save today’s full slate directly into the Daily Recap workspace. Load it from any device later, then copy the recap prompt when you are ready to write the post.</div>
+          <div class="panel-kicker">Daily Pulse Save</div>
+          <h2 class="panel-title">Send today’s slate to Daily Recap</h2>
+          <div class="panel-sub">This is the save station for the Daily Pulse page. Press Save to Daily Recap here, then open the separate Daily Recap page from any device to load the same saved slate.</div>
         </div>
         <div class="daily-save-actions">
           <button class="daily-save-btn primary" onclick="saveDailyPulseForRecap()">Save to Daily Recap</button>
@@ -765,7 +768,7 @@
             <a class="daily-save-btn ghost" href="daily-recap.html">Open Daily Recap Page</a>
             <button class="daily-save-btn" onclick="loadDailyPulseFromCloud()">Reload Latest</button>
           </div>
-          <div id="dailyPulseSaveStatus" class="daily-save-status">Daily Recap cloud save is ready once the Cloudflare Worker route is connected.</div>
+          <div id="dailyPulseSaveStatus" class="daily-save-status">Daily Pulse cloud save is ready once the Cloudflare Worker and KV binding are connected.</div>
         </article>
         <article class="daily-save-card">
           <div class="daily-save-label">Saved Daily Recap</div>
