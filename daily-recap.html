@@ -20,7 +20,7 @@
         <div>
           <div class="kicker">Diamond Pulse</div>
           <h1 class="title">Daily Recap</h1>
-          <div class="sub">Load the saved slate from the Daily Pulse board on any device, review the top signals, then copy the recap prompt when it is time to write.</div>
+          <div class="sub">Load the saved Daily Pulse posts from any device, review the Round the Mound, Batters Edge, Live Pulse, and Team Trend copy, then use it for your recap.</div>
         </div>
       </div>
       <div class="actions">
@@ -100,7 +100,7 @@ function snapshotToPrompt(snapshot){
   if(!snapshot) return '';
   const s=snapshot.summary||{};
   const lines=[];
-  lines.push('Create a Diamond Pulse daily recap using the generated Daily Pulse posts below. Keep it professional, evidence-based, and not hype.');
+  lines.push('Create a Diamond Pulse daily recap using the generated Daily Pulse posts below. Keep the original buckets clear: Round the Mound for pitchers, Batters Edge for hitters, Live Pulse for in-game movement, and Team Trend for team context. Keep it professional, evidence-based, and not hype.');
   lines.push('Date: '+(snapshot.date||''));
   lines.push('Saved at: '+(snapshot.savedAt||''));
   lines.push('Saved post count: '+((snapshot.generatedPosts||[]).length||s.posts||0));
