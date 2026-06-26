@@ -1,305 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Pulse Recap | The Diamond Pulse</title>
-<style>
-:root{--bg:#07111f;--panel:rgba(255,255,255,.055);--border:rgba(255,255,255,.12);--text:#f4f7fb;--muted:#91a4bd;--green:#2ff58a;--orange:#ffb347;--red:#ff5f6d;--blue:#3aa7ff}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(47,245,138,.14),transparent 32%),radial-gradient(circle at top right,rgba(58,167,255,.12),transparent 34%),var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;padding:24px}.wrap{max-width:1100px;margin:auto}a{color:var(--green);text-decoration:none;font-weight:900}.hero,.card{background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:18px;box-shadow:0 18px 45px rgba(0,0,0,.24)}.hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}h1{margin:0;font-size:clamp(38px,7vw,72px);line-height:1;letter-spacing:-2px}h2{margin:0 0 14px;font-size:24px}.muted{color:var(--muted)}button{border:0;border-radius:999px;background:var(--green);color:#06101d;font-weight:900;padding:12px 18px;cursor:pointer;margin-right:8px;margin-top:8px}button.secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.stat{font-size:36px;font-weight:950;color:var(--green);line-height:1}.label{color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;margin-top:7px;letter-spacing:.06em}.player-card{background:rgba(255,255,255,.045);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px}.player-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.player-name{font-size:22px;font-weight:950;line-height:1.05}.score{min-width:76px;text-align:center;border-radius:999px;padding:9px 12px;background:rgba(47,245,138,.12);border:1px solid rgba(47,245,138,.3);color:var(--green);font-weight:950;font-family:monospace}.grade{display:inline-block;border-radius:999px;padding:8px 12px;font-weight:950;margin-top:10px;text-transform:uppercase;letter-spacing:.04em}.smash{background:rgba(47,245,138,.14);border:1px solid rgba(47,245,138,.35);color:var(--green)}.hit{background:rgba(58,167,255,.12);border:1px solid rgba(58,167,255,.32);color:#93cfff}.push{background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.32);color:var(--orange)}.miss{background:rgba(255,95,109,.12);border:1px solid rgba(255,95,109,.32);color:#ffb4bc}.statline{color:var(--muted);margin-top:8px;font-size:14px;line-height:1.45}.reason{color:#d1fae5;margin-top:10px;line-height:1.45;font-size:14px}textarea{width:100%;min-height:330px;background:#020617;color:#d1fae5;border:1px solid var(--border);border-radius:18px;padding:16px;font-size:15px;line-height:1.45;white-space:pre-wrap}.empty{color:var(--muted);padding:18px;border:1px dashed var(--border);border-radius:16px;background:rgba(255,255,255,.025)}@media(max-width:900px){body{padding:14px}.grid{grid-template-columns:1fr}.player-top{display:block}.score{display:inline-block;margin-top:12px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diamond Pulse Daily Recap</title>
+  <style>
+    :root{--bg:#020617;--panel:#0f172a;--line:rgba(148,163,184,.20);--lime:#bef264;--mint:#86efac;--text:#f8fafc;--muted:#94a3b8;--red:#f87171;--blue:#93c5fd;}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 20% 10%,rgba(34,197,94,.18),transparent 28%),radial-gradient(circle at 85% 20%,rgba(14,165,233,.13),transparent 24%),linear-gradient(180deg,#020617,#020617 42%,#07111f);color:var(--text);min-height:100vh;}
+    .wrap{max-width:1180px;margin:0 auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.brand{display:flex;gap:14px;align-items:center}.logo{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,var(--lime),#22c55e);display:grid;place-items:center;color:#052e16;font-weight:1000;box-shadow:0 0 34px rgba(190,242,100,.24)}
+    .kicker{color:var(--lime);font-weight:950;text-transform:uppercase;letter-spacing:.14em;font-size:11px}.title{font-size:clamp(28px,5vw,52px);margin:6px 0 5px;line-height:.96;font-weight:1000}.sub{color:var(--muted);max-width:720px;line-height:1.55}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid rgba(134,239,172,.25);background:rgba(15,23,42,.82);color:#d1fae5;border-radius:999px;padding:11px 13px;font-weight:950;text-transform:uppercase;letter-spacing:.06em;font-size:11px;cursor:pointer;text-decoration:none}.btn.primary{background:var(--lime);color:#111827;border-color:var(--lime)}.btn:hover{transform:translateY(-1px)}
+    .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}.card{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(15,23,42,.86),rgba(2,6,23,.76));box-shadow:0 24px 70px rgba(0,0,0,.35);padding:18px}.label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);font-weight:950;margin-bottom:9px}.muted{color:var(--muted);line-height:1.5;font-size:13px}.input-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin-top:12px}.input{width:100%;border:1px solid rgba(134,239,172,.22);background:rgba(2,6,23,.74);color:var(--text);border-radius:999px;padding:12px 13px;outline:none}.status{margin-top:12px;color:#bbf7d0;font-size:13px;line-height:1.45}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.62);border-radius:18px;padding:12px}.num{font-size:28px;font-weight:1000;color:var(--lime);line-height:1}.cap{font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:950;color:#9ca3af;margin-top:7px}.edge{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.48);border-radius:18px;padding:12px;margin:9px 0}.rank{width:32px;height:32px;border-radius:999px;background:rgba(190,242,100,.17);display:grid;place-items:center;color:var(--lime);font-weight:1000}.name{font-weight:1000}.signal{color:#94a3b8;font-size:12px;margin-top:3px;line-height:1.35}.score{font-size:20px;font-weight:1000;color:var(--lime);text-align:right}.score span{display:block;color:#9ca3af;font-size:9px;letter-spacing:.09em;text-transform:uppercase}.prompt{white-space:pre-wrap;background:#020617;border:1px solid rgba(148,163,184,.18);border-radius:18px;padding:14px;color:#e5e7eb;font-size:12px;line-height:1.55;max-height:440px;overflow:auto}.section-title{font-size:18px;font-weight:1000;margin:8px 0 10px}.mini{border-top:1px solid rgba(148,163,184,.12);padding-top:10px;margin-top:10px}@media(max-width:900px){.top,.grid{grid-template-columns:1fr;display:grid}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.input-row{grid-template-columns:1fr}.wrap{padding:16px}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-<p><a href="index.html">← Back to Diamond Pulse</a> · <a href="daily-pulse.html">Open Daily Pulse Generator</a></p>
-<section class="hero"><div><h1>📊 Daily Pulse Recap</h1><p class="muted">Grade the saved Batters Edge and Round the Mound players after games finish.</p></div><div><button onclick="loadRecap()">Refresh Recap</button><button class="secondary" onclick="copyRecapPost()">Copy Recap Post</button></div></section>
-<section class="grid"><div class="card"><div id="recapDate" class="stat">-</div><div class="label">Saved Pulse Date</div></div><div class="card"><div id="hitRate" class="stat">-</div><div class="label">Hit Rate</div></div><div class="card"><div id="smashCount" class="stat">-</div><div class="label">Smashes</div></div></section>
-<section class="card"><h2>⚡ Batters Edge Results</h2><div id="batterResults">Loading...</div></section>
-<section class="card"><h2>🎯 Round the Mound Results</h2><div id="pitcherResults">Loading...</div></section>
-<section class="card">
-<h2>X Daily Recap Post</h2>
-<textarea id="recapPost" readonly>Run the recap first.</textarea>
-</section>
-
-<section class="card">
-<h2>🔥 Weekly Hottest Player Post</h2>
-<p class="muted">Use this once per week, not every day.</p>
-<button class="secondary" onclick="copyWeeklyPost()">Copy Weekly Post</button>
-<textarea id="weeklyPost" readonly>Weekly hottest player post will appear after the recap runs.</textarea>
-</section>
-</div>
-<script>
-const MLB="https://statsapi.mlb.com/api/v1";function currentSeason(){return new Date().getFullYear()}function h(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}async function getJson(u){const s=u.includes("?")?"&":"?";const r=await fetch(u+s+"_="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("Could not load "+u);return await r.json()}function saved(){try{return JSON.parse(localStorage.getItem("diamondPulseSavedDailyPulse")||"null")}catch{return null}}
-async function logs(id,group){try{const d=await getJson(MLB+"/people/"+id+"/stats?stats=gameLog&group="+group+"&season="+currentSeason());const out=[];(d.stats||[]).forEach(b=>(b.splits||[]).forEach(s=>out.push({date:s.date,opponent:s.opponent?.name||"",stat:s.stat||{}})));return out.sort((a,b)=>new Date(b.date)-new Date(a.date))}catch{return[]}}
-function pick(gs,date){
-  return gs.find(g => g.date === date) || null;
-}function gradeB(g){if(!g)return{grade:"PENDING",cls:"push",text:"Pending — no same-date game log found yet.",hit:false,smash:false};const hits=Number(g.stat.hits||0),hr=Number(g.stat.homeRuns||0),rbi=Number(g.stat.rbi||0),runs=Number(g.stat.runs||0),tb=Number(g.stat.totalBases||0),bb=Number(g.stat.baseOnBalls||0);if(hr>=1||hits>=2||tb>=4)return{grade:"SMASH",cls:"smash",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:true,smash:true};if(hits>=1||rbi>=1||runs>=1||bb>=2)return{grade:"HIT",cls:"hit",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${runs} R`,hit:true,smash:false};return{grade:"MISS",cls:"miss",text:`${hits} H, ${hr} HR, ${rbi} RBI, ${tb} TB`,hit:false,smash:false}}
-function ip(v){if(!v)return 0;const [w,p]=String(v).split(".");let i=Number(w||0);if(p==="1")i+=1/3;if(p==="2")i+=2/3;return i}function gradeP(g){if(!g)return{grade:"PENDING",cls:"push",text:"Pending — no same-date game log found yet.",hit:false,smash:false};const ks=Number(g.stat.strikeOuts||0),er=Number(g.stat.earnedRuns||0),inn=ip(g.stat.inningsPitched),txt=g.stat.inningsPitched||"0.0";if(ks>=8&&er<=2)return{grade:"SMASH",cls:"smash",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:true};if(ks>=6||(inn>=6&&er<=2))return{grade:"HIT",cls:"hit",text:`${txt} IP, ${ks} K, ${er} ER`,hit:true,smash:false};if(ks>=5&&er<=3)return{grade:"PUSH",cls:"push",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false};return{grade:"MISS",cls:"miss",text:`${txt} IP, ${ks} K, ${er} ER`,hit:false,smash:false}}
-function name(p){return p.name||p.player_name||p.fullName||"Player"}async function bres(p,d){const g=pick(await logs(p.id,"hitting"),d);return{type:"batter",player:p,game:g,grade:gradeB(g)}}async function pres(p,d){const g=pick(await logs(p.id,"pitching"),d);return{type:"pitcher",player:p,game:g,grade:gradeP(g)}}function render(r){const p=r.player,g=r.grade,gm=r.game,opp=gm?.opponent?"vs "+gm.opponent:(p.game||"");return `<div class="player-card"><div class="player-top"><div><div class="player-name"><a href="player.html?id=${h(p.id)}&reason=daily-recap">${h(name(p))}</a></div><div class="muted">${h(p.team||"")} · ${h(opp)}</div></div><div class="score">${h(p.score||"-")}</div></div><span class="grade ${h(g.cls)}">${h(g.grade)}</span><div class="reason">Result: ${h(g.text)}</div><div class="statline">Original reason: ${h(p.reason||(p.signals||[]).join(" • ")||"Daily Pulse edge")}</div></div>`}
-function post(date,bs,ps,rate,sm){const bl=bs.map(r=>`${r.grade.grade==="SMASH"?"✅🔥":r.grade.grade==="HIT"?"✅":r.grade.grade==="PUSH"?"➖":"❌"} ${name(r.player)}: ${r.grade.text} — ${r.grade.grade}`).join("\n");const pl=ps.map(r=>`${r.grade.grade==="SMASH"?"✅🔥":r.grade.grade==="HIT"?"✅":r.grade.grade==="PUSH"?"➖":"❌"} ${name(r.player)}: ${r.grade.text} — ${r.grade.grade}`).join("\n");return `📊 DIAMOND PULSE RECAP\n${date}\n\n⚡ Batters Edge\n${bl||"No batter results yet."}\n\n🎯 Round the Mound\n${pl||"No pitcher results yet."}\n\nHit Rate: ${rate}\nSmashes: ${sm}\n\nFull board ⬇️\nhttps://thediamondpulse.com`}
-
-function getTracker(){
-  try {
-    return JSON.parse(localStorage.getItem("diamondPulsePerformanceTracker") || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function saveTracker(tracker){
-  localStorage.setItem("diamondPulsePerformanceTracker", JSON.stringify(tracker));
-}
-
-function updateTracker(date, batterResults, pitcherResults){
-  const tracker = getTracker();
-
-  tracker[date] = {
-    date,
-    saved_at: new Date().toISOString(),
-    batters: batterResults
-      .filter(r => r.grade.grade !== "PENDING")
-      .map(r => ({
-        id: r.player.id,
-        name: name(r.player),
-        grade: r.grade.grade,
-        hit: r.grade.hit,
-        smash: r.grade.smash,
-        result: r.grade.text,
-        score: r.player.score || null
-      })),
-    pitchers: pitcherResults
-      .filter(r => r.grade.grade !== "PENDING")
-      .map(r => ({
-        id: r.player.id,
-        name: name(r.player),
-        grade: r.grade.grade,
-        hit: r.grade.hit,
-        smash: r.grade.smash,
-        result: r.grade.text,
-        score: r.player.score || null
-      }))
-  };
-
-  saveTracker(tracker);
-  return tracker;
-}
-
-function trackerSummary(tracker){
-  const days = Object.values(tracker || {}).sort((a,b) => String(b.date).localeCompare(String(a.date)));
-  const allBatters = days.flatMap(day => day.batters || []);
-  const allPitchers = days.flatMap(day => day.pitchers || []);
-  const all = allBatters.concat(allPitchers);
-
-  const count = list => list.filter(x => x.grade !== "PENDING").length;
-  const hits = list => list.filter(x => x.hit).length;
-  const smashes = list => list.filter(x => x.smash).length;
-  const rate = list => {
-    const c = count(list);
-    return c ? Math.round((hits(list) / c) * 100) + "%" : "-";
-  };
-
-  return {
-    days: days.length,
-    allCount: count(all),
-    allHits: hits(all),
-    allSmashes: smashes(all),
-    allRate: rate(all),
-    batterCount: count(allBatters),
-    batterHits: hits(allBatters),
-    batterSmashes: smashes(allBatters),
-    batterRate: rate(allBatters),
-    pitcherCount: count(allPitchers),
-    pitcherHits: hits(allPitchers),
-    pitcherSmashes: smashes(allPitchers),
-    pitcherRate: rate(allPitchers),
-    recentDays: days.slice(0, 7)
-  };
-}
-
-function renderPerformanceTracker(tracker){
-  const s = trackerSummary(tracker);
-
-  document.getElementById("performanceTracker").innerHTML = `
-    <div class="grid">
-      <div class="card">
-        <div class="stat">${h(s.allRate)}</div>
-        <div class="label">Overall Hit Rate</div>
-        <div class="statline">${h(s.allHits)} hits / ${h(s.allCount)} graded · ${h(s.allSmashes)} smashes</div>
-      </div>
-
-      <div class="card">
-        <div class="stat">${h(s.batterRate)}</div>
-        <div class="label">Batters Edge</div>
-        <div class="statline">${h(s.batterHits)} hits / ${h(s.batterCount)} graded · ${h(s.batterSmashes)} smashes</div>
-      </div>
-
-      <div class="card">
-        <div class="stat">${h(s.pitcherRate)}</div>
-        <div class="label">Round the Mound</div>
-        <div class="statline">${h(s.pitcherHits)} hits / ${h(s.pitcherCount)} graded · ${h(s.pitcherSmashes)} smashes</div>
-      </div>
-    </div>
-
-    <div class="statline">Tracked Days: ${h(s.days)}</div>
-  `;
-}
-
-function getWeeklyHotPlayer(tracker){
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 7);
-
-  const playerMap = {};
-
-  Object.values(tracker || {}).forEach(day => {
-    const dayDate = new Date(day.date + "T12:00:00");
-    if (dayDate < cutoff) return;
-
-    const players = []
-      .concat(day.batters || [])
-      .concat(day.pitchers || []);
-
-    players.forEach(p => {
-      const id = String(p.id || p.name);
-      if (!playerMap[id]) {
-        playerMap[id] = {
-          id,
-          name: p.name,
-          appearances: 0,
-          hits: 0,
-          smashes: 0,
-          misses: 0,
-          scoreTotal: 0,
-          results: []
-        };
-      }
-
-      playerMap[id].appearances += 1;
-      if (p.hit) playerMap[id].hits += 1;
-      if (p.smash) playerMap[id].smashes += 1;
-      if (p.grade === "MISS") playerMap[id].misses += 1;
-      playerMap[id].scoreTotal += Number(p.score || 0);
-      playerMap[id].results.push({
-        date: day.date,
-        grade: p.grade,
-        result: p.result
-      });
-    });
-  });
-
-  const players = Object.values(playerMap).map(p => {
-    p.hotScore =
-      p.hits * 10 +
-      p.smashes * 12 +
-      p.appearances * 3 -
-      p.misses * 5 +
-      Math.round(p.scoreTotal / Math.max(1, p.appearances) / 10);
-
-    p.hitRate = p.appearances ? Math.round((p.hits / p.appearances) * 100) : 0;
-    return p;
-  });
-
-  players.sort((a,b) => b.hotScore - a.hotScore);
-  return players[0] || null;
-}
-
-function renderWeeklyHotPlayer(tracker){
-  const player = getWeeklyHotPlayer(tracker);
-
-  if (!player) {
-    document.getElementById("weeklyHotPlayer").innerHTML =
-      "<div class='empty'>No weekly player results yet. Save and recap a few Daily Pulse posts first.</div>";
-    return;
-  }
-
-  document.getElementById("weeklyHotPlayer").innerHTML = `
-    <div class="player-card">
-      <div class="player-top">
+  <main class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">DP</div>
         <div>
-          <div class="player-name">${h(player.name)}</div>
-          <div class="muted">Last 7 days · ${h(player.appearances)} Daily Pulse appearances</div>
+          <div class="kicker">Diamond Pulse</div>
+          <h1 class="title">Daily Recap</h1>
+          <div class="sub">Load the saved slate from the Daily Pulse board on any device, review the top signals, then copy the recap prompt when it is time to write.</div>
         </div>
-
-        <div class="score">${h(player.hotScore)}</div>
       </div>
-
-      <span class="grade smash">HOT PLAYER</span>
-
-      <div class="reason">
-        Why: ${h(player.hits)} hits, ${h(player.smashes)} smashes, ${h(player.hitRate)}% hit rate across tracked Daily Pulse recaps.
+      <div class="actions">
+        <a class="btn" href="index.html">Back to Daily Pulse</a>
+        <button class="btn primary" onclick="loadRecap()">Load Latest</button>
+        <button class="btn" onclick="copyPrompt()">Copy Recap Prompt</button>
       </div>
+    </header>
 
-      <div class="statline">
-        Recent tracked results:
-        ${player.results.slice(-4).map(r => `${r.date}: ${r.grade} (${r.result})`).join(" · ")}
-      </div>
-    </div>
-  `;
+    <section class="grid">
+      <article class="card">
+        <div class="label">Saved recap controls</div>
+        <div class="muted">Use Load Latest for the newest saved Daily Pulse, or load a specific recap date.</div>
+        <div class="input-row">
+          <input id="recapDate" class="input" type="date" />
+          <button class="btn" onclick="loadRecap(document.getElementById('recapDate').value)">Load Date</button>
+        </div>
+        <div id="status" class="status">Ready to load the saved Daily Recap.</div>
+
+        <div id="summary"></div>
+        <div class="section-title">Top saved edges</div>
+        <div id="edges"><div class="muted">No saved recap loaded yet.</div></div>
+      </article>
+
+      <aside class="card">
+        <div class="label">Recap prompt</div>
+        <div class="muted">This prompt is built from the saved Daily Pulse snapshot so you can create the recap even if you are away from the computer that saved it.</div>
+        <div class="mini"><button class="btn primary" onclick="copyPrompt()">Copy Daily Recap Prompt</button></div>
+        <div id="prompt" class="prompt" style="margin-top:12px;">Load a saved recap first.</div>
+      </aside>
+    </section>
+  </main>
+
+<script>
+const DAILY_RECAP_API_URL = '/api/daily-recap';
+const DAILY_PULSE_SYNC_KEY = 'diamond-pulse-main';
+let currentSnapshot = null;
+function h(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function todayNY(){ try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}catch(e){return new Date().toISOString().slice(0,10);} }
+function setStatus(message){ document.getElementById('status').textContent = message; }
+function localKey(date){ return 'diamondPulseDailySave_'+(date||todayNY()); }
+function saveLocal(snapshot){ try{ localStorage.setItem(localKey(snapshot.date),JSON.stringify(snapshot)); localStorage.setItem('diamondPulseDailySave_latest',JSON.stringify(snapshot)); }catch(e){} }
+function loadLocal(date){ try{ const raw = date ? localStorage.getItem(localKey(date)) : localStorage.getItem('diamondPulseDailySave_latest'); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+async function loadRecap(date){
+  try{
+    setStatus('Loading saved Daily Recap from cloud...');
+    const url = DAILY_RECAP_API_URL + '?key=' + encodeURIComponent(DAILY_PULSE_SYNC_KEY) + (date ? '&date=' + encodeURIComponent(date) : '');
+    const res = await fetch(url,{headers:{'Accept':'application/json'}});
+    const data = await res.json().catch(()=>({ok:false,error:'Bad cloud response'}));
+    if(!res.ok || !data.ok || !data.snapshot) throw new Error(data.error || 'No cloud Daily Recap save found.');
+    currentSnapshot = data.snapshot;
+    saveLocal(currentSnapshot);
+    renderSnapshot(currentSnapshot);
+    setStatus('Loaded saved Daily Recap from '+(currentSnapshot.savedAt || currentSnapshot.date || 'latest')+'.');
+  }catch(err){
+    const local = loadLocal(date);
+    if(local){ currentSnapshot=local; renderSnapshot(local); setStatus('Cloud load failed, so this device loaded its local Daily Recap copy.'); }
+    else { setStatus(err.message || 'Could not load saved Daily Recap.'); }
+  }
 }
-
-function buildDailyTrackerPost(tracker){
-  const s = trackerSummary(tracker);
-
-  return `📈 Tracker:
-Overall: ${s.allRate}
-Batters Edge: ${s.batterRate}
-Round the Mound: ${s.pitcherRate}
-Smashes: ${s.allSmashes}
-Tracked Days: ${s.days}`;
+function renderSnapshot(snapshot){
+  const s=snapshot.summary||{};
+  document.getElementById('summary').innerHTML = '<div class="stats"><div class="stat"><div class="num">'+h(s.signals||0)+'</div><div class="cap">Signals</div></div><div class="stat"><div class="num">'+h(s.live||0)+'</div><div class="cap">Live</div></div><div class="stat"><div class="num">'+h(s.pitchers||0)+'</div><div class="cap">Pitchers</div></div><div class="stat"><div class="num">'+h((s.hitters||0)+(s.teams||0))+'</div><div class="cap">Hitters/Teams</div></div></div><div class="muted">Saved '+h(snapshot.date||'')+' · '+h(snapshot.savedAt ? new Date(snapshot.savedAt).toLocaleString() : '')+'</div>';
+  const top=(snapshot.topEdges||[]).slice(0,12);
+  document.getElementById('edges').innerHTML = top.length ? top.map(e => '<div class="edge"><div class="rank">'+h(e.rank)+'</div><div><div class="name">'+h(e.name||'Unknown')+'</div><div class="signal">'+h(e.type||'Edge')+' · '+h(e.game||'Today')+'<br>'+h(e.signal||'Saved signal')+'</div></div><div class="score">'+h(e.score||'-')+'<span>edge</span></div></div>').join('') : '<div class="muted">Saved recap has no edge rows yet.</div>';
+  document.getElementById('prompt').textContent = snapshotToPrompt(snapshot);
 }
-
-function buildWeeklyHotPlayerPost(tracker){
-  const s = trackerSummary(tracker);
-  const hot = getWeeklyHotPlayer(tracker);
-
-  return `🔥 DIAMOND PULSE HOTTEST PLAYER OF THE WEEK
-
-${hot ? `${hot.name}
-
-Why:
-• ${hot.appearances} Daily Pulse appearances
-• ${hot.hits} graded hits
-• ${hot.smashes} smashes
-• ${hot.hitRate}% hit rate
-
-Recent results:
-${hot.results.slice(-4).map(r => `${r.date}: ${r.grade} — ${r.result}`).join("\n")}` : "Not enough recap data yet."}
-
-Weekly Tracker:
-Overall: ${s.allRate}
-Batters Edge: ${s.batterRate}
-Round the Mound: ${s.pitcherRate}
-
-Full board ⬇️
-https://thediamondpulse.com`;
+function snapshotToPrompt(snapshot){
+  if(!snapshot) return '';
+  const s=snapshot.summary||{};
+  const lines=[];
+  lines.push('Create a Diamond Pulse daily recap from this saved Daily Recap snapshot. Make it sound like a professional sports-betting intelligence recap, not hype.');
+  lines.push('Date: '+(snapshot.date||''));
+  lines.push('Saved at: '+(snapshot.savedAt||''));
+  lines.push('Slate snapshot: '+(s.signals||0)+' signals, '+(s.live||0)+' live, '+(s.pitchers||0)+' pitchers, '+(s.hitters||0)+' hitters, '+(s.teams||0)+' team trends, '+(s.games||0)+' games.');
+  lines.push('');
+  lines.push('Top edges to cover:');
+  (snapshot.topEdges||[]).slice(0,10).forEach(e=>{
+    lines.push(e.rank+'. '+e.name+' — '+e.score+' edge — '+e.type+' — '+e.game+' — '+e.signal+' — confidence: '+e.confidence);
+    if(e.recentBoxscores&&e.recentBoxscores.length) lines.push('   Recent boxscores: '+e.recentBoxscores.map(b=>b.date+' '+(b.ip?b.ip+' IP, '+b.ks+' K, '+b.er+' ER':b.hits+' H, '+b.hr+' HR, '+b.rbi+' RBI')).join(' | '));
+  });
+  if(snapshot.liveFeed&&snapshot.liveFeed.length){
+    lines.push(''); lines.push('Live feed notes:');
+    snapshot.liveFeed.slice(0,8).forEach(f=>lines.push('- '+f.type+': '+f.name+' — '+f.value+' — '+f.team+' — '+f.status+(f.lastHitLabel?' — '+f.lastHitLabel:'')));
+  }
+  lines.push('');
+  lines.push('Write the recap with sections: Biggest Pitching Edge, Best Hitter/Team Trend, Live Movement, What Changed, and Clean Takeaway.');
+  return lines.join('\n');
 }
-
-
-async function loadRecap(){const s=saved();if(!s){
-document.getElementById("batterResults").innerHTML="<div class='empty'>No saved Daily Pulse found. Open daily-pulse.html, generate posts, then click Save Today’s Pulse.</div>";
-document.getElementById("pitcherResults").innerHTML="";
-const tracker = getTracker();
-document.getElementById("recapPost").value = buildDailyTrackerPost(tracker);
-document.getElementById("weeklyPost").value = buildWeeklyHotPlayerPost(tracker);
-return;
-}const d=s.date;document.getElementById("recapDate").textContent=d?d.slice(5):"-";document.getElementById("batterResults").innerHTML="<div class='empty'>Checking batter results...</div>";document.getElementById("pitcherResults").innerHTML="<div class='empty'>Checking pitcher results...</div>";const bs=[],ps=[];for(const p of s.top_batters||[])try{bs.push(await bres(p,d))}catch(e){}for(const p of s.top_pitchers||[])try{ps.push(await pres(p,d))}catch(e){}document.getElementById("batterResults").innerHTML=bs.length?bs.map(render).join(""):"<div class='empty'>No batter results found.</div>";document.getElementById("pitcherResults").innerHTML=ps.length?ps.map(render).join(""):"<div class='empty'>No pitcher results found.</div>";const all=bs.concat(ps),graded=all.filter(r=>r.grade.grade!=="PENDING"),hits=graded.filter(r=>r.grade.hit).length,sm=graded.filter(r=>r.grade.smash).length,rate=graded.length?Math.round(hits/graded.length*100)+"%":"-";document.getElementById("hitRate").textContent=rate;document.getElementById("smashCount").textContent=sm;
-
-const tracker = updateTracker(d, bs, ps);
-document.getElementById("recapPost").value =
-  post(d,bs,ps,rate,sm) + "\n\n" + buildDailyTrackerPost(tracker);
-
-document.getElementById("weeklyPost").value = buildWeeklyHotPlayerPost(tracker);
+async function copyPrompt(){
+  if(!currentSnapshot){ const local=loadLocal(); if(local){ currentSnapshot=local; renderSnapshot(local); } }
+  if(!currentSnapshot){ setStatus('Load a saved recap first.'); return; }
+  const prompt=snapshotToPrompt(currentSnapshot);
+  try{ await navigator.clipboard.writeText(prompt); setStatus('Daily Recap prompt copied.'); }
+  catch(e){ const t=document.createElement('textarea'); t.value=prompt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); setStatus('Daily Recap prompt copied.'); }
 }
-async function copyRecapPost(){
-  await navigator.clipboard.writeText(document.getElementById("recapPost").value);
-  alert("Copied recap post.");
-}
-
-async function copyWeeklyPost(){
-  await navigator.clipboard.writeText(document.getElementById("weeklyPost").value);
-  alert("Copied weekly hottest player post.");
-}
-
-loadRecap().catch(console.error);
+document.getElementById('recapDate').value = todayNY();
+loadRecap();
 </script>
 </body>
 </html>
