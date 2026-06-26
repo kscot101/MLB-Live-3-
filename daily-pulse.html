@@ -670,7 +670,7 @@
         <div>
           <div class="eyebrow">Private Posting Workspace</div>
           <h1 class="post-title">Daily Pulse <span>posts.</span></h1>
-          <div class="post-sub">This page is only for generated post copy. It is not the public homepage and it does not show the full edge-board layout. Generate today’s post set, edit the wording, then save it to the separate Daily Recap page.</div>
+          <div class="post-sub">This page is only for generated post copy. It is not the public homepage and it does not show the full edge-board layout. Generate today’s post set with the original Daily Pulse buckets — Round the Mound, Batters Edge, Live Pulse, and Team Trend — then edit and save it to the separate Daily Recap page.</div>
         </div>
       </div>
       <div class="post-actions">
@@ -684,9 +684,9 @@
     <section class="post-status" id="dailyPulseSaveStatus">Loading Diamond Pulse data for generated posts...</section>
 
     <section class="post-source-grid" id="postSourceSnapshot">
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Posts</div></div>
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Signals</div></div>
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Live</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Round the Mound</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Batters Edge</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Live Pulse</div></div>
       <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Games</div></div>
     </section>
 
@@ -1036,6 +1036,62 @@ function renderDailyPulseCloudPanel(){ const dateInput=document.getElementById('
 
 
 let generatedDailyPosts = [];
+function postMetric(value, fallback){ value = (value === undefined || value === null || value === '') ? fallback : value; return value === undefined || value === null ? '' : String(value); }
+function formatBoxscoreLine(box, group){
+  if(!box) return '';
+  if(group === 'pitching') return (box.date||'Recent')+' · '+(box.ip||'0.0')+' IP · '+(box.ks||0)+' K · '+(box.er||0)+' ER';
+  return (box.date||'Recent')+' · '+(box.hits||0)+' H · '+(box.hr||0)+' HR · '+(box.rbi||0)+' RBI';
+}
+function recentBoxscoreMetric(row, group){
+  const boxes = (row && row.recentBoxscores) ? row.recentBoxscores.slice(0,3) : [];
+  if(!boxes.length) return group === 'pitching' ? pitcherRecentLine(row) : 'Recent boxscore sample loading';
+  return boxes.map(b => formatBoxscoreLine(b, group)).join(' | ');
+}
+function roundTheMoundMetrics(item){
+  const row = item && item.row ? item.row : {};
+  const lines = [];
+  lines.push('Edge Score: '+postMetric(item && item.score, 'TBD'));
+  lines.push('Recent Pitching Line: '+pitcherRecentLine(row));
+  if(row.whiffPct !== undefined && row.whiffPct !== '') lines.push('Whiff Estimate: '+row.whiffPct+'%');
+  if(row.value) lines.push('Strikeout Signal: '+row.value+' total Ks');
+  if(row.qualifiedGames || (row.logs && row.logs.length)) lines.push('H2H K Signal: '+pitcherH2HLine(row));
+  if(row.opponent) lines.push('Matchup: '+(row.team||'Team')+' vs '+row.opponent);
+  if(row.recentBoxscores && row.recentBoxscores.length) lines.push('Last 3 Boxscores: '+recentBoxscoreMetric(row, 'pitching'));
+  return lines;
+}
+function battersEdgeMetrics(item){
+  const row = item && item.row ? item.row : {};
+  const lines = [];
+  lines.push('Edge Score: '+postMetric(item && item.score, 'TBD'));
+  if(row.pitcherName) lines.push('Pitcher Matchup: vs '+row.pitcherName);
+  if(row.hits !== undefined && row.hits !== '') lines.push('Batter-vs-Starter Hits: '+row.hits+' H');
+  if(row.hr !== undefined && row.hr !== '') lines.push('Power Signal: '+row.hr+' HR');
+  if(row.value && !(row.hits || row.hr)) lines.push('Recent Hit Signal: '+row.value);
+  if(row.lastHitLabel) lines.push('Latest Live Hit: '+row.lastHitLabel);
+  lines.push('Evidence: '+(item ? boardEvidence(item) : 'Hitter evidence loading'));
+  if(row.recentBoxscores && row.recentBoxscores.length) lines.push('Last 3 Boxscores: '+recentBoxscoreMetric(row, 'hitting'));
+  return lines;
+}
+function livePulseMetrics(item){
+  const row = item && item.row ? item.row : {};
+  const lines = [];
+  lines.push('Live Signal: '+(item ? item.signal : 'Live movement loading'));
+  lines.push('Game State: '+(item && (item.game || row.game || row.status) ? (item.game || row.game || row.status) : 'Live slate'));
+  lines.push('Evidence: '+(item ? boardEvidence(item) : 'Live evidence loading'));
+  if(row.lastHitLabel) lines.push('Latest Hit Detail: '+row.lastHitLabel);
+  if(row.value) lines.push('Current Count: '+row.value);
+  return lines;
+}
+function teamTrendMetrics(item){
+  const row = item && item.row ? item.row : {};
+  const lines = [];
+  lines.push('Trend Signal: '+(item ? item.signal : 'Team trend loading'));
+  lines.push('Evidence: '+(item ? boardEvidence(item) : 'Team evidence loading'));
+  if(row.whiffPct) lines.push('Whiff Estimate: '+row.whiffPct+'%');
+  if(row.status) lines.push('Date/Context: '+row.status);
+  return lines;
+}
+function metricLinesToText(lines){ return (lines || []).filter(Boolean).map(line => '• '+line).join('\n'); }
 function postTextFromItem(item, kind){
   const row = item && item.row ? item.row : {};
   const name = row.name || 'Today\'s top signal';
@@ -1045,35 +1101,41 @@ function postTextFromItem(item, kind){
   const evidence = item ? boardEvidence(item) : 'The model is still waiting for the full slate data to finish loading.';
   const h2h = item ? boardH2HLine(item) : 'No qualifying matchup note is attached yet.';
   if(kind === 'pitcher'){
-    return 'DAILY PULSE PITCHER READ\n\n'+name+' is the arm that stands out on today’s board.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nMatchup context: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: this is not just a name call — the edge is being driven by the signal profile, recent form, and matchup context available in the Diamond Pulse board.';
+    return 'ROUND THE MOUND\n\n'+name+' is the pitching read that stands out today.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(roundTheMoundMetrics(item))+'\n\nMatchup Context:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis is a pitching post built around strikeout form, whiff profile, recent boxscores, and opponent context — not a generic hot-name call.';
   }
   if(kind === 'hitter'){
-    return 'DAILY PULSE HITTER READ\n\n'+name+' is the bat to keep on the radar today.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nMatchup context: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: the case is built from current production and matchup context, not just boxscore chasing.';
+    return 'BATTERS EDGE\n\n'+name+' is the bat that belongs on today’s posting board.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(battersEdgeMetrics(item))+'\n\nMatchup Context:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis hitter post is supported by matchup data, recent production, and the specific signal that pushed him onto the Diamond Pulse board.';
   }
   if(kind === 'live'){
-    return 'DAILY PULSE LIVE MOVEMENT\n\n'+name+' is moving on the live board.\n\nWhat changed: '+(item ? item.signal : 'Live movement is still loading.')+'\n\nGame state: '+game+'\n\nEvidence: '+evidence+'\n\nClean takeaway: this is the kind of in-game movement worth saving for the recap because it shows what actually changed after first pitch.';
+    return 'LIVE PULSE\n\n'+name+' is the in-game movement worth saving.\n\nWhat Changed:\n'+(item ? item.signal : 'Live movement is still loading.')+'\n\nKey Metrics:\n'+metricLinesToText(livePulseMetrics(item))+'\n\nGame State:\n'+game+'\n\nPost Takeaway:\nThis is the kind of live note that helps the Daily Recap show what changed after first pitch.';
   }
   if(kind === 'team'){
-    return 'DAILY PULSE TEAM TREND\n\n'+name+' is the team-level trend worth noting.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nContext: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: this gives the recap a team environment angle instead of only focusing on individual players.';
+    return 'TEAM TREND\n\n'+name+' is the team-level angle worth noting.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(teamTrendMetrics(item))+'\n\nContext:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis adds a team environment angle to the recap so the post set is not only player-focused.';
   }
   return name+' — '+(item ? item.signal : 'Signal loading.');
 }
 function buildThreadPost(rows){
-  const top = (rows || []).slice(0,5);
+  const top = (rows || []).slice(0,6);
   if(!top.length) return 'DAILY PULSE THREAD\n\nThe post set is waiting on today’s MLB data. Refresh after the board finishes loading, then generate again.';
+  const pitcher = rows.find(x=>x.group==='pitcher');
+  const hitter = rows.find(x=>x.group==='hitter');
+  const live = rows.find(x=>x.category==='live');
+  const team = rows.find(x=>x.group==='team');
   const lines = [];
   lines.push('DAILY PULSE THREAD');
   lines.push('');
-  lines.push('Today’s Diamond Pulse board is built around evidence, matchup context, and live movement — not hype.');
+  lines.push('Today’s Diamond Pulse board is built around the same core post buckets: Round the Mound, Batters Edge, Live Pulse, and team trend context.');
   lines.push('');
+  if(pitcher){ lines.push('ROUND THE MOUND: '+(pitcher.row.name||'Pitcher read')); lines.push('Signal: '+pitcher.signal); lines.push('Metrics: '+roundTheMoundMetrics(pitcher).slice(0,4).join(' · ')); lines.push(''); }
+  if(hitter){ lines.push('BATTERS EDGE: '+(hitter.row.name||'Hitter read')); lines.push('Signal: '+hitter.signal); lines.push('Metrics: '+battersEdgeMetrics(hitter).slice(0,4).join(' · ')); lines.push(''); }
+  if(live){ lines.push('LIVE PULSE: '+(live.row.name||'Live movement')); lines.push('Signal: '+live.signal); lines.push('Evidence: '+boardEvidence(live)); lines.push(''); }
+  if(team){ lines.push('TEAM TREND: '+(team.row.name||'Team trend')); lines.push('Signal: '+team.signal); lines.push('Evidence: '+boardEvidence(team)); lines.push(''); }
+  lines.push('Top Board Signals:');
   top.forEach((item, index) => {
-    lines.push((index+1)+'. '+(item.row && item.row.name ? item.row.name : 'Team trend')+' — '+item.type);
-    lines.push('   Signal: '+item.signal);
-    lines.push('   Evidence: '+boardEvidence(item));
-    lines.push('   Confidence: '+item.confidence);
-    lines.push('');
+    lines.push((index+1)+'. '+(item.row && item.row.name ? item.row.name : 'Team trend')+' — '+item.type+' — '+item.signal+' — Confidence: '+item.confidence);
   });
-  lines.push('Clean takeaway: the strongest reads are the ones backed by multiple signals — recent form, matchup history, live movement, or team trend context.');
+  lines.push('');
+  lines.push('Clean takeaway: the best Daily Pulse posts are the ones where the metrics explain the angle — recent form, whiff/K profile, batter-vs-starter history, live movement, or team trend context.');
   return lines.join('\n');
 }
 function getGeneratedDailyPosts(){
@@ -1083,11 +1145,11 @@ function getGeneratedDailyPosts(){
   const live = rows.find(x=>x.category==='live');
   const team = rows.find(x=>x.group==='team');
   const posts = [];
-  if(pitcher) posts.push({id:'pitcher-read', label:'Pitcher Post', title:(pitcher.row.name||'Pitcher Read'), meta:[pitcher.type, pitcher.confidence, pitcher.signal], text:postTextFromItem(pitcher,'pitcher'), source:compactRowForDailyPulse(pitcher,0)});
-  if(hitter) posts.push({id:'hitter-read', label:'Hitter Post', title:(hitter.row.name||'Hitter Read'), meta:[hitter.type, hitter.confidence, hitter.signal], text:postTextFromItem(hitter,'hitter'), source:compactRowForDailyPulse(hitter,1)});
-  if(live) posts.push({id:'live-movement', label:'Live Movement Post', title:(live.row.name||'Live Movement'), meta:[live.type, live.confidence, live.signal], text:postTextFromItem(live,'live'), source:compactRowForDailyPulse(live,2)});
-  if(team) posts.push({id:'team-trend', label:'Team Trend Post', title:(team.row.name||'Team Trend'), meta:[team.type, team.confidence, team.signal], text:postTextFromItem(team,'team'), source:compactRowForDailyPulse(team,3)});
-  posts.push({id:'thread-post', label:'Full Thread', title:'Daily Pulse Thread', meta:['All signals', rows.length+' board signals', (appState.scoreGames||[]).length+' games'], text:buildThreadPost(rows), source:null, wide:true});
+  if(pitcher) posts.push({id:'round-the-mound', label:'Round the Mound', title:'Round the Mound: '+(pitcher.row.name||'Pitcher Read'), meta:[pitcher.type, pitcher.confidence, pitcher.signal], text:postTextFromItem(pitcher,'pitcher'), source:compactRowForDailyPulse(pitcher,0)});
+  if(hitter) posts.push({id:'batters-edge', label:'Batters Edge', title:'Batters Edge: '+(hitter.row.name||'Hitter Read'), meta:[hitter.type, hitter.confidence, hitter.signal], text:postTextFromItem(hitter,'hitter'), source:compactRowForDailyPulse(hitter,1)});
+  if(live) posts.push({id:'live-pulse', label:'Live Pulse', title:'Live Pulse: '+(live.row.name||'Live Movement'), meta:[live.type, live.confidence, live.signal], text:postTextFromItem(live,'live'), source:compactRowForDailyPulse(live,2)});
+  if(team) posts.push({id:'team-trend', label:'Team Trend', title:'Team Trend: '+(team.row.name||'Team Trend'), meta:[team.type, team.confidence, team.signal], text:postTextFromItem(team,'team'), source:compactRowForDailyPulse(team,3)});
+  posts.push({id:'daily-pulse-thread', label:'Full Daily Pulse Thread', title:'Daily Pulse Thread', meta:['Round the Mound', 'Batters Edge', rows.length+' board signals'], text:buildThreadPost(rows), source:null, wide:true});
   return posts;
 }
 function postCardHtml(post, index){
@@ -1117,7 +1179,7 @@ function renderGeneratedDailyPosts(force){
   const snap = document.getElementById('postSourceSnapshot');
   if(snap){
     const live = rows.filter(x=>x.category==='live').length;
-    snap.innerHTML = '<div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.length)+'</div><div class="post-source-cap">Posts</div></div><div class="post-source-tile"><div class="post-source-num">'+h(rows.length)+'</div><div class="post-source-cap">Signals</div></div><div class="post-source-tile"><div class="post-source-num">'+h(live)+'</div><div class="post-source-cap">Live</div></div><div class="post-source-tile"><div class="post-source-num">'+h((appState.scoreGames||[]).length)+'</div><div class="post-source-cap">Games</div></div>';
+    snap.innerHTML = '<div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.some(p=>p.id==="round-the-mound")?1:0)+'</div><div class="post-source-cap">Round the Mound</div></div><div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.some(p=>p.id==="batters-edge")?1:0)+'</div><div class="post-source-cap">Batters Edge</div></div><div class="post-source-tile"><div class="post-source-num">'+h(live)+'</div><div class="post-source-cap">Live Pulse</div></div><div class="post-source-tile"><div class="post-source-num">'+h((appState.scoreGames||[]).length)+'</div><div class="post-source-cap">Games</div></div>';
   }
   if(rows.length) setDailyPulseStatus('Generated post workspace loaded. Edit the posts, then save them to Daily Recap.');
 }
@@ -1138,7 +1200,7 @@ async function copyAllGeneratedPosts(){
 function buildGeneratedPostSnapshot(){
   const base = buildDailyPulseSnapshot();
   const posts = collectGeneratedPostsFromDom();
-  return {...base, version:4, purpose:'Daily Pulse generated posts only', postMode:'generated-posts-only', generatedPosts:posts.map((p,i)=>({rank:i+1,id:p.id,label:p.label,title:p.title,text:p.text,meta:p.meta||[],source:p.source||null})), summary:{...(base.summary||{}), posts:posts.length}};
+  return {...base, version:5, purpose:'Daily Pulse generated posts only with Round the Mound and Batters Edge metrics', postMode:'generated-posts-only', generatedPosts:posts.map((p,i)=>({rank:i+1,id:p.id,label:p.label,title:p.title,text:p.text,meta:p.meta||[],source:p.source||null})), summary:{...(base.summary||{}), posts:posts.length}};
 }
 function renderAllData(){
   profileStore=[];
