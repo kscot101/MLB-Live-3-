@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Diamond Pulse | Baseball Analytics & Edges</title>
+  <title>Diamond Pulse | Daily Pulse Posts</title>
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -611,6 +611,37 @@
     .page-nav-link { text-decoration: none; display: inline-flex; align-items: center; }
     .fallback-board-row { opacity: .92; }
 
+
+    /* Daily Pulse generated-post workspace */
+    .post-workspace{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:24px 18px 46px;}
+    .post-topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px;}
+    .post-brand{display:flex;gap:14px;align-items:center;}
+    .post-logo{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#bef264,#22c55e);color:#052e16;font-weight:1000;box-shadow:0 0 34px rgba(190,242,100,.24);}
+    .post-title{font-size:clamp(30px,6vw,58px);line-height:.92;margin:4px 0 6px;font-weight:1000;letter-spacing:-.06em;}
+    .post-title span{color:#bef264;}
+    .post-sub{color:#9ca3af;line-height:1.55;max-width:760px;}
+    .post-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end;}
+    .post-btn{border:1px solid rgba(134,239,172,.25);background:rgba(15,23,42,.82);color:#d1fae5;border-radius:999px;padding:11px 13px;font-weight:950;text-transform:uppercase;letter-spacing:.06em;font-size:11px;cursor:pointer;text-decoration:none;}
+    .post-btn.primary{background:#bef264;color:#111827;border-color:#bef264;}
+    .post-btn:hover{transform:translateY(-1px);}
+    .post-status{border:1px solid rgba(134,239,172,.18);background:rgba(15,23,42,.72);border-radius:20px;padding:12px 14px;color:#bbf7d0;font-size:13px;line-height:1.45;margin:14px 0;}
+    .post-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px;}
+    .post-card{border:1px solid rgba(148,163,184,.18);background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(2,6,23,.74));border-radius:26px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.34);}
+    .post-card.wide{grid-column:1 / -1;}
+    .post-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#86efac;font-weight:950;margin-bottom:7px;}
+    .post-name{font-size:21px;font-weight:1000;letter-spacing:-.02em;margin-bottom:7px;}
+    .post-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+    .post-chip{border:1px solid rgba(190,242,100,.19);background:rgba(190,242,100,.09);color:#d9f99d;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;}
+    .post-copy-box{width:100%;min-height:230px;border:1px solid rgba(134,239,172,.20);background:rgba(2,6,23,.68);color:#f8fafc;border-radius:18px;padding:14px;outline:none;resize:vertical;line-height:1.55;font-size:14px;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+    .post-card.wide .post-copy-box{min-height:290px;}
+    .post-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .post-source-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px;}
+    .post-source-tile{border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.62);border-radius:18px;padding:12px;}
+    .post-source-num{font-size:28px;font-weight:1000;color:#bef264;line-height:1;}
+    .post-source-cap{font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:950;color:#9ca3af;margin-top:7px;}
+    .post-hidden-data{display:none!important;}
+    @media(max-width:850px){.post-topbar{display:grid}.post-actions{justify-content:flex-start}.post-grid{grid-template-columns:1fr}.post-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.post-workspace{padding:18px 14px 40px}}
+
   </style>
 </head>
 <body class="board-mode">
@@ -630,171 +661,65 @@
     <circle r="24" fill="rgba(190,242,100,.16)" filter="url(#orbGlow)"><animateMotion dur="7s" repeatCount="indefinite" path="M500 610 L780 370 L500 160 L220 370 L500 610" rotate="auto"/></circle>
   </svg>
 
-  <main class="shell">
+  <main class="post-workspace">
     <div id="fatalFallback" style="display:none"></div>
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 120 120" width="52" height="52">
-            <defs><radialGradient id="logoBall" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#dcfce7"/></radialGradient><radialGradient id="logoRing" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#bef264"/></radialGradient></defs>
-            <circle cx="52" cy="60" r="31" fill="none" stroke="url(#logoRing)" stroke-width="12"/><circle cx="52" cy="60" r="22" fill="url(#logoBall)" stroke="#f0fdf4" stroke-width="2"/>
-            <path d="M40 48 C47 55 47 65 40 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/><path d="M64 48 C57 55 57 65 64 72" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
-            <path d="M76 56 L100 56" stroke="#22c55e" stroke-width="7" stroke-linecap="round"/><path d="M80 67 L106 67" stroke="#bef264" stroke-width="5.5" stroke-linecap="round"/>
-          </svg>
-        </div>
+
+    <header class="post-topbar">
+      <div class="post-brand">
+        <div class="post-logo">DP</div>
         <div>
-          <h1>Diamond <span>Pulse</span></h1>
-          <div class="brand-sub">Daily Pulse · Save the slate to Daily Recap</div>
+          <div class="eyebrow">Private Posting Workspace</div>
+          <h1 class="post-title">Daily Pulse <span>posts.</span></h1>
+          <div class="post-sub">This page is only for generated post copy. It is not the public homepage and it does not show the full edge-board layout. Generate today’s post set, edit the wording, then save it to the separate Daily Recap page.</div>
         </div>
       </div>
-
-      <div class="score-strip">
-        <div class="ticker-viewport"><div id="scoreTicker" class="ticker-track"><button class="ticker-item">Loading scores...</button></div></div>
-      </div>
-
-      <div class="top-actions">
-        <a class="stadium-toggle page-nav-link" href="index.html">Main Board</a>
-        <a class="stadium-toggle page-nav-link" href="daily-recap.html">Daily Recap</a>
-        <div class="live-pill"><span class="live-dot"></span>DAILY PULSE</div>
-        <div id="lastUpdated" class="refresh">Loading live data...</div>
-        <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">Stadium Mode</button>
+      <div class="post-actions">
+        <button class="post-btn primary" onclick="renderGeneratedDailyPosts(true)">Generate Posts</button>
+        <button class="post-btn" onclick="saveDailyPulseForRecap()">Save Posts to Daily Recap</button>
+        <button class="post-btn" onclick="copyAllGeneratedPosts()">Copy All Posts</button>
+        <a class="post-btn" href="daily-recap.html">Daily Recap</a>
       </div>
     </header>
 
-    <section class="team-filter-row">
-      <div class="filter-title">Team filter</div>
-      <div id="teamFilters" class="filter-bar"><button class="filter-btn active">All Teams</button></div>
+    <section class="post-status" id="dailyPulseSaveStatus">Loading Diamond Pulse data for generated posts...</section>
+
+    <section class="post-source-grid" id="postSourceSnapshot">
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Posts</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Signals</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Live</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Games</div></div>
     </section>
 
-    <section class="terminal-hero">
-      <article class="hero-card">
-        <div class="eyebrow">Daily Pulse</div>
-        <h2 class="hero-title">Daily Pulse <span>slate board.</span></h2>
-        <p class="hero-copy">This page is where you build the Daily Pulse. Review the live board, then save today’s slate so the Daily Recap page can load the same snapshot from any device.</p>
-        <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
+    <section id="generatedPostCards" class="post-grid">
+      <article class="post-card wide">
+        <div class="post-label">Generated posts</div>
+        <div class="post-name">Loading today’s post set...</div>
+        <div class="post-sub">The page is collecting live MLB data, hot pitcher/hitter signals, team trends, and H2H notes in the background.</div>
       </article>
-
-      <aside class="drawer-card snapshot-card">
-        <div class="eyebrow">Slate Snapshot</div>
-        <div class="panel-sub">Live feeds, recent boxscores, H2H history, hot forms, and hitter/pitcher boards rolled into one view.</div>
-        <div id="boardSnapshot" class="snapshot-grid">
-          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Edges</div></div>
-          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Live</div></div>
-          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Pitchers</div></div>
-          <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Hitters</div></div>
-        </div>
-      </aside>
     </section>
 
-    <section class="terminal-grid">
-      <article class="terminal-panel">
-        <div class="panel-head">
-          <div>
-            <div class="panel-kicker">The Edge Board</div>
-            <h2 class="panel-title">Sortable slate signals</h2>
-            <div class="panel-sub">Click any player or team signal. The drawer opens with the full explanation, boxscore trail, H2H notes, and live context.</div>
-          </div>
-        </div>
-
-        <div class="board-filter-tabs">
-          <button class="board-filter-btn active" data-board-filter="all" onclick="setEdgeBoardFilter('all')">All Edges</button>
-          <button class="board-filter-btn" data-board-filter="pitchers" onclick="setEdgeBoardFilter('pitchers')">Pitchers</button>
-          <button class="board-filter-btn" data-board-filter="hitters" onclick="setEdgeBoardFilter('hitters')">Hitters</button>
-          <button class="board-filter-btn" data-board-filter="live" onclick="setEdgeBoardFilter('live')">Live</button>
-          <button class="board-filter-btn" data-board-filter="h2h" onclick="setEdgeBoardFilter('h2h')">H2H</button>
-          <button class="board-filter-btn" data-board-filter="teams" onclick="setEdgeBoardFilter('teams')">Teams</button>
-          <button class="board-filter-btn" data-board-filter="watchlist" onclick="setEdgeBoardFilter('watchlist')">Watchlist</button>
-        </div>
-
-        <div class="edge-table-wrap">
-          <table class="edge-table">
-            <thead><tr><th>#</th><th>Player / Signal</th><th>Type</th><th>Game</th><th>Edge</th><th>Confidence</th><th>Key Signal</th></tr></thead>
-            <tbody id="edgeBoardBody"><tr><td colspan="7"><div class="loading">Loading board...</div></td></tr></tbody>
-          </table>
-        </div>
-      </article>
-
-      <aside class="drawer-card">
-        <div class="panel-head">
-          <div>
-            <div class="panel-kicker">Signal Drawer</div>
-            <h2 class="panel-title">Full read</h2>
-            <div class="panel-sub">Evidence, boxscores, H2H history, live paths, team trends, and follow controls.</div>
-          </div>
-        </div>
-        <div id="edgeDrawerContent" class="drawer-body"><div class="drawer-empty">Select a player or team signal from the board to open the full read.</div></div>
-      </aside>
+    <section class="post-card wide" style="margin-top:16px;">
+      <div class="post-label">Saved Daily Recap</div>
+      <div id="dailyPulseSavedPreview"><div class="post-sub">No saved Daily Recap loaded yet.</div></div>
     </section>
 
-    <section class="lower-grid">
-      <article class="feed-panel">
-        <div class="panel-kicker">Live Pulse Feed</div>
-        <h2 class="panel-title">Just happened</h2>
-        <div class="panel-sub">Live events only. No past trends mixed into this feed.</div>
-        <div id="boardLiveFeed" class="feed-list" style="margin-top:12px;"><div class="loading">Waiting for live events...</div></div>
-      </article>
-
-      <aside class="watch-panel">
-        <div class="panel-kicker">Watchlist</div>
-        <h2 class="panel-title">Followed players</h2>
-        <div class="panel-sub">Tap follow in the drawer to keep players here.</div>
-        <div id="boardWatchlist" class="watch-grid" style="margin-top:12px;"><div class="loading">No followed players yet.</div></div>
-      </aside>
+    <section class="post-hidden-data" aria-hidden="true">
+      <div id="lastUpdated"></div>
+      <div id="scoreTicker"></div>
+      <div id="teamFilters"></div>
+      <div id="boardTopEdges"></div>
+      <div id="boardSnapshot"></div>
+      <table><tbody id="edgeBoardBody"></tbody></table>
+      <div id="edgeDrawerContent"></div>
+      <div id="boardLiveFeed"></div>
+      <div id="boardWatchlist"></div>
+      <input id="dailyPulseLoadDate" type="date">
+      <div id="dockArms"></div><div id="dockBats"></div><div id="dockH2H"></div><div id="dockGames"></div>
+      <div id="justHappened"></div><div id="watchlist"></div><div id="liveKs"></div><div id="liveHits"></div><div id="quickLook"></div><div id="pulseCards"></div><div id="gameOfNight"></div><div id="pitcherPulseReads"></div>
+      <div id="hotPitchers"></div><div id="armsPrevKs"></div><div id="hotHitters"></div><div id="streakingHitters"></div><div id="batsPrevHits"></div><div id="pitcherH2H"></div><div id="batterH2H"></div><div id="recapKs"></div><div id="recapHits"></div>
     </section>
 
-
-    <section class="daily-save-panel">
-      <div class="daily-save-head">
-        <div>
-          <div class="panel-kicker">Daily Pulse Save</div>
-          <h2 class="panel-title">Send today’s slate to Daily Recap</h2>
-          <div class="panel-sub">This is the save station for the Daily Pulse page. Press Save to Daily Recap here, then open the separate Daily Recap page from any device to load the same saved slate.</div>
-        </div>
-        <div class="daily-save-actions">
-          <button class="daily-save-btn primary" onclick="saveDailyPulseForRecap()">Save to Daily Recap</button>
-          <button class="daily-save-btn ghost" onclick="loadDailyPulseFromCloud()">Load Saved Recap</button>
-          <button class="daily-save-btn" onclick="copyDailyRecapPrompt()">Copy Daily Recap Prompt</button>
-        </div>
-      </div>
-      <div class="daily-save-grid">
-        <article class="daily-save-card">
-          <div class="daily-save-label">Cross-device Daily Recap</div>
-          <div class="daily-save-muted">This version saves through your Cloudflare Worker at <strong>https://diamond-pulse-daily-recap-api.kadescott97.workers.dev</strong>. Press Save to Daily Recap from the Daily Pulse board, then open the Daily Recap page from any device to load the same saved slate.</div>
-          <div class="daily-save-input-row">
-            <input id="dailyPulseLoadDate" class="daily-save-input" type="date">
-            <button class="daily-save-btn" onclick="loadDailyPulseFromCloud(document.getElementById('dailyPulseLoadDate').value)">Load Recap Date</button>
-          </div>
-          <div class="daily-save-input-row">
-            <a class="daily-save-btn ghost" href="daily-recap.html">Open Daily Recap Page</a>
-            <button class="daily-save-btn" onclick="loadDailyPulseFromCloud()">Reload Latest</button>
-          </div>
-          <div id="dailyPulseSaveStatus" class="daily-save-status">Daily Pulse cloud save is ready once the Cloudflare Worker and KV binding are connected.</div>
-        </article>
-        <article class="daily-save-card">
-          <div class="daily-save-label">Saved Daily Recap</div>
-          <div id="dailyPulseSavedPreview" class="saved-pulse-preview"><div class="daily-save-muted">No saved Daily Recap loaded yet.</div></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="data-dock">
-      <div class="panel-head data-dock-head">
-        <div>
-          <div class="panel-kicker">Full Data Dock</div>
-          <h2 class="panel-title">Everything from the original build, rebuilt into compact panels</h2>
-          <div class="panel-sub">Live leaders, hot arms, hot bats, H2H edges, previous-game team trends, and today's game hubs all stay available here.</div>
-        </div>
-      </div>
-      <div class="data-dock-grid">
-        <article class="data-dock-card"><div class="dock-title">Arms</div><div id="dockArms" class="dock-list"><div class="loading">Loading pitching data...</div></div></article>
-        <article class="data-dock-card"><div class="dock-title">Bats</div><div id="dockBats" class="dock-list"><div class="loading">Loading hitting data...</div></div></article>
-        <article class="data-dock-card"><div class="dock-title">H2H Matchups</div><div id="dockH2H" class="dock-list"><div class="loading">Loading H2H data...</div></div></article>
-        <article class="data-dock-card"><div class="dock-title">Today's Games</div><div id="dockGames" class="dock-list"><div class="loading">Loading games...</div></div></article>
-      </div>
-    </section>
-
-
-    <div class="footer-note">Unofficial baseball research dashboard. Not affiliated with MLB or any sportsbook.</div>
+    <div class="footer-note">Private Diamond Pulse posting page. Keep this URL for your own Daily Pulse post workflow.</div>
   </main>
 
   <div id="profileModal" class="profile-modal" onclick="closeProfileFromBackdrop(event)"><div class="profile-panel"><button class="profile-close" onclick="closeProfile()">Close</button><div id="profileContent"></div></div></div>
@@ -1082,7 +1007,7 @@ async function saveDailyPulseToCloud(snapshot){
     return false;
   }
 }
-async function saveDailyPulseForRecap(){ const snapshot=buildDailyPulseSnapshot(); saveDailyPulseLocal(snapshot); await saveDailyPulseToCloud(snapshot); renderDailyPulseCloudPanel(); }
+async function saveDailyPulseForRecap(){ const snapshot=buildGeneratedPostSnapshot(); saveDailyPulseLocal(snapshot); await saveDailyPulseToCloud(snapshot); renderDailyPulseCloudPanel(); renderGeneratedDailyPosts(false); }
 async function loadDailyPulseFromCloud(date){
   const endpoint=getDailyPulseEndpoint();
   try{
@@ -1109,6 +1034,112 @@ function dailyPulseSnapshotToPrompt(snapshot){ if(!snapshot) return ''; const s=
 async function copyDailyRecapPrompt(){ const snapshot=appState.dailyPulseSnapshot||loadDailyPulseLocal(); if(!snapshot){ setDailyPulseStatus('Save or load a Daily Recap first, then copy the recap prompt.'); return; } const prompt=dailyPulseSnapshotToPrompt(snapshot); try{ await navigator.clipboard.writeText(prompt); setDailyPulseStatus('Daily recap prompt copied. Paste it into ChatGPT to create the recap from your saved Daily Recap.'); }catch(err){ const area=document.createElement('textarea'); area.value=prompt; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('Daily recap prompt copied. Paste it into ChatGPT to create the recap.'); } }
 function renderDailyPulseCloudPanel(){ const dateInput=document.getElementById('dailyPulseLoadDate'); if(dateInput && !dateInput.value) dateInput.value=nyDate(0); const preview=document.getElementById('dailyPulseSavedPreview'); if(!preview) return; const snapshot=appState.dailyPulseSnapshot||loadDailyPulseLocal(); if(!snapshot){ preview.innerHTML='<div class="daily-save-muted">No saved Daily Recap loaded yet. Tap Save to Daily Recap after the board fills in.</div>'; return; } const s=snapshot.summary||{}; const top=(snapshot.topEdges||[]).slice(0,5); preview.innerHTML='<div class="daily-save-muted">Daily Recap saved '+h(snapshot.date||'')+' · '+h(snapshot.savedAt?new Date(snapshot.savedAt).toLocaleString():'')+'</div><div class="saved-pulse-topline"><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.signals||0)+'</div><div class="saved-pulse-cap">Signals</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.live||0)+'</div><div class="saved-pulse-cap">Live</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.pitchers||0)+'</div><div class="saved-pulse-cap">Pitchers</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h((s.hitters||0)+(s.teams||0))+'</div><div class="saved-pulse-cap">Hitters/Teams</div></div></div>'+(top.length?top.map(e=>'<div class="saved-edge-mini"><div class="saved-edge-rank">'+h(e.rank)+'</div><div><div class="saved-edge-name">'+h(e.name)+'</div><div class="saved-edge-signal">'+h(e.signal)+'</div></div><div class="saved-edge-score">'+h(e.score)+'</div></div>').join(''):'<div class="daily-save-muted">Saved Daily Recap has no edge rows yet.</div>'); }
 
+
+let generatedDailyPosts = [];
+function postTextFromItem(item, kind){
+  const row = item && item.row ? item.row : {};
+  const name = row.name || 'Today\'s top signal';
+  const game = item && (item.game || row.game || row.status) ? (item.game || row.game || row.status) : 'Today';
+  const confidence = item && item.confidence ? item.confidence : 'Watch';
+  const primary = item ? boardPrimaryRead(item) : 'This is the strongest available Diamond Pulse signal from the current slate.';
+  const evidence = item ? boardEvidence(item) : 'The model is still waiting for the full slate data to finish loading.';
+  const h2h = item ? boardH2HLine(item) : 'No qualifying matchup note is attached yet.';
+  if(kind === 'pitcher'){
+    return 'DAILY PULSE PITCHER READ\n\n'+name+' is the arm that stands out on today’s board.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nMatchup context: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: this is not just a name call — the edge is being driven by the signal profile, recent form, and matchup context available in the Diamond Pulse board.';
+  }
+  if(kind === 'hitter'){
+    return 'DAILY PULSE HITTER READ\n\n'+name+' is the bat to keep on the radar today.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nMatchup context: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: the case is built from current production and matchup context, not just boxscore chasing.';
+  }
+  if(kind === 'live'){
+    return 'DAILY PULSE LIVE MOVEMENT\n\n'+name+' is moving on the live board.\n\nWhat changed: '+(item ? item.signal : 'Live movement is still loading.')+'\n\nGame state: '+game+'\n\nEvidence: '+evidence+'\n\nClean takeaway: this is the kind of in-game movement worth saving for the recap because it shows what actually changed after first pitch.';
+  }
+  if(kind === 'team'){
+    return 'DAILY PULSE TEAM TREND\n\n'+name+' is the team-level trend worth noting.\n\nPrimary read: '+primary+'\n\nEvidence: '+evidence+'\n\nContext: '+h2h+'\n\nConfidence: '+confidence+'.\n\nClean takeaway: this gives the recap a team environment angle instead of only focusing on individual players.';
+  }
+  return name+' — '+(item ? item.signal : 'Signal loading.');
+}
+function buildThreadPost(rows){
+  const top = (rows || []).slice(0,5);
+  if(!top.length) return 'DAILY PULSE THREAD\n\nThe post set is waiting on today’s MLB data. Refresh after the board finishes loading, then generate again.';
+  const lines = [];
+  lines.push('DAILY PULSE THREAD');
+  lines.push('');
+  lines.push('Today’s Diamond Pulse board is built around evidence, matchup context, and live movement — not hype.');
+  lines.push('');
+  top.forEach((item, index) => {
+    lines.push((index+1)+'. '+(item.row && item.row.name ? item.row.name : 'Team trend')+' — '+item.type);
+    lines.push('   Signal: '+item.signal);
+    lines.push('   Evidence: '+boardEvidence(item));
+    lines.push('   Confidence: '+item.confidence);
+    lines.push('');
+  });
+  lines.push('Clean takeaway: the strongest reads are the ones backed by multiple signals — recent form, matchup history, live movement, or team trend context.');
+  return lines.join('\n');
+}
+function getGeneratedDailyPosts(){
+  const rows = getAllUnifiedEdgeRowsForSave();
+  const pitcher = rows.find(x=>x.group==='pitcher' && x.category==='h2h') || rows.find(x=>x.group==='pitcher');
+  const hitter = rows.find(x=>x.group==='hitter' && x.category==='h2h') || rows.find(x=>x.group==='hitter');
+  const live = rows.find(x=>x.category==='live');
+  const team = rows.find(x=>x.group==='team');
+  const posts = [];
+  if(pitcher) posts.push({id:'pitcher-read', label:'Pitcher Post', title:(pitcher.row.name||'Pitcher Read'), meta:[pitcher.type, pitcher.confidence, pitcher.signal], text:postTextFromItem(pitcher,'pitcher'), source:compactRowForDailyPulse(pitcher,0)});
+  if(hitter) posts.push({id:'hitter-read', label:'Hitter Post', title:(hitter.row.name||'Hitter Read'), meta:[hitter.type, hitter.confidence, hitter.signal], text:postTextFromItem(hitter,'hitter'), source:compactRowForDailyPulse(hitter,1)});
+  if(live) posts.push({id:'live-movement', label:'Live Movement Post', title:(live.row.name||'Live Movement'), meta:[live.type, live.confidence, live.signal], text:postTextFromItem(live,'live'), source:compactRowForDailyPulse(live,2)});
+  if(team) posts.push({id:'team-trend', label:'Team Trend Post', title:(team.row.name||'Team Trend'), meta:[team.type, team.confidence, team.signal], text:postTextFromItem(team,'team'), source:compactRowForDailyPulse(team,3)});
+  posts.push({id:'thread-post', label:'Full Thread', title:'Daily Pulse Thread', meta:['All signals', rows.length+' board signals', (appState.scoreGames||[]).length+' games'], text:buildThreadPost(rows), source:null, wide:true});
+  return posts;
+}
+function postCardHtml(post, index){
+  return '<article class="post-card '+(post.wide?'wide':'')+'">'+
+    '<div class="post-label">'+h(post.label)+'</div>'+
+    '<div class="post-name">'+h(post.title)+'</div>'+
+    '<div class="post-meta">'+(post.meta||[]).filter(Boolean).slice(0,4).map(x=>'<span class="post-chip">'+h(x)+'</span>').join('')+'</div>'+
+    '<textarea class="post-copy-box" data-post-id="'+h(post.id)+'">'+h(post.text)+'</textarea>'+
+    '<div class="post-card-actions"><button class="post-btn" onclick="copyGeneratedPost('+index+')">Copy This Post</button></div>'+
+  '</article>';
+}
+function collectGeneratedPostsFromDom(){
+  const cards = generatedDailyPosts || [];
+  document.querySelectorAll('.post-copy-box').forEach(area => {
+    const id = area.getAttribute('data-post-id');
+    const found = cards.find(p => p.id === id);
+    if(found) found.text = area.value;
+  });
+  return cards;
+}
+function renderGeneratedDailyPosts(force){
+  const holder = document.getElementById('generatedPostCards');
+  if(!holder) return;
+  const rows = getAllUnifiedEdgeRowsForSave();
+  if(force || !generatedDailyPosts.length){ generatedDailyPosts = getGeneratedDailyPosts(); }
+  holder.innerHTML = generatedDailyPosts.length ? generatedDailyPosts.map(postCardHtml).join('') : '<article class="post-card wide"><div class="post-label">Generated posts</div><div class="post-name">Waiting on data...</div><div class="post-sub">Refresh after MLB data finishes loading.</div></article>';
+  const snap = document.getElementById('postSourceSnapshot');
+  if(snap){
+    const live = rows.filter(x=>x.category==='live').length;
+    snap.innerHTML = '<div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.length)+'</div><div class="post-source-cap">Posts</div></div><div class="post-source-tile"><div class="post-source-num">'+h(rows.length)+'</div><div class="post-source-cap">Signals</div></div><div class="post-source-tile"><div class="post-source-num">'+h(live)+'</div><div class="post-source-cap">Live</div></div><div class="post-source-tile"><div class="post-source-num">'+h((appState.scoreGames||[]).length)+'</div><div class="post-source-cap">Games</div></div>';
+  }
+  if(rows.length) setDailyPulseStatus('Generated post workspace loaded. Edit the posts, then save them to Daily Recap.');
+}
+async function copyGeneratedPost(index){
+  const posts = collectGeneratedPostsFromDom();
+  const post = posts[index];
+  if(!post) return;
+  try{ await navigator.clipboard.writeText(post.text); setDailyPulseStatus('Copied '+post.label+'.'); }
+  catch(err){ const area=document.createElement('textarea'); area.value=post.text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('Copied '+post.label+'.'); }
+}
+async function copyAllGeneratedPosts(){
+  const posts = collectGeneratedPostsFromDom();
+  const text = posts.map(p=>p.text).join('\n\n---\n\n');
+  if(!text.trim()){ setDailyPulseStatus('Generate posts first.'); return; }
+  try{ await navigator.clipboard.writeText(text); setDailyPulseStatus('All generated posts copied.'); }
+  catch(err){ const area=document.createElement('textarea'); area.value=text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('All generated posts copied.'); }
+}
+function buildGeneratedPostSnapshot(){
+  const base = buildDailyPulseSnapshot();
+  const posts = collectGeneratedPostsFromDom();
+  return {...base, version:4, purpose:'Daily Pulse generated posts only', postMode:'generated-posts-only', generatedPosts:posts.map((p,i)=>({rank:i+1,id:p.id,label:p.label,title:p.title,text:p.text,meta:p.meta||[],source:p.source||null})), summary:{...(base.summary||{}), posts:posts.length}};
+}
 function renderAllData(){
   profileStore=[];
   renderTeamFilters();
@@ -1118,6 +1149,7 @@ function renderAllData(){
   renderEdgeTerminal();
   renderDataDock();
   renderDailyPulseCloudPanel();
+  renderGeneratedDailyPosts(false);
 }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
