@@ -361,6 +361,36 @@
       font-size: 14px;
     }
 
+
+    .homepage-cta-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .homepage-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(190,242,100,.38);
+      background: rgba(190,242,100,.16);
+      color: var(--lime);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 0 24px rgba(190,242,100,.10);
+    }
+    .homepage-cta.primary { background: var(--lime); color: #111827; border-color: var(--lime); }
+    .homepage-cta-note { color: var(--muted); font-size: 12px; font-weight: 750; }
+    .page-nav-link { text-decoration: none; display: inline-flex; align-items: center; }
+
     .board-top-cards {
       position: relative;
       margin-top: 18px;
@@ -560,35 +590,6 @@
     }
 
 
-
-
-    .daily-save-panel { margin-top: 18px; border: 1px solid rgba(190,242,100,.20); background: linear-gradient(180deg, rgba(15,23,42,.88), rgba(2,6,23,.80)); border-radius: 28px; padding: 18px; box-shadow: 0 22px 70px rgba(0,0,0,.32), inset 0 0 24px rgba(34,197,94,.05); }
-    .daily-save-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
-    .daily-save-actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
-    .daily-save-grid { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(300px,.85fr); gap: 14px; }
-    .daily-save-card { border: 1px solid rgba(148,163,184,.16); border-radius: 22px; background: rgba(2,6,23,.44); padding: 14px; }
-    .daily-save-label { color: var(--mint); font-size: 10px; text-transform: uppercase; letter-spacing: .12em; font-weight: 950; margin-bottom: 7px; }
-    .daily-save-input-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: center; margin-top: 10px; }
-    .daily-save-input { width: 100%; min-width: 0; border: 1px solid rgba(134,239,172,.20); background: rgba(15,23,42,.78); color: #e5e7eb; border-radius: 999px; padding: 11px 13px; outline: none; font-size: 12px; }
-    .daily-save-input:focus { border-color: rgba(190,242,100,.50); box-shadow: 0 0 18px rgba(190,242,100,.10); }
-    .daily-save-btn { border: 1px solid rgba(134,239,172,.24); background: rgba(15,23,42,.80); color: #d1fae5; border-radius: 999px; cursor: pointer; font-weight: 950; padding: 10px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; transition: .16s ease; }
-    .daily-save-btn:hover { transform: translateY(-1px); border-color: var(--line-strong); box-shadow: 0 0 18px rgba(190,242,100,.12); }
-    .daily-save-btn.primary { color: #111827; background: var(--lime); border-color: var(--lime); }
-    .daily-save-btn.ghost { background: rgba(190,242,100,.10); color: var(--lime); border-color: rgba(190,242,100,.28); }
-    .daily-save-status { margin-top: 10px; color: #bbf7d0; font-size: 12px; line-height: 1.45; }
-    .daily-save-muted { color: #94a3b8; font-size: 12px; line-height: 1.5; }
-    .saved-pulse-preview { display: grid; gap: 9px; }
-    .saved-pulse-topline { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
-    .saved-pulse-tile { border: 1px solid rgba(148,163,184,.14); background: rgba(15,23,42,.66); border-radius: 16px; padding: 10px; }
-    .saved-pulse-num { color: var(--lime); font-weight: 950; font-size: 22px; line-height: 1; }
-    .saved-pulse-cap { margin-top: 6px; color: #9ca3af; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; font-weight: 950; }
-    .saved-edge-mini { display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center; border: 1px solid rgba(148,163,184,.14); background: rgba(15,23,42,.60); border-radius: 16px; padding: 9px; }
-    .saved-edge-rank { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; background: rgba(190,242,100,.18); color: var(--lime); font-weight: 950; font-size: 12px; }
-    .saved-edge-name { color: #f8fafc; font-weight: 950; font-size: 12px; }
-    .saved-edge-signal { color: #94a3b8; font-size: 11px; line-height: 1.35; margin-top: 2px; }
-    .saved-edge-score { color: var(--lime); font-weight: 950; font-size: 16px; }
-    @media (max-width: 860px){ .daily-save-head, .daily-save-grid { grid-template-columns: 1fr; display: grid; } .daily-save-actions, .daily-save-input-row { grid-template-columns: 1fr; } .saved-pulse-topline { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-
     .data-dock { margin-top: 18px; border: 1px solid rgba(125,211,252,.18); background: linear-gradient(180deg, rgba(15,23,42,.86), rgba(2,6,23,.78)); border-radius: 28px; padding: 18px; box-shadow: 0 22px 70px rgba(0,0,0,.32); }
     .data-dock-head { padding: 4px 4px 16px; }
     .data-dock-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
@@ -668,6 +669,9 @@
         <div class="eyebrow">Live MLB Model Updates</div>
         <h2 class="hero-title">Baseball insights backed by <span>live data.</span></h2>
         <p class="hero-copy">The Diamond Pulse turns live games, pitching matchups, hot bats, team trends, and head-to-head history into clear MLB storylines.</p>
+        <div class="homepage-cta-row">
+          <span class="homepage-cta-note">Build and save the daily slate from its own page.</span>
+        </div>
         <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
       </article>
 
@@ -739,41 +743,6 @@
       </aside>
     </section>
 
-
-    <section class="daily-save-panel">
-      <div class="daily-save-head">
-        <div>
-          <div class="panel-kicker">Daily Recap</div>
-          <h2 class="panel-title">Saved recap workspace</h2>
-          <div class="panel-sub">Save today’s full slate directly into the Daily Recap workspace. Load it from any device later, then copy the recap prompt when you are ready to write the post.</div>
-        </div>
-        <div class="daily-save-actions">
-          <button class="daily-save-btn primary" onclick="saveDailyPulseForRecap()">Save to Daily Recap</button>
-          <button class="daily-save-btn ghost" onclick="loadDailyPulseFromCloud()">Load Saved Recap</button>
-          <button class="daily-save-btn" onclick="copyDailyRecapPrompt()">Copy Daily Recap Prompt</button>
-        </div>
-      </div>
-      <div class="daily-save-grid">
-        <article class="daily-save-card">
-          <div class="daily-save-label">Cross-device Daily Recap</div>
-          <div class="daily-save-muted">This version saves through your Cloudflare Worker at <strong>https://diamond-pulse-daily-recap-api.kadescott97.workers.dev</strong>. Press Save to Daily Recap from the Daily Pulse board, then open the Daily Recap page from any device to load the same saved slate.</div>
-          <div class="daily-save-input-row">
-            <input id="dailyPulseLoadDate" class="daily-save-input" type="date">
-            <button class="daily-save-btn" onclick="loadDailyPulseFromCloud(document.getElementById('dailyPulseLoadDate').value)">Load Recap Date</button>
-          </div>
-          <div class="daily-save-input-row">
-            <a class="daily-save-btn ghost" href="daily-recap.html">Open Daily Recap Page</a>
-            <button class="daily-save-btn" onclick="loadDailyPulseFromCloud()">Reload Latest</button>
-          </div>
-          <div id="dailyPulseSaveStatus" class="daily-save-status">Daily Recap cloud save is ready once the Cloudflare Worker route is connected.</div>
-        </article>
-        <article class="daily-save-card">
-          <div class="daily-save-label">Saved Daily Recap</div>
-          <div id="dailyPulseSavedPreview" class="saved-pulse-preview"><div class="daily-save-muted">No saved Daily Recap loaded yet.</div></div>
-        </article>
-      </div>
-    </section>
-
     <section class="data-dock">
       <div class="panel-head data-dock-head">
         <div>
@@ -811,9 +780,7 @@ let profileStore = [];
 let pitchCodeMapCache = null;
 let gameFeedCache = {};
 let recentBoxscoreCache = {};
-let appState = { selectedTeamId:"all", edgeBoardFilter:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[], dailyPulseSnapshot:null };
-const DAILY_RECAP_API_URL = "https://diamond-pulse-daily-recap-api.kadescott97.workers.dev";
-const DAILY_PULSE_SYNC_KEY = "diamond-pulse-main";
+let appState = { selectedTeamId:"all", edgeBoardFilter:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherH2H:[], batterH2H:[], followedPlayers:[] };
 let edgeBoardStore = [];
 let activeEdgeRowId = null;
 
@@ -1053,59 +1020,6 @@ function renderDataDock(){
   games.innerHTML=gameRows.length?gameRows.join(''):'<div class="loading">Today\'s games will appear after the scoreboard loads.</div>';
 }
 
-
-function getAllUnifiedEdgeRowsForSave(){ const active=appState.edgeBoardFilter; appState.edgeBoardFilter='all'; const rows=buildUnifiedEdgeRows(); appState.edgeBoardFilter=active; return rows; }
-function getDailyPulseEndpoint(){ return DAILY_RECAP_API_URL; }
-function saveDailyPulseEndpointFromInput(){ setDailyPulseStatus('No Apps Script URL is needed. This build saves through your workers.dev Cloudflare Worker using Cloudflare Worker KV.'); }
-function compactRowForDailyPulse(item,index){ const r=item.row||{}; return {rank:index+1, source:item.source, type:item.type, group:item.group, category:item.category, score:item.score, confidence:item.confidence, signal:item.signal, game:item.game||r.game||r.status||'Today', name:r.name||'', personId:r.personId||'', team:r.team||'', teamId:r.teamId||'', opponent:r.opponent||'', pitcherName:r.pitcherName||'', value:r.value||'', status:r.status||'', whiffPct:r.whiffPct||'', qualifiedGames:r.qualifiedGames||'', bestKs:r.bestKs||'', hits:r.hits||'', hr:r.hr||'', lastHitLabel:r.lastHitLabel||'', recentBoxscores:(r.recentBoxscores||[]).slice(0,4), logs:(r.logs||[]).slice(0,5)}; }
-function compactGameForDailyPulse(game){ const away=game.teams&&game.teams.away&&game.teams.away.team?game.teams.away.team:{}; const home=game.teams&&game.teams.home&&game.teams.home.team?game.teams.home.team:{}; return {gamePk:game.gamePk, matchup:(away.name||'Away')+' @ '+(home.name||'Home'), status:tickerStatus(game), awayScore:scoreValue(game,'away'), homeScore:scoreValue(game,'home'), watchFactor:computeWatchFactor(game)}; }
-function buildDailyPulseSnapshot(){ const rows=getAllUnifiedEdgeRowsForSave(); const liveRows=rows.filter(x=>x.category==='live'); const pitcherRows=rows.filter(x=>x.group==='pitcher'); const hitterRows=rows.filter(x=>x.group==='hitter'); const teamRows=rows.filter(x=>x.group==='team'); return {version:3, site:'Diamond Pulse', saveType:'daily-recap', purpose:'Daily Recap workspace', date:nyDate(0), savedAt:new Date().toISOString(), summary:{signals:rows.length, live:liveRows.length, pitchers:pitcherRows.length, hitters:hitterRows.length, teams:teamRows.length, games:(appState.scoreGames||[]).length}, topEdges:rows.slice(0,12).map(compactRowForDailyPulse), liveFeed:[...(appState.liveKs||[]).filter(p=>Number(p.value)>=4).slice(0,6).map(p=>({type:'K',name:p.name,team:p.team,value:p.value,status:p.status,game:p.game})),...(appState.liveHits||[]).filter(p=>Number(p.value)>=1).slice(0,6).map(p=>({type:'H',name:p.name,team:p.team,value:p.value,status:p.status,game:p.game,lastHitLabel:p.lastHitLabel||''}))], games:(appState.scoreGames||[]).slice(0,20).map(compactGameForDailyPulse), watchlist:(appState.followedPlayers||[]).slice(0,50), originalData:{pitcherH2H:(appState.pitcherH2H||[]).slice(0,12).map(r=>({name:r.name,team:r.team,opponent:r.opponent,qualifiedGames:r.qualifiedGames,bestKs:r.bestKs,whiffPct:r.whiffPct||'',recentBoxscores:(r.recentBoxscores||[]).slice(0,4)})), batterH2H:(appState.batterH2H||[]).slice(0,12).map(r=>({name:r.name,team:r.team,pitcherName:r.pitcherName,hits:r.hits,hr:r.hr,logs:(r.logs||[]).slice(0,5)})), hotPitchers:(appState.hotPitchers||[]).slice(0,12).map(r=>({name:r.name,team:r.team,value:r.value,status:r.status,whiffPct:r.whiffPct,recentBoxscores:(r.recentBoxscores||[]).slice(0,4)})), hotHitters:(appState.hotHitters||[]).slice(0,12).map(r=>({name:r.name,team:r.team,value:r.value,logs:(r.logs||[]).slice(0,5),recentBoxscores:(r.recentBoxscores||[]).slice(0,4)})), prevKs:(appState.prevKs||[]).slice(0,10), prevHits:(appState.prevHits||[]).slice(0,10)} }; }
-function dailyPulseLocalKey(date){ return 'diamondPulseDailySave_'+(date||nyDate(0)); }
-function saveDailyPulseLocal(snapshot){ try{ localStorage.setItem(dailyPulseLocalKey(snapshot.date), JSON.stringify(snapshot)); localStorage.setItem('diamondPulseDailySave_latest', JSON.stringify(snapshot)); }catch(err){ console.warn(err); } appState.dailyPulseSnapshot=snapshot; }
-function loadDailyPulseLocal(date){ try{ const raw=date?localStorage.getItem(dailyPulseLocalKey(date)):localStorage.getItem('diamondPulseDailySave_latest'); return raw?JSON.parse(raw):null; }catch(err){ return null; } }
-function setDailyPulseStatus(message){ const el=document.getElementById('dailyPulseSaveStatus'); if(el) el.textContent=message; }
-async function saveDailyPulseToCloud(snapshot){
-  const endpoint=getDailyPulseEndpoint();
-  try{
-    setDailyPulseStatus('Saving Daily Recap to cloud...');
-    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',key:DAILY_PULSE_SYNC_KEY,date:snapshot.date,payload:snapshot})});
-    const data=await res.json().catch(()=>({ok:false,error:'Bad cloud response'}));
-    if(!res.ok || !data.ok) throw new Error(data.error||'Cloud save failed');
-    setDailyPulseStatus('Saved to Daily Recap cloud. Open daily-recap.html on any device and load the saved recap.');
-    return true;
-  }catch(err){
-    console.warn('Daily Recap cloud save failed',err);
-    setDailyPulseStatus('Saved on this device, but cloud save failed: '+(err.message||err));
-    return false;
-  }
-}
-async function saveDailyPulseForRecap(){ const snapshot=buildDailyPulseSnapshot(); saveDailyPulseLocal(snapshot); await saveDailyPulseToCloud(snapshot); renderDailyPulseCloudPanel(); }
-async function loadDailyPulseFromCloud(date){
-  const endpoint=getDailyPulseEndpoint();
-  try{
-    setDailyPulseStatus('Loading saved Daily Recap from cloud...');
-    const url=endpoint+'?key='+encodeURIComponent(DAILY_PULSE_SYNC_KEY)+(date?'&date='+encodeURIComponent(date):'');
-    const res=await fetch(url,{method:'GET',headers:{'Accept':'application/json'}});
-    const data=await res.json().catch(()=>({ok:false,error:'Bad cloud response'}));
-    if(data&&data.ok&&data.snapshot){
-      saveDailyPulseLocal(data.snapshot); appState.dailyPulseSnapshot=data.snapshot; renderDailyPulseCloudPanel();
-      setDailyPulseStatus('Loaded saved Daily Recap from '+(data.snapshot.savedAt||data.snapshot.date||'latest')+'.');
-    } else {
-      const local=loadDailyPulseLocal(date);
-      if(local){ appState.dailyPulseSnapshot=local; renderDailyPulseCloudPanel(); setDailyPulseStatus('Cloud did not have that save, so I loaded the local Daily Recap from this device.'); }
-      else setDailyPulseStatus((data&&data.error)||'No cloud Daily Recap save was found yet.');
-    }
-  }catch(err){
-    const local=loadDailyPulseLocal(date);
-    if(local){ appState.dailyPulseSnapshot=local; renderDailyPulseCloudPanel(); setDailyPulseStatus('Cloud load failed, so I loaded the local Daily Recap from this device.'); }
-    else setDailyPulseStatus(err.message||'Could not load saved Daily Recap.');
-  }
-}
-async function autoLoadDailyRecapWorkspace(){ if(appState.dailyPulseSnapshot) return; try{ const res=await fetch(getDailyPulseEndpoint()+'?key='+encodeURIComponent(DAILY_PULSE_SYNC_KEY),{headers:{'Accept':'application/json'}}); const data=await res.json(); if(data&&data.ok&&data.snapshot){ saveDailyPulseLocal(data.snapshot); appState.dailyPulseSnapshot=data.snapshot; renderDailyPulseCloudPanel(); setDailyPulseStatus('Latest cloud Daily Recap loaded automatically.'); } }catch(err){ console.warn('Auto-load Daily Recap failed', err); } }
-function dailyPulseSnapshotToPrompt(snapshot){ if(!snapshot) return ''; const s=snapshot.summary||{}; const lines=[]; lines.push('Create a Diamond Pulse daily recap from this saved Daily Recap snapshot. Make it sound like a professional sports-betting intelligence recap, not hype.'); lines.push('Date: '+(snapshot.date||'')); lines.push('Saved at: '+(snapshot.savedAt||'')); lines.push('Slate snapshot: '+(s.signals||0)+' signals, '+(s.live||0)+' live, '+(s.pitchers||0)+' pitchers, '+(s.hitters||0)+' hitters, '+(s.teams||0)+' team trends, '+(s.games||0)+' games.'); lines.push(''); lines.push('Top edges to cover:'); (snapshot.topEdges||[]).slice(0,10).forEach(e=>{ lines.push(e.rank+'. '+e.name+' — '+e.score+' edge — '+e.type+' — '+e.game+' — '+e.signal+' — confidence: '+e.confidence); if(e.recentBoxscores&&e.recentBoxscores.length) lines.push('   Recent boxscores: '+e.recentBoxscores.map(b=>b.date+' '+(b.ip?b.ip+' IP, '+b.ks+' K, '+b.er+' ER':b.hits+' H, '+b.hr+' HR, '+b.rbi+' RBI')).join(' | ')); }); if(snapshot.liveFeed&&snapshot.liveFeed.length){ lines.push(''); lines.push('Live feed notes:'); snapshot.liveFeed.slice(0,8).forEach(f=>lines.push('- '+f.type+': '+f.name+' — '+f.value+' — '+f.team+' — '+f.status+(f.lastHitLabel?' — '+f.lastHitLabel:''))); } lines.push(''); lines.push('Write the recap with sections: Biggest Pitching Edge, Best Hitter/Team Trend, Live Movement, What Changed, and Clean Takeaway.'); return lines.join('\n'); }
-async function copyDailyRecapPrompt(){ const snapshot=appState.dailyPulseSnapshot||loadDailyPulseLocal(); if(!snapshot){ setDailyPulseStatus('Save or load a Daily Recap first, then copy the recap prompt.'); return; } const prompt=dailyPulseSnapshotToPrompt(snapshot); try{ await navigator.clipboard.writeText(prompt); setDailyPulseStatus('Daily recap prompt copied. Paste it into ChatGPT to create the recap from your saved Daily Recap.'); }catch(err){ const area=document.createElement('textarea'); area.value=prompt; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('Daily recap prompt copied. Paste it into ChatGPT to create the recap.'); } }
-function renderDailyPulseCloudPanel(){ const dateInput=document.getElementById('dailyPulseLoadDate'); if(dateInput && !dateInput.value) dateInput.value=nyDate(0); const preview=document.getElementById('dailyPulseSavedPreview'); if(!preview) return; const snapshot=appState.dailyPulseSnapshot||loadDailyPulseLocal(); if(!snapshot){ preview.innerHTML='<div class="daily-save-muted">No saved Daily Recap loaded yet. Tap Save to Daily Recap after the board fills in.</div>'; return; } const s=snapshot.summary||{}; const top=(snapshot.topEdges||[]).slice(0,5); preview.innerHTML='<div class="daily-save-muted">Daily Recap saved '+h(snapshot.date||'')+' · '+h(snapshot.savedAt?new Date(snapshot.savedAt).toLocaleString():'')+'</div><div class="saved-pulse-topline"><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.signals||0)+'</div><div class="saved-pulse-cap">Signals</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.live||0)+'</div><div class="saved-pulse-cap">Live</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h(s.pitchers||0)+'</div><div class="saved-pulse-cap">Pitchers</div></div><div class="saved-pulse-tile"><div class="saved-pulse-num">'+h((s.hitters||0)+(s.teams||0))+'</div><div class="saved-pulse-cap">Hitters/Teams</div></div></div>'+(top.length?top.map(e=>'<div class="saved-edge-mini"><div class="saved-edge-rank">'+h(e.rank)+'</div><div><div class="saved-edge-name">'+h(e.name)+'</div><div class="saved-edge-signal">'+h(e.signal)+'</div></div><div class="saved-edge-score">'+h(e.score)+'</div></div>').join(''):'<div class="daily-save-muted">Saved Daily Recap has no edge rows yet.</div>'); }
-
 function renderAllData(){
   profileStore=[];
   renderTeamFilters();
@@ -1114,7 +1028,6 @@ function renderAllData(){
   renderWatchlist();
   renderEdgeTerminal();
   renderDataDock();
-  renderDailyPulseCloudPanel();
 }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
@@ -1138,9 +1051,7 @@ window.addEventListener("unhandledrejection", function(e){ showSiteError(e.reaso
 function bootDiamondPulse(){
   try {
     appState.followedPlayers=loadFollowedPlayers();
-    appState.dailyPulseSnapshot=loadDailyPulseLocal();
     renderAllData();
-    autoLoadDailyRecapWorkspace().catch(function(err){ console.warn(err); });
   } catch(err) {
     showSiteError(err);
   }
