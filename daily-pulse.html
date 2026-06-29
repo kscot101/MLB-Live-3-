@@ -681,7 +681,7 @@
         </div>
       </div>
       <div class="post-actions">
-        <button class="post-btn primary" onclick="renderGeneratedDailyPosts(true)">Generate 6 Posts</button>
+        <button class="post-btn primary" onclick="generateFreshDailyPulsePosts()">Generate Fresh 6 Posts</button>
         <button class="post-btn" onclick="saveDailyPulseForRecap()">Save 6 Posts to Daily Recap</button>
         <button class="post-btn" onclick="copyPitcherGeneratedPosts()">Copy Pitcher Set</button>
         <button class="post-btn" onclick="copyBatterGeneratedPosts()">Copy Batter Set</button>
@@ -751,6 +751,7 @@ let recentBoxscoreCache = {};
 let seasonStatCache = {};
 let pitcherKLeaderboardCache = null;
 let dailyPostRenderInFlight = false;
+let dailyPulseRefreshInFlight = false;
 let appState = { selectedTeamId:"all", edgeBoardFilter:"all", scoreGames:[], todaysTeams:[], liveKs:[], liveHits:[], prevKs:[], prevHits:[], hotHitters:[], streakingHitters:[], hotPitchers:[], pitcherPostPool:[], pitcherH2H:[], batterH2H:[], followedPlayers:[], dailyPulseSnapshot:null };
 const DAILY_RECAP_API_URL = "https://diamond-pulse-daily-recap-api.kadescott97.workers.dev";
 const DAILY_PULSE_SYNC_KEY = "diamond-pulse-main";
@@ -948,8 +949,8 @@ function hitAnimationBlock(row){ if(!row||!row.lastHitType) return ""; return '<
 function h2hCacheKey(){ return "diamondPulseH2HEdge_"+nyDate(0); }
 function loadH2HCache(){ try { const cache=JSON.parse(localStorage.getItem(h2hCacheKey())||"null"); if(!cache) return null; if(cache.version!==H2H_CACHE_VERSION) return null; if(cache.date!==nyDate(0)) return null; return cache; } catch(err){ return null; } }
 function saveH2HCache(){ try { localStorage.setItem(h2hCacheKey(),JSON.stringify({version:H2H_CACHE_VERSION,date:nyDate(0),pitcherH2H:appState.pitcherH2H||[],batterH2H:appState.batterH2H||[]})); } catch(err){} }
-async function loadHeadToHeadEdges(){
-  const cache=loadH2HCache(); if(cache){ appState.pitcherH2H=cache.pitcherH2H||[]; appState.batterH2H=cache.batterH2H||[]; renderAllData(); return; }
+async function loadHeadToHeadEdges(forceFresh){
+  const cache=forceFresh ? null : loadH2HCache(); if(cache){ appState.pitcherH2H=cache.pitcherH2H||[]; appState.batterH2H=cache.batterH2H||[]; renderAllData(); return; }
   let pitcherEdges=[], batterEdges=[], probables=[]; try { probables=await getTodaysProbables(); } catch(err){ renderAllData(); return; }
   for(const pitcher of probables){
     const logs=await fetchPitcherGameLogs(pitcher.id,H2H_YEARS_BACK);
@@ -1502,6 +1503,31 @@ async function renderGeneratedDailyPosts(force){
   }catch(err){ console.error(err); setDailyPulseStatus('Post generation hit an error: '+(err.message || err)); }
   finally{ dailyPostRenderInFlight = false; }
 }
+async function generateFreshDailyPulsePosts(){
+  if(dailyPulseRefreshInFlight){
+    setDailyPulseStatus('Already refreshing today’s MLB data. Give it a few seconds.');
+    return;
+  }
+  dailyPulseRefreshInFlight = true;
+  generatedDailyPosts = [];
+  gameFeedCache = {};
+  recentBoxscoreCache = {};
+  try {
+    setDailyPulseStatus('Refreshing today’s MLB slate now, then building 3 Round the Mound posts and 3 Batters Edge posts...');
+    await loadDashboard();
+    await loadStaticSectionsOnce();
+    await loadHeadToHeadEdges(true);
+  } catch(err) {
+    console.error(err);
+    setDailyPulseStatus('Fresh data refresh hit an issue, so I will generate from the best loaded data: '+(err && err.message ? err.message : err));
+  } finally {
+    dailyPulseRefreshInFlight = false;
+  }
+  renderAllData();
+  await renderGeneratedDailyPosts(true);
+  setDailyPulseStatus('Fresh Daily Pulse generated from today’s current MLB data at '+new Date().toLocaleTimeString()+'. Use Copy Pitcher Set and Copy Batter Set separately.');
+}
+
 async function copyGeneratedPost(index){
   const posts = collectGeneratedPostsFromDom();
   const post = posts[index];
@@ -1542,7 +1568,7 @@ function renderAllData(){
   renderEdgeTerminal();
   renderDataDock();
   renderDailyPulseCloudPanel();
-  renderGeneratedDailyPosts(false);
+  if(!dailyPulseRefreshInFlight) renderGeneratedDailyPosts(false);
 }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
