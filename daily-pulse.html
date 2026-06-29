@@ -640,6 +640,13 @@
     .post-source-num{font-size:28px;font-weight:1000;color:#bef264;line-height:1;}
     .post-source-cap{font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:950;color:#9ca3af;margin-top:7px;}
     .post-hidden-data{display:none!important;}
+
+    .post-group-heading{grid-column:1 / -1;border:1px solid rgba(190,242,100,.16);background:rgba(190,242,100,.06);border-radius:22px;padding:14px 16px;margin-top:6px;}
+    .post-group-kicker{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#86efac;font-weight:950;margin-bottom:5px;}
+    .post-group-title{font-size:22px;font-weight:1000;letter-spacing:-.03em;}
+    .post-group-copy{color:#9ca3af;font-size:13px;line-height:1.45;margin-top:5px;}
+    .post-card.pitcher-post{border-color:rgba(96,165,250,.24);}
+    .post-card.batter-post{border-color:rgba(190,242,100,.24);}
     @media(max-width:850px){.post-topbar{display:grid}.post-actions{justify-content:flex-start}.post-grid{grid-template-columns:1fr}.post-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.post-workspace{padding:18px 14px 40px}}
 
   </style>
@@ -670,13 +677,15 @@
         <div>
           <div class="eyebrow">Private Posting Workspace</div>
           <h1 class="post-title">Daily Pulse <span>posts.</span></h1>
-          <div class="post-sub">This page is only for generated post copy. It is not the public homepage and it does not show the full edge-board layout. Generate today’s post set with the original Daily Pulse buckets — Round the Mound, Batters Edge, Live Pulse, and Team Trend — then edit and save it to the separate Daily Recap page.</div>
+          <div class="post-sub">This page is only for your generated post copy. Generate six separate Daily Pulse posts using the original data buckets: three Round the Mound pitcher posts and three Batters Edge hitter posts. Edit them here, then copy the Pitcher set and Batter set separately for your posts.</div>
         </div>
       </div>
       <div class="post-actions">
-        <button class="post-btn primary" onclick="renderGeneratedDailyPosts(true)">Generate Posts</button>
-        <button class="post-btn" onclick="saveDailyPulseForRecap()">Save Posts to Daily Recap</button>
-        <button class="post-btn" onclick="copyAllGeneratedPosts()">Copy All Posts</button>
+        <button class="post-btn primary" onclick="renderGeneratedDailyPosts(true)">Generate 6 Posts</button>
+        <button class="post-btn" onclick="saveDailyPulseForRecap()">Save 6 Posts to Daily Recap</button>
+        <button class="post-btn" onclick="copyPitcherGeneratedPosts()">Copy Pitcher Set</button>
+        <button class="post-btn" onclick="copyBatterGeneratedPosts()">Copy Batter Set</button>
+        <button class="post-btn" onclick="copyAllGeneratedPosts()">Copy All 6</button>
         <a class="post-btn" href="daily-recap.html">Daily Recap</a>
       </div>
     </header>
@@ -684,9 +693,9 @@
     <section class="post-status" id="dailyPulseSaveStatus">Loading Diamond Pulse data for generated posts...</section>
 
     <section class="post-source-grid" id="postSourceSnapshot">
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Round the Mound</div></div>
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Batters Edge</div></div>
-      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Live Pulse</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Pitcher Posts</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Batter Posts</div></div>
+      <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Total Posts</div></div>
       <div class="post-source-tile"><div class="post-source-num">--</div><div class="post-source-cap">Games</div></div>
     </section>
 
@@ -1138,22 +1147,82 @@ function buildThreadPost(rows){
   lines.push('Clean takeaway: the best Daily Pulse posts are the ones where the metrics explain the angle — recent form, whiff/K profile, batter-vs-starter history, live movement, or team trend context.');
   return lines.join('\n');
 }
+function stablePostKey(item){
+  const row = item && item.row ? item.row : {};
+  return String(row.personId || row.teamId || row.name || item.id || Math.random())+'::'+String(item.source || item.type || 'signal');
+}
+function pickDistinctPostItems(items, count){
+  const picked = [];
+  const seenPlayers = new Set();
+  const seenKeys = new Set();
+  (items || []).forEach(item => {
+    if(!item || !item.row) return;
+    const playerKey = item.row.personId ? String(item.row.personId) : '';
+    const key = stablePostKey(item);
+    if(playerKey && seenPlayers.has(playerKey)) return;
+    if(seenKeys.has(key)) return;
+    picked.push(item);
+    if(playerKey) seenPlayers.add(playerKey);
+    seenKeys.add(key);
+  });
+  return picked.slice(0, count);
+}
+function getPitcherPostCandidates(rows){
+  const pitcherRows = (rows || []).filter(x => x.group === 'pitcher');
+  return [
+    ...pitcherRows.filter(x => x.category === 'h2h'),
+    ...pitcherRows.filter(x => String(x.source || '').toLowerCase().includes('current form')),
+    ...pitcherRows.filter(x => x.category === 'live'),
+    ...pitcherRows
+  ];
+}
+function getBatterPostCandidates(rows){
+  const hitterRows = (rows || []).filter(x => x.group === 'hitter');
+  return [
+    ...hitterRows.filter(x => x.category === 'h2h'),
+    ...hitterRows.filter(x => String(x.source || '').toLowerCase().includes('hot bat')),
+    ...hitterRows.filter(x => String(x.source || '').toLowerCase().includes('hit streak')),
+    ...hitterRows.filter(x => x.category === 'live'),
+    ...hitterRows
+  ];
+}
 function getGeneratedDailyPosts(){
   const rows = getAllUnifiedEdgeRowsForSave();
-  const pitcher = rows.find(x=>x.group==='pitcher' && x.category==='h2h') || rows.find(x=>x.group==='pitcher');
-  const hitter = rows.find(x=>x.group==='hitter' && x.category==='h2h') || rows.find(x=>x.group==='hitter');
-  const live = rows.find(x=>x.category==='live');
-  const team = rows.find(x=>x.group==='team');
+  const pitchers = pickDistinctPostItems(getPitcherPostCandidates(rows), 3);
+  const hitters = pickDistinctPostItems(getBatterPostCandidates(rows), 3);
   const posts = [];
-  if(pitcher) posts.push({id:'round-the-mound', label:'Round the Mound', title:'Round the Mound: '+(pitcher.row.name||'Pitcher Read'), meta:[pitcher.type, pitcher.confidence, pitcher.signal], text:postTextFromItem(pitcher,'pitcher'), source:compactRowForDailyPulse(pitcher,0)});
-  if(hitter) posts.push({id:'batters-edge', label:'Batters Edge', title:'Batters Edge: '+(hitter.row.name||'Hitter Read'), meta:[hitter.type, hitter.confidence, hitter.signal], text:postTextFromItem(hitter,'hitter'), source:compactRowForDailyPulse(hitter,1)});
-  if(live) posts.push({id:'live-pulse', label:'Live Pulse', title:'Live Pulse: '+(live.row.name||'Live Movement'), meta:[live.type, live.confidence, live.signal], text:postTextFromItem(live,'live'), source:compactRowForDailyPulse(live,2)});
-  if(team) posts.push({id:'team-trend', label:'Team Trend', title:'Team Trend: '+(team.row.name||'Team Trend'), meta:[team.type, team.confidence, team.signal], text:postTextFromItem(team,'team'), source:compactRowForDailyPulse(team,3)});
-  posts.push({id:'daily-pulse-thread', label:'Full Daily Pulse Thread', title:'Daily Pulse Thread', meta:['Round the Mound', 'Batters Edge', rows.length+' board signals'], text:buildThreadPost(rows), source:null, wide:true});
+  pitchers.forEach((item, index) => {
+    posts.push({
+      id:'round-the-mound-'+(index+1),
+      group:'pitcher',
+      label:'Round the Mound #'+(index+1),
+      title:'Round the Mound #'+(index+1)+': '+(item.row.name||'Pitcher Read'),
+      meta:[item.type, item.confidence, item.signal],
+      text:postTextFromItem(item,'pitcher'),
+      source:compactRowForDailyPulse(item,index)
+    });
+  });
+  hitters.forEach((item, index) => {
+    posts.push({
+      id:'batters-edge-'+(index+1),
+      group:'batter',
+      label:'Batters Edge #'+(index+1),
+      title:'Batters Edge #'+(index+1)+': '+(item.row.name||'Hitter Read'),
+      meta:[item.type, item.confidence, item.signal],
+      text:postTextFromItem(item,'hitter'),
+      source:compactRowForDailyPulse(item,index+3)
+    });
+  });
   return posts;
 }
+function postGroupHeading(group){
+  if(group === 'pitcher'){
+    return '<div class="post-group-heading"><div class="post-group-kicker">Post set one</div><div class="post-group-title">Round the Mound — 3 pitcher posts</div><div class="post-group-copy">Copy this group when you want a pitcher-focused Daily Pulse post. These use K form, whiff estimate, H2H K signal, matchup context, recent line, and recent boxscores.</div></div>';
+  }
+  return '<div class="post-group-heading"><div class="post-group-kicker">Post set two</div><div class="post-group-title">Batters Edge — 3 hitter posts</div><div class="post-group-copy">Copy this group when you want a hitter-focused Daily Pulse post. These use batter-vs-starter history, hot bat form, live hit movement, matchup context, and recent boxscores.</div></div>';
+}
 function postCardHtml(post, index){
-  return '<article class="post-card '+(post.wide?'wide':'')+'">'+
+  return '<article class="post-card '+(post.wide?'wide':'')+' '+(post.group==='pitcher'?'pitcher-post':'batter-post')+'">'+
     '<div class="post-label">'+h(post.label)+'</div>'+
     '<div class="post-name">'+h(post.title)+'</div>'+
     '<div class="post-meta">'+(post.meta||[]).filter(Boolean).slice(0,4).map(x=>'<span class="post-chip">'+h(x)+'</span>').join('')+'</div>'+
@@ -1175,13 +1244,18 @@ function renderGeneratedDailyPosts(force){
   if(!holder) return;
   const rows = getAllUnifiedEdgeRowsForSave();
   if(force || !generatedDailyPosts.length){ generatedDailyPosts = getGeneratedDailyPosts(); }
-  holder.innerHTML = generatedDailyPosts.length ? generatedDailyPosts.map(postCardHtml).join('') : '<article class="post-card wide"><div class="post-label">Generated posts</div><div class="post-name">Waiting on data...</div><div class="post-sub">Refresh after MLB data finishes loading.</div></article>';
+  const pitcherPosts = generatedDailyPosts.filter(p => p.group === 'pitcher');
+  const batterPosts = generatedDailyPosts.filter(p => p.group === 'batter');
+  if(generatedDailyPosts.length){
+    holder.innerHTML = postGroupHeading('pitcher') + pitcherPosts.map(postCardHtml).join('') + postGroupHeading('batter') + batterPosts.map(postCardHtml).join('');
+  } else {
+    holder.innerHTML = '<article class="post-card wide"><div class="post-label">Generated posts</div><div class="post-name">Waiting on data...</div><div class="post-sub">Refresh after MLB data finishes loading. This page will generate 3 Round the Mound posts and 3 Batters Edge posts.</div></article>';
+  }
   const snap = document.getElementById('postSourceSnapshot');
   if(snap){
-    const live = rows.filter(x=>x.category==='live').length;
-    snap.innerHTML = '<div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.some(p=>p.id==="round-the-mound")?1:0)+'</div><div class="post-source-cap">Round the Mound</div></div><div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.some(p=>p.id==="batters-edge")?1:0)+'</div><div class="post-source-cap">Batters Edge</div></div><div class="post-source-tile"><div class="post-source-num">'+h(live)+'</div><div class="post-source-cap">Live Pulse</div></div><div class="post-source-tile"><div class="post-source-num">'+h((appState.scoreGames||[]).length)+'</div><div class="post-source-cap">Games</div></div>';
+    snap.innerHTML = '<div class="post-source-tile"><div class="post-source-num">'+h(pitcherPosts.length)+'</div><div class="post-source-cap">Pitcher Posts</div></div><div class="post-source-tile"><div class="post-source-num">'+h(batterPosts.length)+'</div><div class="post-source-cap">Batter Posts</div></div><div class="post-source-tile"><div class="post-source-num">'+h(generatedDailyPosts.length)+'</div><div class="post-source-cap">Total Posts</div></div><div class="post-source-tile"><div class="post-source-num">'+h((appState.scoreGames||[]).length)+'</div><div class="post-source-cap">Games</div></div>';
   }
-  if(rows.length) setDailyPulseStatus('Generated post workspace loaded. Edit the posts, then save them to Daily Recap.');
+  if(rows.length) setDailyPulseStatus('Six-post Daily Pulse workspace loaded. Edit each post, then copy the Pitcher set and Batter set separately.');
 }
 async function copyGeneratedPost(index){
   const posts = collectGeneratedPostsFromDom();
@@ -1190,17 +1264,29 @@ async function copyGeneratedPost(index){
   try{ await navigator.clipboard.writeText(post.text); setDailyPulseStatus('Copied '+post.label+'.'); }
   catch(err){ const area=document.createElement('textarea'); area.value=post.text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('Copied '+post.label+'.'); }
 }
+function postsByGroup(group){ return collectGeneratedPostsFromDom().filter(p => p.group === group); }
+async function copyPostGroup(group, label){
+  const posts = postsByGroup(group);
+  const text = posts.map(p => p.text).join('\n\n---\n\n');
+  if(!text.trim()){ setDailyPulseStatus('Generate posts first.'); return; }
+  try{ await navigator.clipboard.writeText(text); setDailyPulseStatus(label+' copied.'); }
+  catch(err){ const area=document.createElement('textarea'); area.value=text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus(label+' copied.'); }
+}
+async function copyPitcherGeneratedPosts(){ await copyPostGroup('pitcher', 'Pitcher post set'); }
+async function copyBatterGeneratedPosts(){ await copyPostGroup('batter', 'Batter post set'); }
 async function copyAllGeneratedPosts(){
   const posts = collectGeneratedPostsFromDom();
   const text = posts.map(p=>p.text).join('\n\n---\n\n');
   if(!text.trim()){ setDailyPulseStatus('Generate posts first.'); return; }
-  try{ await navigator.clipboard.writeText(text); setDailyPulseStatus('All generated posts copied.'); }
-  catch(err){ const area=document.createElement('textarea'); area.value=text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('All generated posts copied.'); }
+  try{ await navigator.clipboard.writeText(text); setDailyPulseStatus('All six generated posts copied.'); }
+  catch(err){ const area=document.createElement('textarea'); area.value=text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); setDailyPulseStatus('All six generated posts copied.'); }
 }
 function buildGeneratedPostSnapshot(){
   const base = buildDailyPulseSnapshot();
   const posts = collectGeneratedPostsFromDom();
-  return {...base, version:5, purpose:'Daily Pulse generated posts only with Round the Mound and Batters Edge metrics', postMode:'generated-posts-only', generatedPosts:posts.map((p,i)=>({rank:i+1,id:p.id,label:p.label,title:p.title,text:p.text,meta:p.meta||[],source:p.source||null})), summary:{...(base.summary||{}), posts:posts.length}};
+  const pitcherPosts = posts.filter(p => p.group === 'pitcher');
+  const batterPosts = posts.filter(p => p.group === 'batter');
+  return {...base, version:6, purpose:'Daily Pulse six generated posts: three Round the Mound pitcher posts and three Batters Edge hitter posts', postMode:'six-split-posts', generatedPosts:posts.map((p,i)=>({rank:i+1,id:p.id,group:p.group,label:p.label,title:p.title,text:p.text,meta:p.meta||[],source:p.source||null})), postGroups:{pitchers:pitcherPosts.map(p=>p.id), batters:batterPosts.map(p=>p.id)}, summary:{...(base.summary||{}), posts:posts.length, pitcherPosts:pitcherPosts.length, batterPosts:batterPosts.length}};
 }
 function renderAllData(){
   profileStore=[];
