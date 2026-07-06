@@ -147,7 +147,8 @@
       white-space: nowrap;
     }
 
-    .live-pill {
+    .live-pill,
+    .live-board-link {
       display: inline-flex;
       align-items: center;
       gap: 7px;
@@ -160,6 +161,30 @@
       font-weight: 950;
       letter-spacing: .08em;
       text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 0 18px rgba(190,242,100,.10);
+    }
+
+    .live-board-link::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--lime);
+      box-shadow: 0 0 14px rgba(190,242,100,.9);
+    }
+
+    .live-board-link:hover {
+      color: #111827;
+      background: var(--lime);
+      border-color: var(--lime);
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(190,242,100,.22);
+    }
+
+    .live-board-link:hover::before {
+      background: #111827;
+      box-shadow: 0 0 10px rgba(17,24,39,.35);
     }
 
     .live-dot {
@@ -427,8 +452,16 @@
     .panel-sub { margin-top: 7px; color: #9ca3af; font-size: 12px; line-height: 1.45; }
 
     .board-filter-tabs { position: relative; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px 0; }
-    .board-filter-btn { padding: 8px 11px; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; }
+    .board-filter-btn { padding: 8px 11px; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
     .board-filter-btn.active { color: #111827; background: var(--lime); border-color: var(--lime); }
+    .board-filter-btn.live-route {
+      color: var(--lime);
+      border-color: rgba(190,242,100,.32);
+      background: rgba(190,242,100,.14);
+      box-shadow: 0 0 18px rgba(190,242,100,.10);
+    }
+    .board-filter-btn.live-route:hover { color: #111827; background: var(--lime); border-color: var(--lime); box-shadow: 0 0 22px rgba(190,242,100,.22); }
+    .board-filter-btn.live-route:hover .live-dot { background:#111827; box-shadow:0 0 10px rgba(17,24,39,.35); }
 
     .edge-table-wrap { position: relative; padding: 12px; overflow-x: auto; }
     .edge-table { width: 100%; min-width: 790px; border-collapse: separate; border-spacing: 0 8px; font-size: 13px; }
@@ -623,7 +656,7 @@
       </div>
 
       <div class="top-actions">
-        <a class="live-board-link" href="live-board.html">Live Board</a><div class="live-pill"><span class="live-dot"></span>MLB MODEL</div>
+        <a class="live-board-link" href="live-board.html">Live</a><div class="live-pill"><span class="live-dot"></span>MLB MODEL</div>
         <div id="lastUpdated" class="refresh">Loading live data...</div>
         <button id="stadiumBtn" class="stadium-toggle" onclick="toggleStadiumMode()">Stadium Mode</button>
       </div>
@@ -660,12 +693,13 @@
           <div>
             <div class="panel-kicker">The Edge Board</div>
             <h2 class="panel-title">Sortable slate signals</h2>
-            <div class="panel-sub">Click any pitcher, hitter, or team signal. The drawer opens with the explanation, boxscore trail, H2H notes, and context. Live player tracking lives on its own page.</div>
+            <div class="panel-sub">Click any pitcher, hitter, or team signal. The drawer opens with the explanation, boxscore trail, H2H notes, and context. Use the Live tab for live games only.</div>
           </div>
         </div>
 
         <div class="board-filter-tabs">
           <button class="board-filter-btn active" data-board-filter="all" onclick="setEdgeBoardFilter('all')">All Edges</button>
+          <a class="board-filter-btn live-route" href="live-board.html" aria-label="Open dedicated live games board"><span class="live-dot"></span>Live</a>
           <button class="board-filter-btn" data-board-filter="pitchers" onclick="setEdgeBoardFilter('pitchers')">Pitchers</button>
           <button class="board-filter-btn" data-board-filter="hitters" onclick="setEdgeBoardFilter('hitters')">Hitters</button>
           <button class="board-filter-btn" data-board-filter="h2h" onclick="setEdgeBoardFilter('h2h')">H2H</button>
@@ -697,8 +731,8 @@
       <article class="feed-panel live-router-card">
         <div class="panel-kicker">Dedicated Live Tracker</div>
         <h2 class="panel-title">Live hitters and pitchers moved to their own page</h2>
-        <div class="panel-sub">The main board stays cleaner. Use the Live Board for in-game hit leaders, K leaders, latest hit basepaths, and live game status.</div>
-        <a class="big-live-link" href="live-board.html">Open Live Board</a>
+        <div class="panel-sub">The main board stays cleaner. Use the Live tab for in-game hit leaders, K leaders, latest hit basepaths, and live game status.</div>
+        <a class="big-live-link" href="live-board.html">Open Live Tab</a>
       </article>
 
       <aside class="watch-panel">
