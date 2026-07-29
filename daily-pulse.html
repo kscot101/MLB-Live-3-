@@ -743,7 +743,7 @@
 
 const logo = id => id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
 const H2H_YEARS_BACK = 8;
-const H2H_CACHE_VERSION = 5;
+const H2H_CACHE_VERSION = 6;
 let profileStore = [];
 let pitchCodeMapCache = null;
 let gameFeedCache = {};
@@ -855,6 +855,217 @@ function pitcherSeasonAuthorityBoost(row){
   if(k9 >= 11) boost += 4; else if(k9 >= 10) boost += 3; else if(k9 >= 9) boost += 1;
   return boost;
 }
+
+function pitcherRecentFormProfile(row){
+  const raw = (row && row.recentBoxscores && row.recentBoxscores.length)
+    ? row.recentBoxscores
+    : (row && row.logs ? row.logs : []);
+  const starts = (raw || [])
+    .filter(g => g && g.ks !== undefined)
+    .slice(0, 4)
+    .map(g => ({
+      date: g.date || '',
+      opponent: g.opponent || g.game || 'Opponent',
+      ip: g.ip || g.inningsPitched || '0.0',
+      ks: statNumber(g.ks, 0),
+      er: statNumber(g.er, 0),
+      hits: statNumber(g.hits, 0),
+      bb: statNumber(g.bb, 0)
+    }));
+  const lastTwo = starts.slice(0, 2);
+  const lastThree = starts.slice(0, 3);
+  const lastTwoKs = lastTwo.map(g => g.ks);
+  const lastTwoTotal = lastTwoKs.reduce((sum, n) => sum + n, 0);
+  const lastThreeTotal = lastThree.reduce((sum, g) => sum + g.ks, 0);
+  const recentAvg = lastThree.length ? lastThreeTotal / lastThree.length : 0;
+  const lowRecent = lastTwo.length >= 2 && lastTwoTotal < 10;
+  const veryLowBackToBack = lastTwo.length >= 2 && lastTwoKs[0] <= 4 && lastTwoKs[1] <= 4;
+  return {
+    starts,
+    count: starts.length,
+    lastTwo,
+    lastTwoKs,
+    lastTwoTotal,
+    lastThreeTotal,
+    recentAvg,
+    lowRecent,
+    veryLowBackToBack,
+    label: lastTwo.length ? lastTwoKs.join(' K, ') + ' K last 2 starts' : 'Recent K form loading'
+  };
+}
+function pitcherDailyPulseEligible(row){
+  if(!row || !row.personId) return false;
+  const form = pitcherRecentFormProfile(row);
+  const rank = statNumber(row.seasonKRank, 0);
+  const seasonKs = statNumber(row.seasonKs, 0);
+  const k9 = statNumber(row.seasonKPer9, 0);
+  const eliteSeasonArm = (rank && rank <= 10) || seasonKs >= 150 || k9 >= 11;
+  const provenSeasonArm = (rank && rank <= 35) || seasonKs >= 100 || k9 >= 9.5;
+  const liveKs = row.status && String(row.status).toLowerCase().includes('live') ? statNumber(row.value, 0) : 0;
+  if(liveKs >= 6) return true;
+  if(!form.count) return !!provenSeasonArm;
+  if(form.lastTwo.length >= 2){
+    if(form.veryLowBackToBack) return false;
+    if(form.lastTwoTotal < 10 && !(eliteSeasonArm && form.lastTwoTotal >= 8 && Math.max(...form.lastTwoKs) >= 5)) return false;
+    if(form.recentAvg < 4.5 && !eliteSeasonArm) return false;
+  }
+  if(form.lastTwo.length === 1 && form.lastTwoKs[0] < 5 && !eliteSeasonArm) return false;
+  return true;
+}
+function pitcherCurrentFormScore(row){
+  const form = pitcherRecentFormProfile(row);
+  if(!form.count) return 8;
+  let score = 0;
+  if(form.lastTwoTotal >= 18) score += 35;
+  else if(form.lastTwoTotal >= 15) score += 31;
+  else if(form.lastTwoTotal >= 12) score += 26;
+  else if(form.lastTwoTotal >= 10) score += 21;
+  else if(form.lastTwoTotal >= 8) score += 12;
+  else score += 4;
+  if(form.recentAvg >= 8) score += 6;
+  else if(form.recentAvg >= 6) score += 3;
+  if(form.veryLowBackToBack) score -= 18;
+  else if(form.lowRecent) score -= 10;
+  return clamp(score, 0, 40);
+}
+function pitcherSeasonAuthorityScore(row){
+  const rank = statNumber(row && row.seasonKRank, 0), seasonKs = statNumber(row && row.seasonKs, 0), k9 = statNumber(row && row.seasonKPer9, 0);
+  let score = 0;
+  if(rank && rank <= 5) score += 20;
+  else if(rank && rank <= 10) score += 18;
+  else if(rank && rank <= 25) score += 14;
+  else if(rank && rank <= 50) score += 9;
+  if(seasonKs >= 150) score += 4;
+  else if(seasonKs >= 110) score += 3;
+  else if(seasonKs >= 80) score += 1;
+  if(k9 >= 11) score += 4;
+  else if(k9 >= 10) score += 3;
+  else if(k9 >= 9) score += 1;
+  return clamp(score, 0, 25);
+}
+function pitcherH2HSupportScore(row){
+  const eligible = pitcherDailyPulseEligible(row);
+  const games = statNumber(row && row.qualifiedGames, 0);
+  const best = statNumber(row && row.bestKs, 0);
+  const total = statNumber(row && row.totalKs, 0);
+  let score = 0;
+  if(games >= 4) score += 14;
+  else if(games >= 2) score += 10;
+  else if((row && row.logs && row.logs.length >= 2)) score += 8;
+  if(best >= 12) score += 4;
+  else if(best >= 9) score += 2;
+  if(games && total / games >= 9) score += 2;
+  return eligible ? clamp(score, 0, 20) : Math.min(4, score);
+}
+function opponentKContextScore(row){
+  const oppId = row && row.opponentId;
+  const trend = (appState.prevKs || []).find(t => String(t.teamId) === String(oppId));
+  if(!trend) return 4;
+  let score = 0;
+  const ks = statNumber(trend.value, 0);
+  const whiff = statNumber(trend.whiffPct, 0);
+  if(ks >= 12) score += 6;
+  else if(ks >= 9) score += 5;
+  else if(ks >= 7) score += 3;
+  else if(ks <= 4) score -= 2;
+  if(whiff >= 30) score += 4;
+  else if(whiff >= 25) score += 2;
+  return clamp(score, 0, 10);
+}
+function findTodayGameForRow(row){
+  const gamePk = row && (row.todayGamePk || row.gamePk);
+  if(gamePk) {
+    const direct = (appState.scoreGames || []).find(g => String(g.gamePk) === String(gamePk));
+    if(direct) return direct;
+  }
+  const teamId = row && row.teamId;
+  const opponentId = row && row.opponentId;
+  return (appState.scoreGames || []).find(g => {
+    const away = g.teams && g.teams.away && g.teams.away.team && g.teams.away.team.id;
+    const home = g.teams && g.teams.home && g.teams.home.team && g.teams.home.team.id;
+    return [away, home].map(String).includes(String(teamId)) && (!opponentId || [away, home].map(String).includes(String(opponentId)));
+  });
+}
+function gameTimeContext(row){
+  const game = findTodayGameForRow(row);
+  if(!game || !game.gameDate) return {label:'Game time loading', score:2};
+  const dt = new Date(game.gameDate);
+  const local = new Date(dt.toLocaleString('en-US', {timeZone:'America/New_York'}));
+  const hour = local.getHours();
+  const label = hour >= 19 ? 'Night game' : hour >= 17 ? 'Evening game' : 'Day game';
+  const score = hour >= 19 ? 3 : hour >= 17 ? 2 : 1;
+  return {label, score, hour};
+}
+function parseWindMph(wind){
+  const m = String(wind || '').match(/(\d+)\s*mph/i);
+  return m ? Number(m[1]) : 0;
+}
+function weatherTimeContext(row){
+  const weather = row && row.gameWeather ? row.gameWeather : {};
+  const temp = statNumber(weather.temp || weather.temperature, 0);
+  const wind = weather.wind || '';
+  const condition = weather.condition || weather.conditions || '';
+  const mph = parseWindMph(wind);
+  const time = gameTimeContext(row);
+  let score = time.score;
+  const notes = [time.label];
+  if(temp){
+    notes.push(temp + '°');
+    if(temp <= 55) score += 2;
+    else if(temp <= 65) score += 1;
+    else if(temp >= 86) score -= 1;
+  }
+  if(wind){
+    notes.push(String(wind));
+    const w = String(wind).toLowerCase();
+    if(w.includes('in') && mph >= 8) score += 2;
+    else if(w.includes('out') && mph >= 10) score -= 2;
+    else if(mph <= 5 && mph > 0) score += 1;
+  }
+  if(condition) notes.push(condition);
+  return {label: notes.filter(Boolean).join(' · '), score: clamp(score, 0, 8)};
+}
+async function attachPitcherGameContext(row){
+  if(!row || row.pitcherGameContextReady) return row;
+  const game = findTodayGameForRow(row);
+  if(game && game.gameDate){
+    row.gameTimeLabel = gameTimeContext(row).label;
+  }
+  const gamePk = row.todayGamePk || row.gamePk || (game && game.gamePk);
+  if(gamePk){
+    try{
+      const live = await getGameFeed(gamePk);
+      row.gameWeather = (live && live.gameData && live.gameData.weather) ? live.gameData.weather : (row.gameWeather || {});
+    }catch(err){}
+  }
+  const env = weatherTimeContext(row);
+  row.weatherTimeLabel = env.label;
+  row.weatherTimeScore = env.score;
+  row.pitcherGameContextReady = true;
+  return row;
+}
+function pitcherBalancedPostScore(item){
+  const row = item && item.row ? item.row : {};
+  const current = pitcherCurrentFormScore(row);
+  const season = pitcherSeasonAuthorityScore(row);
+  const h2h = pitcherH2HSupportScore(row);
+  const opp = opponentKContextScore(row);
+  const env = statNumber(row.weatherTimeScore, weatherTimeContext(row).score);
+  const liveBonus = item && item.category === 'live' ? Math.min(8, statNumber(row.value, 0)) : 0;
+  const raw = 38 + current + season + h2h + opp + env + liveBonus;
+  const eligible = pitcherDailyPulseEligible(row);
+  return Math.round(clamp(eligible ? raw : Math.min(raw, 69), 50, 99));
+}
+function pitcherBalancedEvaluationLine(row){
+  const form = pitcherRecentFormProfile(row);
+  const env = weatherTimeContext(row);
+  const parts = [];
+  parts.push('Current Form: ' + form.label + (form.recentAvg ? ' · '+form.recentAvg.toFixed(1)+' K/start last 3' : ''));
+  parts.push('Season Authority: ' + (row.strikeoutAuthority || pitcherStrikeoutAuthority(row)) + (row.seasonKRank ? ' · MLB K rank #'+row.seasonKRank : ''));
+  parts.push('H2H Support: ' + pitcherH2HLine(row));
+  parts.push('Game Environment: ' + env.label);
+  return parts;
+}
 function computeHomeRunPulsePct(row){
   const pa = Math.max(1, statNumber(row && row.seasonPa, 0));
   const hr = statNumber(row && row.seasonHr, 0), hrRate = hr / pa;
@@ -904,6 +1115,10 @@ async function enrichPitcherRowAdvanced(row){
   const kPer9 = statNumber(stat.strikeoutsPer9Inn, innings > 0 ? (seasonKs / innings) * 9 : 0);
   row.seasonPitching = stat; row.seasonKs = seasonKs; row.seasonKRank = rankInfo ? rankInfo.rank : ''; row.seasonKPer9 = kPer9;
   row.seasonEra = stat.era || stat.earnedRunAverage || ''; row.seasonWhip = stat.whip || '';
+  if(!row.recentBoxscores || row.recentBoxscores.length < 2){
+    try { row.recentBoxscores = await getRecentBoxscoresForPlayer(row.personId, 'pitching', row.team || row.name || 'Pitcher', 4); } catch(err){}
+  }
+  await attachPitcherGameContext(row);
   row.strikeoutAuthority = pitcherStrikeoutAuthority(row); row.advancedPitcherMetricsReady = true;
   return row;
 }
@@ -930,9 +1145,15 @@ async function enrichPostCandidatesAdvanced(items, group){
   if(group === 'pitcher') await Promise.all(limited.map(enrichPitcherRowAdvanced)); else await Promise.all(limited.map(enrichBatterRowAdvanced));
   (items || []).forEach(item=>{
     if(!item || !item.row) return;
-    if(group === 'pitcher') item.score = Math.round(clamp(Number(item.score || 0) + pitcherSeasonAuthorityBoost(item.row), 70, 99));
-    else item.score = Math.round(clamp(Number(item.score || 0) + hitterPowerProfileBoost(item.row), 68, 99));
-    item.confidence = edgeConfidenceLabel(item.score, {category:item.category}); item.signal = edgeSignal(item.row, item.source);
+    if(group === 'pitcher') {
+      item.score = pitcherBalancedPostScore(item);
+      item.currentFormEligible = pitcherDailyPulseEligible(item.row);
+      item.signal = item.currentFormEligible ? edgeSignal(item.row, item.source) : 'H2H note only — recent K form is too light for a Daily Pulse pick';
+    } else {
+      item.score = Math.round(clamp(Number(item.score || 0) + hitterPowerProfileBoost(item.row), 68, 99));
+      item.signal = edgeSignal(item.row, item.source);
+    }
+    item.confidence = edgeConfidenceLabel(item.score, {category:item.category});
   });
   return items;
 }
@@ -1218,6 +1439,8 @@ function recentBoxscoreMetric(row, group){
 function roundTheMoundMetrics(item){
   const row = item && item.row ? item.row : {};
   const lines = [];
+  lines.push('Balanced Evaluation: current form + season K authority + H2H support + opponent trend + weather/time');
+  pitcherBalancedEvaluationLine(row).forEach(line => lines.push(line));
   lines.push('Edge Score: '+postMetric(item && item.score, 'TBD'));
   lines.push('Strikeout Authority: '+(row.strikeoutAuthority || 'Recent-form K profile'));
   if(row.seasonKRank) lines.push('League K Standing: MLB strikeout rank #'+row.seasonKRank);
@@ -1275,7 +1498,7 @@ function postTextFromItem(item, kind){
   const evidence = item ? boardEvidence(item) : 'The model is still waiting for the full slate data to finish loading.';
   const h2h = item ? boardH2HLine(item) : 'No qualifying matchup note is attached yet.';
   if(kind === 'pitcher'){
-    return 'ROUND THE MOUND\n\n'+name+' is the pitching read that stands out today.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(roundTheMoundMetrics(item))+'\n\nMatchup Context:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis is a pitching post built around proven strikeout authority first — league K standing, season K volume, K/9, whiff profile, recent boxscores, and opponent context — not just one recent spike.';
+    return 'ROUND THE MOUND\n\n'+name+' is the pitching read that stands out today.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(roundTheMoundMetrics(item))+'\n\nMatchup Context:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis pitching post is not selected from H2H alone. It has to clear current-form checks first, then H2H history, season K authority, opponent trend, weather, and time of day can strengthen the case.';
   }
   if(kind === 'hitter'){
     return 'BATTERS EDGE\n\n'+name+' is the bat that belongs on today’s posting board.\n\nPrimary Read:\n'+primary+'\n\nKey Metrics:\n'+metricLinesToText(battersEdgeMetrics(item))+'\n\nMatchup Context:\n'+h2h+'\n\nConfidence:\n'+confidence+'\n\nPost Takeaway:\nThis hitter post is supported by matchup data, OBP, SLG, OPS, HR pace, recent production, and the HR Pulse percentage that separates real power upside from ordinary contact.';
@@ -1368,8 +1591,8 @@ function getPitcherPostCandidates(){
     });
   };
   // Original pitcher data buckets, separated instead of rolled into one player.
-  addList(appState.pitcherH2H, 'Pitcher H2H Edge', 'Pitcher Edge', 'h2h', 'pitcherh2h', 18);
-  addList(appState.hotPitchers, 'Round the Mound Current Form', 'Pitcher Edge', 'pitchers', 'pitcherlogs', 14);
+  addList(appState.pitcherH2H, 'Pitcher H2H Edge', 'Pitcher Edge', 'h2h', 'pitcherh2h', 4);
+  addList(appState.hotPitchers, 'Round the Mound Current Form', 'Pitcher Edge', 'pitchers', 'pitcherlogs', 12);
   addList(appState.pitcherPostPool, 'Round the Mound Probable Starter Pool', 'Pitcher Edge', 'pitchers', 'pitcherlogs', 8);
   addList((appState.liveKs || []).filter(p => Number(p.value || 0) >= 1), 'Live K Pace', 'Live Pitcher Edge', 'live', 'pitcherboxscores', 10);
   return candidates;
@@ -1435,7 +1658,8 @@ function getGeneratedDailyPosts(){
 }
 
 async function getGeneratedDailyPostsAsync(){
-  const pitcherCandidates = await enrichPostCandidatesAdvanced(getPitcherPostCandidates(), 'pitcher');
+  const pitcherCandidatesRaw = await enrichPostCandidatesAdvanced(getPitcherPostCandidates(), 'pitcher');
+  const pitcherCandidates = pitcherCandidatesRaw.filter(item => item && item.row && pitcherDailyPulseEligible(item.row));
   const hitterCandidates = await enrichPostCandidatesAdvanced(getBatterPostCandidates(), 'hitter');
   const pitchers = pickDistinctPostItems(pitcherCandidates, 3);
   const hitters = pickDistinctPostItems(hitterCandidates, 3);
@@ -1454,7 +1678,7 @@ async function getGeneratedDailyPostsAsync(){
 }
 function postGroupHeading(group){
   if(group === 'pitcher'){
-    return '<div class="post-group-heading"><div class="post-group-kicker">Post set one</div><div class="post-group-title">Round the Mound — 3 pitcher posts</div><div class="post-group-copy">Copy this group when you want a pitcher-focused Daily Pulse post. These use league K rank, season K volume, K/9, whiff estimate, H2H K signal, matchup context, recent line, and recent boxscores.</div></div>';
+    return '<div class="post-group-heading"><div class="post-group-kicker">Post set one</div><div class="post-group-title">Round the Mound — 3 pitcher posts</div><div class="post-group-copy">Copy this group when you want a pitcher-focused Daily Pulse post. These now require usable current form first, then weigh league K rank, season K volume, K/9, whiff estimate, H2H K signal, opponent K trend, weather, time of day, and recent boxscores.</div></div>';
   }
   return '<div class="post-group-heading"><div class="post-group-kicker">Post set two</div><div class="post-group-title">Batters Edge — 3 hitter posts</div><div class="post-group-copy">Copy this group when you want a hitter-focused Daily Pulse post. These use batter-vs-starter history, OBP, SLG, OPS, HR pace, HR Pulse %, hot bat form, live hit movement, matchup context, and recent boxscores.</div></div>';
 }
@@ -1484,7 +1708,7 @@ async function renderGeneratedDailyPosts(force){
   try{
     const realGeneratedCount = (generatedDailyPosts || []).filter(p => p && p.source).length;
     if(force || !generatedDailyPosts.length || realGeneratedCount < 6){
-      setDailyPulseStatus('Generating six posts with league K rank, OBP, SLG, OPS, and HR Pulse metrics...');
+      setDailyPulseStatus('Generating six posts with balanced pitcher checks: current form first, then H2H, league K rank, weather/time, OBP, SLG, OPS, and HR Pulse...');
       generatedDailyPosts = await getGeneratedDailyPostsAsync();
     }
     const rows = getAllUnifiedEdgeRowsForSave();
