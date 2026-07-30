@@ -1228,6 +1228,51 @@ function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' activ
   '<td><div class="edge-signal">'+h(item.signal)+'</div></td>'+
   '</tr>'; }
 function renderTopEdgeCards(){ const el=document.getElementById('boardTopEdges'); if(!el) return; const top=edgeBoardStore.slice(0,3); if(!top.length){ el.innerHTML='<div class="loading">Top edges will load once today’s data arrives.</div>'; return; } el.innerHTML=top.map((item,index)=>'<article class="top-edge-card" onclick="openEdgeDrawer(\''+h(item.id)+'\')"><div class="top-edge-rank">'+(index+1)+'</div><div class="top-edge-score">'+h(item.score)+'<span>Edge</span></div><div class="top-edge-player">'+h(item.row.name)+'</div><div class="top-edge-meta">'+h(item.type)+' · '+h(item.game||item.row.team||'Today')+'</div><div class="top-edge-signal">'+h(item.signal)+'</div></article>').join(''); }
+
+
+/* Diamond Pulse homepage pitcher algorithm v7: tiered scoring, not strict filtering. */
+function pitcherTieredHomepageScore(row, source){
+  const form = pitcherRecentFormProfile(row);
+  const formScore = pitcherCurrentFormScore(row);
+  const seasonScore = pitcherSeasonAuthorityScore(row);
+  const h2hScore = pitcherH2HSupportScore(row);
+  const oppScore = opponentKContextScore(row);
+  const envScore = Math.min(5, statNumber(row && row.weatherTimeScore, weatherTimeContext(row).score));
+  const liveBonus = String(source || '').includes('Live') ? Math.min(8, statNumber(row && row.value, 0)) : 0;
+  let raw = 35 + formScore + seasonScore + Math.min(15, h2hScore) + Math.min(15, oppScore) + envScore + liveBonus;
+  if(form.veryLowBackToBack && seasonScore < 18) raw = Math.min(raw, 66);
+  else if(form.veryLowBackToBack) raw = Math.min(raw, 73);
+  else if(form.lowRecent && seasonScore < 12) raw = Math.min(raw, 76);
+  return Math.round(clamp(raw, 50, 99));
+}
+function pitcherHomepageTier(row, score){
+  const form = pitcherRecentFormProfile(row);
+  const seasonScore = pitcherSeasonAuthorityScore(row);
+  if(form.veryLowBackToBack && seasonScore < 18) return 'Thin Slate Play';
+  if(score >= 86 && !form.lowRecent) return 'Strong Edge';
+  if(score >= 74 && !form.veryLowBackToBack) return 'Solid Watch';
+  if(score >= 62) return 'Upside Watch';
+  return 'Thin Slate Play';
+}
+function pitcherEdgeScore(row, source){ return pitcherTieredHomepageScore(row, source || ''); }
+function edgeSignal(row,source){
+  if(source.includes('Pitcher H2H')) return pitcherHomepageTier(row, pitcherEdgeScore(row, source))+' · H2H support capped · '+(row.qualifiedGames||0)+' 8+ K games vs '+(row.opponent||'opponent');
+  if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'starter');
+  if(source.includes('Current Form')) return pitcherHomepageTier(row, pitcherEdgeScore(row, source))+' · '+(row.status||'Recent K form')+(row.whiffPct?' · '+row.whiffPct+'% Whiff Est.':'');
+  if(source.includes('Live K')) return pitcherHomepageTier(row, pitcherEdgeScore(row, source))+' · '+(row.value||0)+' strikeouts live';
+  if(source.includes('Live Hit')) return (row.value||0)+' hits live'+(row.lastHitLabel?' · Latest: '+row.lastHitLabel:'');
+  if(source.includes('Hot Bat')) return (row.value||0)+' hits over recent completed games';
+  if(source.includes('Hit Streak')) return (row.value||0)+' game hit streak';
+  if(source.includes('Team Strikeout')) return (row.value||0)+' team Ks last completed game · '+(row.whiffPct||'0.0')+'% whiff';
+  if(source.includes('Team Hits')) return (row.value||0)+' team hits last completed game';
+  return row.extra || row.status || 'Signal';
+}
+function makeBoardItem(row,source,type,group,category,detailType){
+  const score=group==='pitcher'?pitcherEdgeScore(row,source):(group==='team'?teamTrendScore(row,source):hitterEdgeScore(row,source));
+  const confidence = group==='pitcher' ? pitcherHomepageTier(row, score) : edgeConfidenceLabel(score,{category});
+  return {row,source,type,group,category,detailType,score,confidence,signal:edgeSignal(row,source),game:row.game||'', id:''};
+}
+
 function renderBoardSnapshot(){ const el=document.getElementById('boardSnapshot'); if(!el) return; const active=appState.edgeBoardFilter; appState.edgeBoardFilter='all'; const all=buildUnifiedEdgeRows(); appState.edgeBoardFilter=active; const liveGames=(appState.scoreGames||[]).filter(g=>g.status&&g.status.abstractGameState==='Live').length; const pitchers=all.filter(x=>x.group==='pitcher').length; const hitters=all.filter(x=>x.group==='hitter').length; const teams=all.filter(x=>x.group==='team').length; el.innerHTML='<div class="snapshot-tile"><div class="snapshot-value">'+all.length+'</div><div class="snapshot-label">Signals</div></div><div class="snapshot-tile"><div class="snapshot-value">'+liveGames+'</div><div class="snapshot-label">Live Games</div></div><div class="snapshot-tile"><div class="snapshot-value">'+pitchers+'</div><div class="snapshot-label">Pitchers</div></div><div class="snapshot-tile"><div class="snapshot-value">'+hitters+'/'+teams+'</div><div class="snapshot-label">Hitters/Teams</div></div>'; }
 function renderEdgeBoard(){ const body=document.getElementById('edgeBoardBody'); if(!body) return; edgeBoardStore=buildUnifiedEdgeRows(); document.querySelectorAll('.board-filter-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.boardFilter===boardFilter())); if(!edgeBoardStore.length){ body.innerHTML='<tr><td colspan="7"><div class="loading">No edge rows are loaded yet. Live data may still be loading, or there may be no qualifying games in this filter.</div></td></tr>'; renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(null); return; } if(!activeEdgeRowId || !edgeBoardStore.some(item=>item.id===activeEdgeRowId)) activeEdgeRowId=edgeBoardStore[0].id; body.innerHTML=edgeBoardStore.map(edgeRowHtml).join(''); renderTopEdgeCards(); renderBoardSnapshot(); renderEdgeDrawer(edgeBoardStore.find(item=>item.id===activeEdgeRowId)); }
 function openEdgeDrawer(id){ activeEdgeRowId=id; renderEdgeBoard(); const drawer=document.getElementById('edgeDrawerContent'); if(drawer && window.innerWidth<980) drawer.scrollIntoView({behavior:'smooth',block:'start'}); }
