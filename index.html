@@ -609,11 +609,61 @@
     @media (max-width: 1180px){ .data-dock-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 720px){ .data-dock-grid{ grid-template-columns: 1fr; } }
 
+    /* Visual cleanup + results tracker polish */
+    .field-bg { opacity: .28; }
+    body::before { opacity: .72; }
+    .topbar { background: rgba(2,6,23,.86); }
+    .terminal-hero { grid-template-columns: minmax(0,1.25fr) minmax(330px,.55fr); }
+    .hero-card, .terminal-panel, .drawer-card, .feed-panel, .watch-panel, .data-dock { box-shadow: 0 20px 70px rgba(0,0,0,.30); }
+    .hero-title { max-width: 920px; }
+    .hero-copy { max-width: 820px; }
+    .board-top-cards { margin-top: 18px; }
+    .edge-type-pill[data-kind], .signal-label-pill { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:999px; font-size:10px; font-weight:950; text-transform:uppercase; letter-spacing:.06em; }
+    .signal-label-pill.pitcher { color:#bbf7d0; border:1px solid rgba(34,197,94,.30); background:rgba(34,197,94,.11); }
+    .signal-label-pill.hitter { color:#bfdbfe; border:1px solid rgba(96,165,250,.30); background:rgba(59,130,246,.12); }
+    .signal-label-pill.team { color:#fde68a; border:1px solid rgba(245,158,11,.30); background:rgba(245,158,11,.12); }
+    .signal-label-pill.live { color:#d9f99d; border:1px solid rgba(190,242,100,.34); background:rgba(190,242,100,.13); }
+    .quick-action-link, .results-board-link { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:34px; padding:8px 12px; border-radius:999px; border:1px solid rgba(190,242,100,.28); color:var(--lime); background:rgba(190,242,100,.10); text-decoration:none; font-weight:950; font-size:11px; letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; }
+    .quick-action-link:hover, .results-board-link:hover { background:var(--lime); color:#111827; transform:translateY(-1px); box-shadow:0 0 20px rgba(190,242,100,.17); }
+    .lower-grid { grid-template-columns: minmax(0,1fr) minmax(300px,.42fr) minmax(300px,.42fr); }
+    .tracker-card { padding:16px; border:1px solid rgba(190,242,100,.20); background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(2,6,23,.72)); border-radius:26px; }
+    .tracker-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:14px; }
+    .data-dock-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .data-dock-card { min-height: 205px; }
+    .data-dock-card:nth-child(4) { grid-column: 1 / -1; min-height: 160px; }
+    .data-dock-card:nth-child(4) .dock-list { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .edge-table-wrap { max-height: 640px; }
+    .edge-table thead th { position: sticky; top: 0; z-index: 5; background: rgba(2,6,23,.96); }
+    @media (max-width: 1180px){ .lower-grid { grid-template-columns: 1fr; } .data-dock-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .data-dock-card:nth-child(4) .dock-list { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 720px){ .data-dock-grid, .data-dock-card:nth-child(4) .dock-list { grid-template-columns: 1fr; } }
+
+
     /* No-blank safety: the rebuilt shell must stay visible even if live data fails. */
     .shell { display: block !important; opacity: 1 !important; visibility: visible !important; }
     .fatal-card { margin: 12px 0; padding: 14px; border-radius: 18px; background: rgba(127,29,29,.34); border: 1px solid rgba(248,113,113,.38); color: #fecaca; font-size: 13px; line-height: 1.45; }
     .fallback-board-row { opacity: .92; }
 
+
+    /* Homepage proof tracker */
+    .homepage-proof-board { margin-top:18px; border:1px solid rgba(190,242,100,.22); background:linear-gradient(180deg, rgba(15,23,42,.90), rgba(2,6,23,.78)); border-radius:30px; padding:18px; box-shadow:0 24px 80px rgba(0,0,0,.28); }
+    .homepage-proof-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; border-bottom:1px solid rgba(148,163,184,.12); padding-bottom:14px; margin-bottom:14px; }
+    .proof-status { color:#94a3b8; font-size:12px; line-height:1.45; max-width:720px; }
+    .proof-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .proof-card { border:1px solid rgba(134,239,172,.16); background:rgba(2,6,23,.48); border-radius:22px; padding:14px; min-height:144px; }
+    .proof-card-title { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#86efac; font-size:11px; font-weight:1000; letter-spacing:.12em; text-transform:uppercase; }
+    .proof-rate { margin-top:12px; font-size:38px; line-height:1; font-weight:1000; letter-spacing:-.07em; color:#bef264; }
+    .proof-meta { margin-top:8px; color:#cbd5e1; font-size:13px; font-weight:850; }
+    .proof-split { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+    .proof-mini { border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.58); border-radius:16px; padding:9px; }
+    .proof-mini strong { display:block; color:#f8fafc; font-size:16px; line-height:1; }
+    .proof-mini span { display:block; margin-top:5px; color:#94a3b8; font-size:9px; font-weight:950; letter-spacing:.09em; text-transform:uppercase; }
+    .proof-table-wrap { margin-top:14px; overflow:auto; border-radius:20px; border:1px solid rgba(148,163,184,.12); }
+    .proof-table { width:100%; border-collapse:collapse; min-width:720px; background:rgba(2,6,23,.36); }
+    .proof-table th { text-align:left; padding:12px; color:#86efac; font-size:10px; letter-spacing:.12em; text-transform:uppercase; border-bottom:1px solid rgba(148,163,184,.12); }
+    .proof-table td { padding:12px; border-bottom:1px solid rgba(148,163,184,.08); color:#e5e7eb; font-size:13px; }
+    .proof-badge { display:inline-flex; align-items:center; border-radius:999px; padding:5px 8px; background:rgba(190,242,100,.12); border:1px solid rgba(190,242,100,.22); color:#bef264; font-weight:950; font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
+    .proof-empty { padding:16px; color:#cbd5e1; border:1px dashed rgba(148,163,184,.28); border-radius:20px; background:rgba(2,6,23,.34); line-height:1.55; }
+    @media (max-width: 900px){ .proof-grid{grid-template-columns:1fr;} .homepage-proof-head{display:block;} .homepage-proof-head .tracker-actions{margin-top:12px;} }
   </style>
 </head>
 <body class="board-mode">
@@ -647,7 +697,7 @@
         </div>
         <div>
           <h1>Diamond <span>Pulse</span></h1>
-          <div class="brand-sub">MLB edge board · Balanced pitcher, hitter, and team signals</div>
+          <div class="brand-sub">MLB edge board · Clean pitcher, hitter, and team signals</div>
         </div>
       </div>
 
@@ -730,10 +780,11 @@
     <section class="lower-grid">
       <article class="feed-panel live-router-card">
         <div class="panel-kicker">Dedicated Live Tracker</div>
-        <h2 class="panel-title">Live hitters and pitchers moved to their own page</h2>
-        <div class="panel-sub">The main board stays cleaner. Use the Live tab for in-game hit leaders, K leaders, latest hit basepaths, and live game status.</div>
+        <h2 class="panel-title">Live games stay separate</h2>
+        <div class="panel-sub">The homepage stays focused on pregame signals. Use the Live tab for in-game hit leaders, K leaders, latest hit basepaths, and live game status.</div>
         <a class="big-live-link" href="/live-board.html">Open Live Tab</a>
       </article>
+
 
       <aside class="watch-panel">
         <div class="panel-kicker">Watchlist</div>
@@ -748,7 +799,7 @@
         <div>
           <div class="panel-kicker">Separated Signal Rooms</div>
           <h2 class="panel-title">Pitcher, hitter, and team stats split into clean rooms</h2>
-          <div class="panel-sub">Pitcher stats, hitter stats, and team stats are visually separated. Live hitter/pitcher tracking has its own dedicated page.</div>
+          <div class="panel-sub">Pitcher, hitter, and team rooms are separated on purpose. The homepage proof board tracks day, week, and YTD pick results at the bottom.</div>
         </div>
       </div>
       <div class="data-dock-grid">
@@ -759,6 +810,31 @@
       </div>
     </section>
 
+
+
+    <section class="homepage-proof-board" id="homepageProofBoard">
+      <div class="homepage-proof-head">
+        <div>
+          <div class="panel-kicker">Proof Board</div>
+          <h2 class="panel-title">Picks tracker</h2>
+          <div class="proof-status" id="homepageProofStatus">Loading Daily Pulse results...</div>
+        </div>
+        <div class="tracker-actions">
+          <button class="results-board-link" onclick="loadHomepageProofTracker(true)">Refresh Tracker</button>
+        </div>
+      </div>
+      <div class="proof-grid" id="homepageProofSummary">
+        <div class="proof-card"><div class="loading">Loading daily results...</div></div>
+        <div class="proof-card"><div class="loading">Loading weekly results...</div></div>
+        <div class="proof-card"><div class="loading">Loading YTD results...</div></div>
+      </div>
+      <div class="proof-table-wrap" id="homepageProofTableWrap" style="display:none;">
+        <table class="proof-table">
+          <thead><tr><th>Date</th><th>Overall</th><th>Pitchers</th><th>Hitters</th><th>Status</th></tr></thead>
+          <tbody id="homepageProofTable"></tbody>
+        </table>
+      </div>
+    </section>
 
     <div class="footer-note">Unofficial baseball research dashboard. Not affiliated with MLB or any sportsbook.</div>
   </main>
@@ -1238,6 +1314,34 @@ function boardPrimaryRead(item){ const row=item.row, source=item.source; if(item
 function boardEvidence(item){ const row=item.row, source=item.source; if(item.group==='pitcher') return pitcherBalancedEvaluationLine(row)+(row.whiffPct!==undefined?' · Whiff Est. '+row.whiffPct+'%':''); if(item.group==='team' && source.includes('Strikeout')) return (row.value||0)+' team strikeouts · '+(row.whiffPct||'0.0')+'% whiff estimate · '+(row.status||'previous completed game'); if(item.group==='team' && source.includes('Hits')) return (row.value||0)+' team hits · '+(row.players&&row.players.length?row.players.slice(0,3).map(p=>p.name+' '+p.hits+' H').join(' · '):'player breakdown loading'); if(source.includes('Batter H2H')) return (row.hits||0)+' H · '+(row.hr||0)+' HR vs '+(row.pitcherName||'today’s probable starter'); if(source.includes('Live Hit')) return (row.value||0)+' H tonight'+(row.lastHitLabel?' · Latest hit: '+row.lastHitLabel:''); if(source.includes('Hot Bat')) return (row.value||0)+' hits over the last 4 completed game days'; if(source.includes('Hit Streak')) return (row.value||0)+' straight completed games with a hit'; return row.extra || row.status || 'Evidence loading'; }
 function boardH2HLine(item){ const row=item.row, source=item.source; if(source.includes('Pitcher H2H')) return pitcherH2HLine(row); if(source.includes('Batter H2H')) return (row.logs||[]).length+' qualifying games vs '+(row.pitcherName||'starter')+' shown below.'; if(item.group==='team') return 'Team trend row. H2H is not the driver; this comes from the previous completed team boxscore.'; return item.group==='pitcher' ? 'H2H is not the primary driver on this row.' : 'No qualifying H2H note is attached to this row.'; }
 function makeBoardItem(row,source,type,group,category,detailType){ const score=group==='pitcher'?pitcherEdgeScore(row,source):(group==='team'?teamTrendScore(row,source):hitterEdgeScore(row,source)); return {row,source,type,group,category,detailType,score,confidence:edgeConfidenceLabel(score,{category}),signal:edgeSignal(row,source),game:row.game||'', id:''}; }
+function boardSourcePriority(item){
+  const source=String(item&&item.source||'');
+  if(item&&item.group==='pitcher'){
+    if(source.includes('Live K')) return 6;
+    if(source.includes('Current Form')) return 5;
+    if(source.includes('Probable Starter')) return 4;
+    if(source.includes('Pitcher H2H')) return 3;
+  }
+  if(item&&item.group==='hitter'){
+    if(source.includes('Live Hit')) return 6;
+    if(source.includes('Batter H2H')) return 5;
+    if(source.includes('Hot Bat')) return 4;
+    if(source.includes('Hit Streak')) return 3;
+  }
+  return 1;
+}
+function dedupeEdgeRows(rows){
+  const out=[], seen=new Map();
+  (rows||[]).forEach(item=>{
+    if(!item||!item.row||item.group==='team'||!item.row.personId){ out.push(item); return; }
+    const key=String(item.group)+':'+String(item.row.personId);
+    const prev=seen.get(key);
+    if(!prev){ seen.set(key,item); out.push(item); return; }
+    const replace = item.score > prev.score + 3 || (Math.abs(item.score-prev.score)<=3 && boardSourcePriority(item)>boardSourcePriority(prev));
+    if(replace){ const idx=out.indexOf(prev); if(idx>=0) out[idx]=item; seen.set(key,item); }
+  });
+  return out;
+}
 function buildUnifiedEdgeRows(){ const rows=[]; function add(list,source,type,group,category,detailType,limit,requirePerson=true){ (list||[]).slice(0,limit||50).forEach(row=>{ if(!row) return; if(requirePerson && !row.personId) return; rows.push(makeBoardItem(row,source,type,group,category,detailType)); }); }
   add(filterRows(appState.pitcherH2H).filter(pitcherCurrentFormEligible),'Pitcher H2H Support','Pitcher Edge','pitcher','h2h','pitcherh2h',20);
   add(filterRows(appState.batterH2H),'Batter H2H Edge','Batter Edge','hitter','h2h','batterh2h',20);
@@ -1254,6 +1358,7 @@ function buildUnifiedEdgeRows(){ const rows=[]; function add(list,source,type,gr
   if(activeFilter==='h2h') filtered=rows.filter(r=>r.category==='h2h');
   if(activeFilter==='teams') filtered=rows.filter(r=>r.category==='teams');
   if(activeFilter==='watchlist') filtered=rows.filter(r=>r.row&&rowIsFollowed(r.row));
+  filtered=dedupeEdgeRows(filtered);
   filtered.sort((a,b)=>b.score-a.score || String(a.row.name||'').localeCompare(String(b.row.name||'')));
   filtered.forEach((item,index)=>item.id='edge_'+index+'_'+(item.row.personId?String(item.row.personId):'team_'+String(item.row.teamId||item.row.name).replace(/[^a-z0-9]+/gi,'_')));
   return filtered.slice(0,60);
@@ -1264,7 +1369,7 @@ function boardProfileButton(item){ if(!item||!item.row||!item.row.personId) retu
 function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' active':''; const isTeam=item.group==='team'; return '<tr class="edge-row'+active+'" onclick="openEdgeDrawer(\''+h(item.id)+'\')">'+
   '<td><span class="edge-rank-pill">'+(index+1)+'</span></td>'+
   '<td><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(isTeam?(item.source||'Team trend'):(item.row.team||''))+'</div></div></div></td>'+
-  '<td><span class="edge-type-pill">'+h(item.type)+'</span></td>'+
+  '<td><span class="signal-label-pill '+(item.group==='pitcher'?'pitcher':item.group==='hitter'?'hitter':'team')+'">'+h(item.type)+'</span></td>'+
   '<td>'+h(item.game||item.row.game||item.row.status||'Today')+'</td>'+
   '<td class="edge-score-cell">'+h(item.score)+'</td>'+
   '<td><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></td>'+
@@ -1340,8 +1445,20 @@ function renderDataDock(){
   if(!arms||!bats||!h2h||!games) return;
 
   const pitcherRows=[];
-  filterRows(appState.pitcherH2H).filter(pitcherCurrentFormEligible).slice(0,5).forEach(p=>pitcherRows.push(dockItemHtml(p,p.name,'Form cleared · '+p.qualifiedGames+' 8+ K H2H games vs '+p.opponent,p.bestKs+' K','Pitcher H2H Support')));
-  filterRows(appState.hotPitchers).slice(0,5).forEach(p=>pitcherRows.push(dockItemHtml(p,p.name,p.status+' · '+(p.whiffPct||'0.0')+'% whiff',p.value+' K','Current Form Edge')));
+  const pitcherDockSeen=new Set();
+  function addPitcherDock(p,label,sub,score,sourceHint){
+    if(!p) return;
+    const key=p.personId?String(p.personId):String(label||'pitcher');
+    if(pitcherDockSeen.has(key)) return;
+    pitcherDockSeen.add(key);
+    pitcherRows.push(dockItemHtml(p,label,sub,score,sourceHint));
+  }
+  const pitcherDockCandidates=[];
+  filterRows(appState.pitcherH2H).filter(pitcherCurrentFormEligible).slice(0,8).forEach(p=>pitcherDockCandidates.push({p,label:p.name,sub:'Form cleared · '+p.qualifiedGames+' 8+ K H2H games vs '+p.opponent,score:p.bestKs+' K',source:'Pitcher H2H Support',rank:pitcherEdgeScore(p,'Pitcher H2H Support')}));
+  filterRows(appState.hotPitchers).slice(0,8).forEach(p=>pitcherDockCandidates.push({p,label:p.name,sub:p.status+' · '+(p.whiffPct||'0.0')+'% whiff',score:p.value+' K',source:'Current Form Edge',rank:pitcherEdgeScore(p,'Current Form Edge')+2}));
+  filterRows(appState.pitcherPostPool).slice(0,8).forEach(p=>pitcherDockCandidates.push({p,label:p.name,sub:(p.status||'Probable starter pool')+' · '+pitcherStrikeoutAuthority(p),score:pitcherEdgeScore(p,'Probable Starter Pool'),source:'Probable Starter Pool',rank:pitcherEdgeScore(p,'Probable Starter Pool')}));
+  pitcherDockCandidates.sort((a,b)=>b.rank-a.rank || boardSourcePriority({group:'pitcher',source:b.source})-boardSourcePriority({group:'pitcher',source:a.source}));
+  pitcherDockCandidates.forEach(x=>addPitcherDock(x.p,x.label,x.sub,x.score,x.source));
 
   const hitterRows=[];
   filterRows(appState.batterH2H).slice(0,5).forEach(b=>hitterRows.push(dockItemHtml(b,b.name,b.hits+' H · '+b.hr+' HR vs '+b.pitcherName,b.hits+' H','Batter H2H Edge')));
@@ -1454,10 +1571,115 @@ function showSiteError(err){
 window.addEventListener("error", function(e){ showSiteError(e.error || e.message); });
 window.addEventListener("unhandledrejection", function(e){ showSiteError(e.reason || e); });
 
+
+const DAILY_RECAP_API_URL = 'https://diamond-pulse-daily-recap-api.kadescott97.workers.dev';
+const RESULTS_SYNC_KEY = 'diamond-pulse-results';
+const RESULTS_LEDGER_SYNC_KEY = 'diamond-pulse-results-ytd';
+let homepageProofState = { loaded:false, ledger:null };
+async function proofApiGet(key,date){
+  const url = DAILY_RECAP_API_URL + '?key=' + encodeURIComponent(key) + (date ? '&date=' + encodeURIComponent(date) : '');
+  const res = await fetch(url,{headers:{Accept:'application/json'},cache:'no-store'});
+  const data = await res.json().catch(()=>({ok:false,error:'Bad response'}));
+  if(!res.ok || !data.ok) throw new Error(data.error || 'Load failed');
+  return data.snapshot;
+}
+function proofDateOffset(dateString, offset){
+  const parts = String(dateString || nyDate(0)).split('-').map(Number);
+  const d = new Date(parts[0] || currentSeason(), (parts[1] || 1)-1, parts[2] || 1);
+  d.setDate(d.getDate()+offset);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function proofEmptySummary(label){ return {label, total:0, graded:0, hits:0, misses:0, pending:0, pitchers:{total:0,graded:0,hits:0,misses:0,pending:0}, hitters:{total:0,graded:0,hits:0,misses:0,pending:0}, dates:[]}; }
+function proofIsPitcher(p){ return String(p.group || p.label || p.type || '').toLowerCase().includes('pitch') || String(p.label || '').toLowerCase().includes('round'); }
+function proofIsPending(p){ return String(p.outcome || 'Pending').toLowerCase().includes('pending'); }
+function proofIsMiss(p){ return String(p.outcome || '').toLowerCase().includes('miss'); }
+function proofAddPick(summary, pick){
+  const bucket = proofIsPitcher(pick) ? summary.pitchers : summary.hitters;
+  summary.total += 1; bucket.total += 1;
+  if(proofIsPending(pick)){ summary.pending += 1; bucket.pending += 1; return; }
+  summary.graded += 1; bucket.graded += 1;
+  if(proofIsMiss(pick)){ summary.misses += 1; bucket.misses += 1; }
+  else { summary.hits += 1; bucket.hits += 1; }
+}
+function proofSummarizeRecords(records, label){
+  const summary = proofEmptySummary(label);
+  records.forEach(record=>{
+    if(!record) return;
+    const date = record.date || record.savedAt || '';
+    if(date) summary.dates.push(date);
+    (record.picks || []).forEach(p=>proofAddPick(summary,p));
+  });
+  summary.dates = [...new Set(summary.dates)].sort();
+  return summary;
+}
+function proofRate(summary){ return summary.graded ? Math.round((summary.hits / summary.graded) * 100) + '%' : '0%'; }
+function proofLine(summary){ return summary.hits + '-' + summary.misses + (summary.pending ? ' · ' + summary.pending + ' pending' : ''); }
+function proofCard(title, summary, subtitle){
+  return '<article class="proof-card"><div class="proof-card-title"><span>'+h(title)+'</span><span class="proof-badge">'+h(summary.graded)+' graded</span></div><div class="proof-rate">'+h(proofRate(summary))+'</div><div class="proof-meta">'+h(proofLine(summary))+'</div><div class="proof-meta">'+h(subtitle || (summary.dates.length ? summary.dates[0] + (summary.dates.length>1 ? ' - ' + summary.dates[summary.dates.length-1] : '') : 'No saved results yet'))+'</div><div class="proof-split"><div class="proof-mini"><strong>'+h(proofRate(summary.pitchers))+'</strong><span>Pitchers · '+h(summary.pitchers.hits)+'-'+h(summary.pitchers.misses)+'</span></div><div class="proof-mini"><strong>'+h(proofRate(summary.hitters))+'</strong><span>Hitters · '+h(summary.hitters.hits)+'-'+h(summary.hitters.misses)+'</span></div></div></article>';
+}
+function proofRecordsFromLedger(ledger){
+  const records = ledger && ledger.records ? Object.values(ledger.records) : [];
+  return records.filter(r=>r && Array.isArray(r.picks)).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+}
+async function proofLoadRecentFallback(){
+  const records=[];
+  const today=nyDate(0);
+  for(let i=0;i<45;i++){
+    const d=proofDateOffset(today,-i);
+    try{ records.push(await proofApiGet(RESULTS_SYNC_KEY,d)); }catch(err){}
+  }
+  return records.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+}
+async function loadHomepageProofTracker(force){
+  const status=document.getElementById('homepageProofStatus');
+  const summaryBox=document.getElementById('homepageProofSummary');
+  const tableWrap=document.getElementById('homepageProofTableWrap');
+  const tbody=document.getElementById('homepageProofTable');
+  if(!status || !summaryBox || !tbody) return;
+  if(homepageProofState.loaded && !force) return;
+  status.textContent='Loading day, week, and YTD pick results...';
+  try{
+    let records=[];
+    try{
+      const ledger=await proofApiGet(RESULTS_LEDGER_SYNC_KEY, String(currentSeason()));
+      homepageProofState.ledger=ledger;
+      records=proofRecordsFromLedger(ledger);
+    }catch(err){
+      records=await proofLoadRecentFallback();
+    }
+    records=records.filter(r=>String(r.date||'').slice(0,4)===String(currentSeason()));
+    const today=nyDate(0);
+    const latestRecord=records.length ? records[records.length-1] : null;
+    const weekStart=proofDateOffset(today,-6);
+    const weekRecords=records.filter(r=>String(r.date||'')>=weekStart && String(r.date||'')<=today);
+    const daySummary=proofSummarizeRecords(latestRecord?[latestRecord]:[], 'Latest day');
+    const weekSummary=proofSummarizeRecords(weekRecords, 'This week');
+    const ytdSummary=proofSummarizeRecords(records, 'YTD');
+    summaryBox.innerHTML = proofCard('Latest Day', daySummary, latestRecord ? latestRecord.date : 'No daily tracker saved yet') + proofCard('This Week', weekSummary, weekRecords.length ? 'Last 7 days · '+weekRecords.length+' tracked slate(s)' : 'No week results saved yet') + proofCard('YTD', ytdSummary, records.length ? currentSeason()+' · '+records.length+' tracked slate(s)' : 'No YTD ledger yet');
+    if(records.length){
+      tableWrap.style.display='block';
+      tbody.innerHTML = records.slice(-10).reverse().map(record=>{
+        const s=proofSummarizeRecords([record], record.date || '');
+        return '<tr><td><strong>'+h(record.date||'--')+'</strong></td><td>'+h(proofLine(s))+' <span class="proof-badge">'+h(proofRate(s))+'</span></td><td>'+h(s.pitchers.hits)+'-'+h(s.pitchers.misses)+' <span style="color:#94a3b8">('+h(proofRate(s.pitchers))+')</span></td><td>'+h(s.hitters.hits)+'-'+h(s.hitters.misses)+' <span style="color:#94a3b8">('+h(proofRate(s.hitters))+')</span></td><td>'+h(s.pending ? s.pending+' pending' : 'Complete')+'</td></tr>';
+      }).join('');
+      status.textContent='Tracking latest day, last 7 days, and YTD from saved Results Tracker slates.';
+    } else {
+      tableWrap.style.display='none';
+      status.innerHTML='No saved tracked results found yet. Once picks are graded and saved, day, week, and YTD records will show here.';
+      summaryBox.innerHTML='<div class="proof-empty" style="grid-column:1/-1;">No tracked picks saved yet. The proof board will update after saved Daily Pulse results are graded.</div>';
+    }
+    homepageProofState.loaded=true;
+  }catch(err){
+    status.textContent='Could not load homepage proof tracker: '+(err.message || err);
+    summaryBox.innerHTML='<div class="proof-empty" style="grid-column:1/-1;">The tracker could not load yet. Make sure at least one Daily Pulse result slate has been saved.</div>';
+  }
+}
+
 function bootDiamondPulse(){
   try {
     appState.followedPlayers=loadFollowedPlayers();
     renderAllData();
+    loadHomepageProofTracker(false).catch(showSiteError);
   } catch(err) {
     showSiteError(err);
   }
@@ -1468,6 +1690,7 @@ function bootDiamondPulse(){
 
   setInterval(function(){ loadDashboard().catch(showSiteError); },30000);
   setInterval(function(){ loadStaticSectionsOnce().catch(showSiteError); },600000);
+  setInterval(function(){ loadHomepageProofTracker(true).catch(showSiteError); },900000);
 }
 
 if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootDiamondPulse);
