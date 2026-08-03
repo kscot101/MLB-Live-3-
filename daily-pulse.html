@@ -1659,7 +1659,7 @@ function getGeneratedDailyPosts(){
 
 async function getGeneratedDailyPostsAsync(){
   const pitcherCandidatesRaw = await enrichPostCandidatesAdvanced(getPitcherPostCandidates(), 'pitcher');
-  const pitcherCandidates = pitcherCandidatesRaw.filter(item => item && item.row && pitcherDailyPulseEligible(item.row));
+  const pitcherCandidates = pitcherCandidatesRaw.filter(item => item && item.row && item.row.personId);
   const hitterCandidates = await enrichPostCandidatesAdvanced(getBatterPostCandidates(), 'hitter');
   const pitchers = pickDistinctPostItems(pitcherCandidates, 3);
   const hitters = pickDistinctPostItems(hitterCandidates, 3);
@@ -2134,22 +2134,25 @@ async function loadHotPitchersToday(){
   const probables=await getTodaysProbables();
   let hotPitchers=[];
   let pitcherPostPool=[];
+  let leaderboard={};
+  try{ leaderboard = await fetchPitcherKLeaderboardMap(); }catch(err){ leaderboard = {}; }
   for(const p of probables){
     const logs=await fetchPitcherGameLogs(p.id,1);
     const splits=logs.filter(s=>s.stat&&s.stat.strikeOuts!==undefined).sort((a,b)=>new Date(b.date)-new Date(a.date));
     const lastTwo=splits.slice(0,2);
-    if(lastTwo.length<2) continue;
-    const k1=Number(lastTwo[0].stat.strikeOuts||0), k2=Number(lastTwo[1].stat.strikeOuts||0);
-    const recentBoxes=pitcherRecentBoxscoresFromSplits(logs,p.team,3);
-    const poolLogs=lastTwo.map(split=>({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks:Number(split.stat.strikeOuts||0),whiffPct:"",swings:0,misses:0}));
+    const k1=lastTwo[0] ? Number(lastTwo[0].stat.strikeOuts||0) : 0;
+    const k2=lastTwo[1] ? Number(lastTwo[1].stat.strikeOuts||0) : 0;
+    const recentBoxes=pitcherRecentBoxscoresFromSplits(logs,p.team,4);
+    const rankInfo=leaderboard[String(p.id)] || null;
+    const poolLogs=lastTwo.map(split=>({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks:Number(split.stat.strikeOuts||0),whiffPct:"",swings:0,misses:0,pitches:Number(split.stat.pitchesThrown||0)}));
     const recentTotal=recentBoxes.reduce((sum,g)=>sum+Number(g.ks||0),0);
-    pitcherPostPool.push({
+    const row={
       value:k1+k2,
       name:p.name,
       personId:p.personId,
       team:p.team,
       game:"Today vs "+p.opponent,
-      status:"Last 2 games: "+k1+" K, "+k2+" K",
+      status:lastTwo.length ? "Last 2 games: "+k1+" K, "+k2+" K" : "Probable starter · recent MLB game log loading",
       teamId:p.teamId,
       opponent:p.opponent,
       opponentId:p.opponentId,
@@ -2157,12 +2160,18 @@ async function loadHotPitchersToday(){
       whiffPct:"",
       swings:0,
       misses:0,
-      extra:"Probable starter today · recent 3-game K total: "+recentTotal,
+      extra:"Probable starter today"+(recentBoxes.length?" · recent 3-game K total: "+recentTotal:" · limited recent MLB sample"),
       logs:poolLogs,
       recentBoxscores:recentBoxes,
+      seasonKRank: rankInfo ? rankInfo.rank : "",
+      seasonKs: rankInfo ? rankInfo.strikeOuts : 0,
+      strikeoutAuthority: rankInfo ? pitcherStrikeoutAuthority({seasonKRank:rankInfo.rank, seasonKs:rankInfo.strikeOuts}) : "Current-form / matchup profile",
       boxscoreGroup:"pitching"
-    });
-    if(k1>=8&&k2>=8){
+    };
+    await attachPitcherGameContext(row);
+    pitcherPostPool.push(row);
+
+    if(lastTwo.length>=2 && (k1+k2>=10 || (rankInfo && rankInfo.rank<=50))){
       let totalSwings=0,totalMisses=0,rowLogs=[];
       for(const split of lastTwo){
         const gamePk=getSplitGamePk(split);
@@ -2170,18 +2179,22 @@ async function loadHotPitchersToday(){
         const ks=Number(split.stat.strikeOuts||0);
         totalSwings+=whiff.swings;
         totalMisses+=whiff.misses;
-        rowLogs.push({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses});
+        rowLogs.push({date:split.date,opponent:opponentNameFromSplit(split)||"Opponent",ks,whiffPct:whiff.whiffPct,swings:whiff.swings,misses:whiff.misses,pitches:Number(split.stat.pitchesThrown||0)});
       }
-      const totalWhiffPct=totalSwings>0?((totalMisses/totalSwings)*100).toFixed(1):"0.0";
-      hotPitchers.push({value:k1+k2,name:p.name,personId:p.personId,team:p.team,game:"Today vs "+p.opponent,status:"Last 2 games: "+k1+" K, "+k2+" K",teamId:p.teamId,opponent:p.opponent,opponentId:p.opponentId,todayGamePk:p.todayGamePk,whiffPct:totalWhiffPct,swings:totalSwings,misses:totalMisses,extra:"Probable starter today · Whiff%: "+totalWhiffPct+"% ("+totalMisses+"/"+totalSwings+")",logs:rowLogs,recentBoxscores:recentBoxes,boxscoreGroup:"pitching"});
+      row.whiffPct=totalSwings>0?((totalMisses/totalSwings)*100).toFixed(1):"0.0";
+      row.swings=totalSwings;
+      row.misses=totalMisses;
+      row.logs=rowLogs;
+      row.extra="Probable starter today · Whiff%: "+row.whiffPct+"% ("+totalMisses+"/"+totalSwings+")";
     }
   }
-  hotPitchers.sort((a,b)=>b.value-a.value);
   pitcherPostPool.sort((a,b)=>Number(b.value||0)-Number(a.value||0));
+  hotPitchers = pitcherPostPool.slice(0,12);
   appState.hotPitchers=hotPitchers;
   appState.pitcherPostPool=pitcherPostPool;
   renderAllData();
 }
+
 async function loadStaticSectionsOnce(){ try{ await loadPreviousGameDayStats(); }catch(err){ console.error(err); } try{ await loadHotHitters(); }catch(err){ console.error(err); } try{ await loadHotPitchersToday(); }catch(err){ console.error(err); } renderAllData(); }
 async function loadDashboard(){ try{ gameFeedCache={}; await loadScoreTicker(); }catch(err){ console.error(err); document.getElementById("scoreTicker").innerHTML='<button class="ticker-item">Error loading scoreboard</button>'; } try{ await loadLiveStats(); }catch(err){ console.error(err); if(document.getElementById("liveKs")) document.getElementById("liveKs").innerHTML='<div class="card ks">Error loading live data. Refresh page.</div>'; if(document.getElementById("liveHits")) document.getElementById("liveHits").innerHTML='<div class="card hits">Error loading live data. Refresh page.</div>'; } }
 function showSiteError(err){
