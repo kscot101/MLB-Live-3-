@@ -664,6 +664,197 @@
     .proof-badge { display:inline-flex; align-items:center; border-radius:999px; padding:5px 8px; background:rgba(190,242,100,.12); border:1px solid rgba(190,242,100,.22); color:#bef264; font-weight:950; font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
     .proof-empty { padding:16px; color:#cbd5e1; border:1px dashed rgba(148,163,184,.28); border-radius:20px; background:rgba(2,6,23,.34); line-height:1.55; }
     @media (max-width: 900px){ .proof-grid{grid-template-columns:1fr;} .homepage-proof-head{display:block;} .homepage-proof-head .tracker-actions{margin-top:12px;} }
+
+
+    /* Mobile cleanup v1: compact homepage, card-style board, separated sections */
+    @media (max-width: 760px) {
+      body { overflow-x: hidden; }
+      body::before { background-size: 30px 30px; opacity: .68; }
+      .field-bg { opacity: .22; transform: scale(1.08); }
+      .shell { width: min(100% - 12px, 1540px); padding: 8px 0 28px; }
+
+      .topbar {
+        position: relative;
+        top: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 20px;
+      }
+      .brand { min-width: 0; gap: 10px; }
+      .brand-mark { width: 44px; height: 44px; border-radius: 16px; flex: 0 0 auto; }
+      .brand-mark svg { width: 42px; height: 42px; }
+      .brand h1 { font-size: 22px; letter-spacing: -.055em; line-height: .92; }
+      .brand-sub { font-size: 9px; line-height: 1.25; letter-spacing: .08em; max-width: 245px; }
+      .score-strip { width: 100%; border-radius: 18px; padding: 6px; order: 3; }
+      .ticker-track { animation-duration: 70s; gap: 6px; }
+      .ticker-item { padding: 7px 9px; font-size: 11px; }
+      .ticker-score { font-size: 12px; }
+      .ticker-detail { font-size: 10px; }
+      .top-actions { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+      .top-actions::-webkit-scrollbar { display: none; }
+      .live-board-link, .live-pill, .refresh, .stadium-toggle { flex: 0 0 auto; min-height: 32px; padding: 8px 10px; font-size: 10px; }
+      .refresh { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+
+      .team-filter-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin: 10px 0;
+        padding: 9px;
+        border-radius: 18px;
+      }
+      .filter-title { font-size: 9px; }
+      .filter-bar { padding-bottom: 4px; gap: 6px; }
+      .filter-btn { padding: 6px 9px; font-size: 10px; }
+      .filter-btn img { width: 20px; height: 20px; }
+
+      .terminal-hero, .terminal-grid, .lower-grid { grid-template-columns: 1fr !important; gap: 10px; }
+      .hero-card, .terminal-panel, .drawer-card, .feed-panel, .watch-panel, .snapshot-card, .data-dock, .homepage-proof-board {
+        border-radius: 20px !important;
+        box-shadow: 0 14px 38px rgba(0,0,0,.30), inset 0 0 18px rgba(34,197,94,.04);
+      }
+      .hero-card { padding: 14px; }
+      .eyebrow { font-size: 9px; padding: 5px 8px; }
+      .hero-title { margin-top: 10px; font-size: clamp(32px, 12vw, 46px); line-height: .92; letter-spacing: -.075em; }
+      .hero-copy { font-size: 13px; line-height: 1.45; }
+      .board-top-cards {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 1px 2px 8px;
+        margin-top: 14px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .board-top-cards::-webkit-scrollbar { display: none; }
+      .top-edge-card { min-width: 250px; min-height: 145px; scroll-snap-align: start; border-radius: 18px; padding: 12px; }
+      .top-edge-player { font-size: 16px; padding-right: 52px; }
+      .top-edge-score { font-size: 26px; }
+      .snapshot-card { padding: 12px; }
+      .snapshot-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 8px; }
+      .snapshot-tile { border-radius: 16px; padding: 10px; }
+      .snapshot-value { font-size: 22px; }
+
+      .panel-head {
+        display: block;
+        padding: 13px 13px 10px;
+      }
+      .panel-title { font-size: 21px; line-height: 1.08; }
+      .panel-sub { font-size: 11px; }
+      .board-filter-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 10px 12px 0;
+        gap: 7px;
+        scrollbar-width: none;
+      }
+      .board-filter-tabs::-webkit-scrollbar { display: none; }
+      .board-filter-btn { flex: 0 0 auto; padding: 8px 10px; font-size: 9px; }
+
+      .edge-table-wrap { overflow: visible; max-height: none !important; padding: 10px; }
+      .edge-table { display: block; width: 100%; min-width: 0 !important; border-spacing: 0; font-size: 12px; }
+      .edge-table thead { display: none; }
+      .edge-table tbody { display: grid; gap: 10px; }
+      .edge-row {
+        display: block;
+        position: relative;
+        padding: 12px;
+        border: 1px solid rgba(134,239,172,.16);
+        border-radius: 18px;
+        background: rgba(15,23,42,.80);
+        box-shadow: 0 12px 26px rgba(0,0,0,.20);
+      }
+      .edge-row.active, .edge-row:hover { border-color: rgba(190,242,100,.40); background: rgba(21,36,42,.88); }
+      .edge-row td {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 5px 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #d1fae5;
+      }
+      .edge-row td::before {
+        content: attr(data-label);
+        flex: 0 0 88px;
+        color: var(--mint);
+        font-size: 9px;
+        font-weight: 950;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .edge-row td:first-child {
+        position: absolute;
+        top: 11px;
+        right: 11px;
+        width: auto;
+        padding: 0 !important;
+      }
+      .edge-row td:first-child::before { display: none; }
+      .edge-rank-pill { width: 28px; height: 28px; font-size: 11px; }
+      .edge-row td:nth-child(2) { display: block; padding-right: 36px !important; }
+      .edge-row td:nth-child(2)::before { display: none; }
+      .edge-player-cell { grid-template-columns: 38px minmax(0,1fr); gap: 9px; }
+      .edge-team-logo { width: 38px; height: 38px; padding: 5px; }
+      .edge-player-name { font-size: 16px; line-height: 1.12; }
+      .edge-player-team { font-size: 11px; }
+      .signal-label-pill, .edge-confidence-pill { font-size: 9px; padding: 5px 7px; text-align: right; }
+      .edge-score-cell { font-size: 18px !important; }
+      .edge-row td:nth-child(7) { display: block; }
+      .edge-row td:nth-child(7)::before { display: block; margin-bottom: 4px; }
+      .edge-signal { max-width: none; line-height: 1.35; font-size: 12px; }
+
+      .drawer-card { position: relative !important; top: auto !important; max-height: none !important; }
+      .drawer-body { padding: 12px; }
+      .drawer-player-head { grid-template-columns: 46px minmax(0,1fr) !important; gap: 10px; }
+      .drawer-logo { width: 46px; height: 46px; padding: 6px; }
+      .drawer-name { font-size: 21px; }
+      .drawer-meta { font-size: 11px; }
+      .drawer-score { grid-column: 1 / -1; text-align: left; font-size: 30px; }
+      .drawer-action-row { gap: 7px; }
+      .profile-btn, .follow-btn { min-height: 32px; padding: 8px 10px; font-size: 10px; }
+      .drawer-section { border-radius: 16px; padding: 11px; }
+      .details-grid, .game-mini-grid { grid-template-columns: 1fr !important; }
+
+      .lower-grid { margin-top: 10px; }
+      .big-live-link, .quick-action-link, .results-board-link { width: 100%; min-height: 38px; font-size: 10px; }
+      .watch-chip { grid-template-columns: 34px minmax(0,1fr) auto; border-radius: 16px; padding: 9px; }
+      .watch-chip img { width: 34px; height: 34px; }
+      .watch-name { font-size: 13px; }
+
+      .data-dock { margin-top: 10px; }
+      .data-dock-grid, .data-dock-card:nth-child(4) .dock-list { grid-template-columns: 1fr !important; gap: 10px; }
+      .data-dock-card, .data-dock-card:nth-child(4) { grid-column: auto !important; min-height: 0; border-radius: 20px; padding: 13px; }
+      .dock-title { font-size: 18px; }
+      .dock-list { grid-template-columns: 1fr !important; gap: 8px; }
+      .dock-item { grid-template-columns: 32px minmax(0,1fr) auto; border-radius: 15px; padding: 9px; }
+      .dock-score { font-size: 16px; }
+
+      .homepage-proof-board { margin-top: 12px; padding: 13px; }
+      .homepage-proof-head { display: block; padding-bottom: 12px; margin-bottom: 12px; }
+      .homepage-proof-head .tracker-actions { margin-top: 10px; }
+      .proof-grid { grid-template-columns: 1fr !important; gap: 10px; }
+      .proof-card { min-height: 0; border-radius: 18px; padding: 12px; }
+      .proof-rate { font-size: 32px; }
+      .proof-split { grid-template-columns: 1fr 1fr; }
+      .proof-table-wrap { overflow-x: auto; border-radius: 16px; }
+      .proof-table { min-width: 620px; }
+      .footer-note { font-size: 11px; margin: 18px 0; padding: 0 8px; }
+    }
+
+    @media (max-width: 420px) {
+      .shell { width: min(100% - 8px, 1540px); }
+      .hero-title { font-size: 34px; }
+      .snapshot-grid, .proof-split { grid-template-columns: 1fr !important; }
+      .top-edge-card { min-width: 236px; }
+      .edge-row td { gap: 8px; }
+      .edge-row td::before { flex-basis: 76px; }
+      .panel-title { font-size: 19px; }
+    }
+
   </style>
 </head>
 <body class="board-mode">
@@ -1367,13 +1558,13 @@ function rowIsFollowed(row){ return row&&row.personId&&isFollowed(row.personId);
 function boardFollowButton(item){ if(!item||!item.row||!item.row.personId) return ''; const followed=isFollowed(item.row.personId); const index=edgeBoardStore.findIndex(x=>x.id===item.id); return '<button class="follow-btn '+(followed?'active':'')+'" onclick="event.stopPropagation(); toggleFollow(edgeBoardStore['+index+'].row); renderEdgeTerminal();">'+(followed?'⭐ Following':'⭐ Tap to Follow')+'</button>'; }
 function boardProfileButton(item){ if(!item||!item.row||!item.row.personId) return ''; const profileId=registerProfile(item.row,item.source); return '<button class="profile-btn" onclick="event.stopPropagation(); openProfile('+profileId+')">Profile</button>'; }
 function edgeRowHtml(item,index){ const active=activeEdgeRowId===item.id?' active':''; const isTeam=item.group==='team'; return '<tr class="edge-row'+active+'" onclick="openEdgeDrawer(\''+h(item.id)+'\')">'+
-  '<td><span class="edge-rank-pill">'+(index+1)+'</span></td>'+
-  '<td><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(isTeam?(item.source||'Team trend'):(item.row.team||''))+'</div></div></div></td>'+
-  '<td><span class="signal-label-pill '+(item.group==='pitcher'?'pitcher':item.group==='hitter'?'hitter':'team')+'">'+h(item.type)+'</span></td>'+
-  '<td>'+h(item.game||item.row.game||item.row.status||'Today')+'</td>'+
-  '<td class="edge-score-cell">'+h(item.score)+'</td>'+
-  '<td><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></td>'+
-  '<td><div class="edge-signal">'+h(item.signal)+'</div></td>'+
+  '<td data-label="Rank"><span class="edge-rank-pill">'+(index+1)+'</span></td>'+
+  '<td data-label="Player"><div class="edge-player-cell"><img class="edge-team-logo" src="'+logo(item.row.teamId)+'"><div><div class="edge-player-name">'+h(item.row.name)+'</div><div class="edge-player-team">'+h(isTeam?(item.source||'Team trend'):(item.row.team||''))+'</div></div></div></td>'+
+  '<td data-label="Type"><span class="signal-label-pill '+(item.group==='pitcher'?'pitcher':item.group==='hitter'?'hitter':'team')+'">'+h(item.type)+'</span></td>'+
+  '<td data-label="Game">'+h(item.game||item.row.game||item.row.status||'Today')+'</td>'+
+  '<td data-label="Edge" class="edge-score-cell">'+h(item.score)+'</td>'+
+  '<td data-label="Confidence"><span class="edge-confidence-pill '+confidenceClass(item.confidence)+'">'+h(item.confidence)+'</span></td>'+
+  '<td data-label="Key Signal"><div class="edge-signal">'+h(item.signal)+'</div></td>'+
   '</tr>'; }
 function renderTopEdgeCards(){ const el=document.getElementById('boardTopEdges'); if(!el) return; const top=edgeBoardStore.slice(0,3); if(!top.length){ el.innerHTML='<div class="loading">Top edges will load once today’s data arrives.</div>'; return; } el.innerHTML=top.map((item,index)=>'<article class="top-edge-card" onclick="openEdgeDrawer(\''+h(item.id)+'\')"><div class="top-edge-rank">'+(index+1)+'</div><div class="top-edge-score">'+h(item.score)+'<span>Edge</span></div><div class="top-edge-player">'+h(item.row.name)+'</div><div class="top-edge-meta">'+h(item.type)+' · '+h(item.game||item.row.team||'Today')+'</div><div class="top-edge-signal">'+h(item.signal)+'</div></article>').join(''); }
 
