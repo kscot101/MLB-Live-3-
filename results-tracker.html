@@ -49,6 +49,7 @@
   <script>
     const DAILY_RECAP_API_URL = 'https://diamond-pulse-daily-recap-api.kadescott97.workers.dev';
     const DAILY_PULSE_SYNC_KEY = 'diamond-pulse-main';
+    const DAILY_PULSE_SCHEDULER_URL = 'https://diamond-pulse-scheduler.kadescott97.workers.dev';
     const RESULTS_SYNC_KEY = 'diamond-pulse-results';
     const RESULTS_LEDGER_SYNC_KEY = 'diamond-pulse-results-ytd';
     let trackerState = {date: nyDate(), sourceSnapshot:null, picks:[]};
@@ -63,7 +64,9 @@
     }
     async function apiGet(key,date){const url=DAILY_RECAP_API_URL+'?key='+encodeURIComponent(key)+(date?'&date='+encodeURIComponent(date):''); const res=await fetch(url,{headers:{Accept:'application/json'}}); const data=await res.json().catch(()=>({ok:false,error:'Bad response'})); if(!res.ok||!data.ok) throw new Error(data.error||'Load failed'); return data.snapshot}
     async function apiPost(key,date,payload){const res=await fetch(DAILY_RECAP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,date,payload})}); const data=await res.json().catch(()=>({ok:false,error:'Bad response'})); if(!res.ok||!data.ok) throw new Error(data.error||'Save failed'); return data}
-    async function loadLatestDailyPulse(){try{setStatus('Loading latest saved Daily Pulse...'); const snap=await apiGet(DAILY_PULSE_SYNC_KEY); trackerState.date=snap.date||nyDate(); document.getElementById('trackerDate').value=trackerState.date; trackerState.sourceSnapshot=snap; trackerState.picks=picksFromSnapshot(snap); const saved=await loadTrackerLocalOrCloud(trackerState.date, false); if(saved && Array.isArray(saved.picks)){ mergeSavedResults(saved.picks); } render(); setStatus('Loaded '+trackerState.picks.length+' picks from saved Daily Pulse for '+trackerState.date+'.');}catch(err){setStatus('Could not load Daily Pulse: '+(err.message||err));}}
+    async function schedulerGetDailyPulse(date){const url=DAILY_PULSE_SCHEDULER_URL+'/latest'+(date?'?date='+encodeURIComponent(date):''); const res=await fetch(url,{headers:{Accept:'application/json'},cache:'no-store'}); const data=await res.json().catch(()=>({ok:false,error:'Bad scheduler response'})); if(!res.ok||!data.ok||!data.snapshot) throw new Error(data.error||'Scheduler Daily Pulse load failed'); return data.snapshot}
+    async function schedulerRunNowDailyPulse(){const res=await fetch(DAILY_PULSE_SCHEDULER_URL+'/run-now',{headers:{Accept:'application/json'},cache:'no-store'}); const data=await res.json().catch(()=>({ok:false,error:'Bad scheduler response'})); if(!res.ok||!data.ok||!data.snapshot) throw new Error(data.error||'Scheduler Daily Pulse generation failed'); return data.snapshot}
+    async function loadLatestDailyPulse(){try{setStatus('Loading today’s scheduler-generated Daily Pulse picks...'); let snap; try{ snap=await schedulerGetDailyPulse(nyDate()); }catch(todayErr){ try{ snap=await schedulerGetDailyPulse(); }catch(latestErr){ snap=await schedulerRunNowDailyPulse(); } } trackerState.date=snap.date||nyDate(); document.getElementById('trackerDate').value=trackerState.date; trackerState.sourceSnapshot=snap; trackerState.picks=picksFromSnapshot(snap); const saved=await loadTrackerLocalOrCloud(trackerState.date, false); if(saved && Array.isArray(saved.picks)){ mergeSavedResults(saved.picks); } render(); setStatus('Loaded '+trackerState.picks.length+' picks from the scheduled Daily Pulse Worker for '+trackerState.date+'.');}catch(err){setStatus('Could not load Daily Pulse yet: '+(err.message||err)+'. Check the scheduler Worker /run-now and /latest endpoints.');}}
     async function loadTrackerLocalOrCloud(date,show=true){try{const snap=await apiGet(RESULTS_SYNC_KEY,date); if(show) setStatus('Loaded saved tracker for '+date+'.'); return snap}catch(err){try{return JSON.parse(localStorage.getItem('diamondPulseResults_'+date)||'null')}catch(e){return null}}}
     function mergeSavedResults(savedPicks){const byId=new Map(savedPicks.map(p=>[p.id,p])); trackerState.picks=trackerState.picks.map(p=>({...p,...(byId.get(p.id)||{}),source:p.source,signal:p.signal||((byId.get(p.id)||{}).signal)}));}
     function updateInput(id,key,value){const p=trackerState.picks.find(x=>x.id===id); if(!p)return; p.inputs=p.inputs||{}; p.inputs[key]=value; gradePick(p); render(false)}
@@ -97,6 +100,7 @@
     async function copyRecap(){buildRecap(); const text=document.getElementById('recapBox').value; try{await navigator.clipboard.writeText(text); setStatus('Results recap copied.')}catch(err){setStatus('Copy failed. Highlight the recap text and copy it manually.')}}
     document.getElementById('trackerDate').value=nyDate();
     render();
+    loadLatestDailyPulse().catch(()=>{});
   </script>
 </body>
 </html>
