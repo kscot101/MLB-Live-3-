@@ -644,6 +644,29 @@
     .fallback-board-row { opacity: .92; }
 
 
+
+    /* Homepage auto Daily Pulse picks */
+    .homepage-picks-board{margin-top:22px;border:1px solid rgba(190,242,100,.20);border-radius:30px;background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(2,6,23,.72));box-shadow:0 22px 70px rgba(0,0,0,.22);padding:18px;position:relative;overflow:hidden;}
+    .homepage-picks-board:before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 20% 0%,rgba(190,242,100,.12),transparent 32%),radial-gradient(circle at 100% 20%,rgba(34,197,94,.10),transparent 28%);pointer-events:none;}
+    .homepage-picks-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:relative;z-index:1;}
+    .homepage-picks-status{color:#94a3b8;font-size:12px;font-weight:800;margin-top:6px;line-height:1.45;}
+    .homepage-picks-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end;}
+    .homepage-picks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;position:relative;z-index:1;}
+    .homepage-pick-group{border:1px solid rgba(148,163,184,.16);border-radius:24px;background:rgba(2,6,23,.46);padding:14px;min-width:0;}
+    .homepage-pick-group-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .homepage-pick-group-title strong{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#e5e7eb;}
+    .homepage-pick-group-title span{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#bef264;font-weight:950;border:1px solid rgba(190,242,100,.20);border-radius:999px;padding:4px 8px;background:rgba(190,242,100,.08);}
+    .homepage-pick-card{border:1px solid rgba(190,242,100,.13);border-radius:18px;background:rgba(15,23,42,.72);padding:12px;margin-top:8px;}
+    .homepage-pick-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+    .homepage-pick-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#86efac;font-weight:950;margin-bottom:4px;}
+    .homepage-pick-name{font-size:15px;color:#f8fafc;font-weight:950;line-height:1.15;}
+    .homepage-pick-meta{font-size:11px;color:#94a3b8;font-weight:800;margin-top:4px;line-height:1.35;}
+    .homepage-pick-score{min-width:48px;text-align:center;border-radius:16px;background:rgba(190,242,100,.10);border:1px solid rgba(190,242,100,.22);padding:8px 7px;color:#bef264;font-size:18px;font-weight:1000;line-height:1;}
+    .homepage-pick-score span{display:block;margin-top:3px;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;}
+    .homepage-pick-reason{font-size:12px;color:#cbd5e1;font-weight:750;line-height:1.45;margin-top:9px;}
+    .homepage-pick-empty{border:1px dashed rgba(148,163,184,.24);border-radius:18px;padding:16px;color:#94a3b8;font-size:12px;line-height:1.45;background:rgba(15,23,42,.38);}
+    @media (max-width: 900px){ .homepage-picks-head{display:block;} .homepage-picks-actions{justify-content:flex-start;margin-top:12px;} .homepage-picks-grid{grid-template-columns:1fr;} }
+
     /* Homepage proof tracker */
     .homepage-proof-board { margin-top:18px; border:1px solid rgba(190,242,100,.22); background:linear-gradient(180deg, rgba(15,23,42,.90), rgba(2,6,23,.78)); border-radius:30px; padding:18px; box-shadow:0 24px 80px rgba(0,0,0,.28); }
     .homepage-proof-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; border-bottom:1px solid rgba(148,163,184,.12); padding-bottom:14px; margin-bottom:14px; }
@@ -855,6 +878,30 @@
       .panel-title { font-size: 19px; }
     }
 
+
+
+    /* Simplified homepage + yesterday proof card */
+    .quick-nav-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .quick-nav-btn { text-decoration:none; border:1px solid rgba(190,242,100,.25); background:rgba(190,242,100,.10); color:#ecfccb; padding:10px 13px; border-radius:999px; font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
+    .quick-nav-btn.secondary { border-color:rgba(148,163,184,.18); background:rgba(15,23,42,.66); color:#cbd5e1; }
+    .terminal-hero { grid-template-columns:minmax(0,1fr) 320px !important; }
+    .terminal-grid { margin-top:14px; }
+    .lower-grid { display:none !important; }
+    .data-dock.secondary-rooms { margin-top:14px; padding:0; overflow:hidden; }
+    .data-dock.secondary-rooms > summary { list-style:none; cursor:pointer; padding:16px 18px; display:flex; justify-content:space-between; align-items:center; gap:14px; border-radius:28px; }
+    .data-dock.secondary-rooms > summary::-webkit-details-marker { display:none; }
+    .data-dock.secondary-rooms > summary::after { content:'Open'; color:#bef264; font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.10em; border:1px solid rgba(190,242,100,.25); border-radius:999px; padding:8px 10px; background:rgba(190,242,100,.08); }
+    .data-dock.secondary-rooms[open] > summary::after { content:'Close'; }
+    .data-dock-inner { padding:0 18px 18px; }
+    .proof-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .proof-card.yesterday-card { border-color:rgba(190,242,100,.42); background:linear-gradient(180deg, rgba(190,242,100,.13), rgba(2,6,23,.76)); box-shadow:0 18px 48px rgba(190,242,100,.10); }
+    .yesterday-mini-list { margin-top:10px; display:grid; gap:6px; }
+    .yesterday-mini-item { border:1px solid rgba(148,163,184,.16); background:rgba(2,6,23,.32); border-radius:13px; padding:8px; font-size:12px; color:#cbd5e1; }
+    .homepage-proof-board { margin-top:18px; }
+    .homepage-proof-head { align-items:center; }
+    .proof-table-wrap { max-height:330px; overflow:auto; }
+    @media (max-width: 1180px){ .proof-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .terminal-hero{grid-template-columns:1fr !important;} }
+    @media (max-width: 720px){ .proof-grid{grid-template-columns:1fr;} .quick-nav-row{overflow-x:auto; flex-wrap:nowrap; padding-bottom:2px;} .quick-nav-btn{white-space:nowrap;} .data-dock.secondary-rooms > summary{align-items:flex-start;} }
   </style>
 </head>
 <body class="board-mode">
@@ -911,14 +958,19 @@
     <section class="terminal-hero">
       <article class="hero-card">
         <div class="eyebrow">Live MLB Model Updates</div>
-        <h2 class="hero-title">Baseball insights backed by <span>live data.</span></h2>
-        <p class="hero-copy">The Diamond Pulse separates pitcher signals, hitter signals, and team trends into a cleaner betting board backed by live MLB data.</p>
+        <h2 class="hero-title">Today’s cleanest <span>MLB signals.</span></h2>
+        <p class="hero-copy">Top pitcher, hitter, and team reads are separated so the board is easier to scan. Open a row for the full evidence trail.</p>
+        <div class="quick-nav-row">
+          <a class="quick-nav-btn" href="#edgeBoardBody">View edge board</a>
+          <a class="quick-nav-btn" href="#homepageProofBoard">View results</a>
+          <a class="quick-nav-btn secondary" href="/live-board.html">Live games</a>
+        </div>
         <div id="boardTopEdges" class="board-top-cards"><div class="loading">Loading top edges...</div></div>
       </article>
 
       <aside class="drawer-card snapshot-card">
         <div class="eyebrow">Slate Snapshot</div>
-        <div class="panel-sub">Pitcher, hitter, team, and H2H signals are separated. Pitcher edges now require current form before H2H can boost the case.</div>
+        <div class="panel-sub">Quick slate count for the board. Live games are kept on a separate page so the homepage stays focused.</div>
         <div id="boardSnapshot" class="snapshot-grid">
           <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Edges</div></div>
           <div class="snapshot-tile"><div class="snapshot-value">--</div><div class="snapshot-label">Live Games</div></div>
@@ -928,13 +980,32 @@
       </aside>
     </section>
 
+
+
+    <section class="homepage-picks-board" id="homepageDailyPicksBoard">
+      <div class="homepage-picks-head">
+        <div>
+          <div class="panel-kicker">Today’s Picks</div>
+          <h2 class="panel-title">Daily Pulse watchlist</h2>
+          <div class="homepage-picks-status" id="homepageDailyPicksStatus">Loading today’s six picks from the Daily Pulse engine...</div>
+        </div>
+        <div class="homepage-picks-actions">
+          <button class="results-board-link" onclick="refreshHomepageDailyPicks(true)">Refresh Picks</button>
+        </div>
+      </div>
+      <div class="homepage-picks-grid" id="homepageDailyPicksGrid">
+        <div class="homepage-pick-group"><div class="homepage-pick-empty">Loading Round the Mound pitcher picks...</div></div>
+        <div class="homepage-pick-group"><div class="homepage-pick-empty">Loading Batters Edge hitter picks...</div></div>
+      </div>
+    </section>
+
     <section class="terminal-grid">
       <article class="terminal-panel">
         <div class="panel-head">
           <div>
             <div class="panel-kicker">The Edge Board</div>
             <h2 class="panel-title">Sortable slate signals</h2>
-            <div class="panel-sub">Click any pitcher, hitter, or team signal. The drawer opens with the explanation, boxscore trail, H2H notes, and context. Use the Live tab for live games only.</div>
+            <div class="panel-sub">Scan the best pregame signals first. Click a row to open the read, recent boxscores, H2H notes, and context.</div>
           </div>
         </div>
 
@@ -968,38 +1039,25 @@
       </aside>
     </section>
 
-    <section class="lower-grid">
-      <article class="feed-panel live-router-card">
-        <div class="panel-kicker">Dedicated Live Tracker</div>
-        <h2 class="panel-title">Live games stay separate</h2>
-        <div class="panel-sub">The homepage stays focused on pregame signals. Use the Live tab for in-game hit leaders, K leaders, latest hit basepaths, and live game status.</div>
-        <a class="big-live-link" href="/live-board.html">Open Live Tab</a>
-      </article>
+    <div id="boardWatchlist" style="display:none;"></div>
 
-
-      <aside class="watch-panel">
-        <div class="panel-kicker">Watchlist</div>
-        <h2 class="panel-title">Followed players</h2>
-        <div class="panel-sub">Tap follow in the drawer to keep players here.</div>
-        <div id="boardWatchlist" class="watch-grid" style="margin-top:12px;"><div class="loading">No followed players yet.</div></div>
-      </aside>
-    </section>
-
-    <section class="data-dock">
-      <div class="panel-head data-dock-head">
+    <details class="data-dock secondary-rooms">
+      <summary>
         <div>
-          <div class="panel-kicker">Separated Signal Rooms</div>
-          <h2 class="panel-title">Pitcher, hitter, and team stats split into clean rooms</h2>
-          <div class="panel-sub">Pitcher, hitter, and team rooms are separated on purpose. The homepage proof board tracks day, week, and YTD pick results at the bottom.</div>
+          <div class="panel-kicker">More Signal Rooms</div>
+          <h2 class="panel-title">Pitcher, hitter, team, and game details</h2>
+          <div class="panel-sub">Collapsed by default to keep the homepage cleaner. Open this when you want the deeper room-by-room stat lists.</div>
         </div>
-      </div>
+      </summary>
+      <div class="data-dock-inner">
       <div class="data-dock-grid">
         <article class="data-dock-card"><div class="dock-title">Pitcher Stats</div><div class="dock-subhead">Pitcher H2H, form, whiff, and K profile</div><div id="dockArms" class="dock-list"><div class="loading">Loading pitching data...</div></div></article>
         <article class="data-dock-card"><div class="dock-title">Hitter Stats</div><div class="dock-subhead">Batter H2H, hot bats, hit streaks, and recent boxscores</div><div id="dockBats" class="dock-list"><div class="loading">Loading hitting data...</div></div></article>
         <article class="data-dock-card"><div class="dock-title">Team Stats</div><div class="dock-subhead">Team strikeouts, team hits, whiff, and previous game trends</div><div id="dockH2H" class="dock-list"><div class="loading">Loading H2H data...</div></div></article>
         <article class="data-dock-card"><div class="dock-title">Game Hubs</div><div class="dock-subhead">Tap a matchup for full game context</div><div id="dockGames" class="dock-list"><div class="loading">Loading games...</div></div></article>
       </div>
-    </section>
+      </div>
+    </details>
 
 
 
@@ -1007,15 +1065,16 @@
       <div class="homepage-proof-head">
         <div>
           <div class="panel-kicker">Proof Board</div>
-          <h2 class="panel-title">Picks tracker</h2>
-          <div class="proof-status" id="homepageProofStatus">Loading Daily Pulse results...</div>
+          <h2 class="panel-title">Results tracker</h2>
+          <div class="proof-status" id="homepageProofStatus">Loading day, week, YTD, and yesterday’s results...</div>
         </div>
         <div class="tracker-actions">
           <button class="results-board-link" onclick="loadHomepageProofTracker(true)">Refresh Tracker</button>
         </div>
       </div>
       <div class="proof-grid" id="homepageProofSummary">
-        <div class="proof-card"><div class="loading">Loading daily results...</div></div>
+        <div class="proof-card"><div class="loading">Loading yesterday’s results...</div></div>
+        <div class="proof-card"><div class="loading">Loading latest results...</div></div>
         <div class="proof-card"><div class="loading">Loading weekly results...</div></div>
         <div class="proof-card"><div class="loading">Loading YTD results...</div></div>
       </div>
@@ -1677,6 +1736,7 @@ function renderAllData(){
   renderWatchlist();
   renderEdgeTerminal();
   renderDataDock();
+  scheduleHomepageDailyPicks(false);
 }
 function liveStatus(live){ const state=live.gameData.status.detailedState||"Live"; const line=live.liveData.linescore||{}; if(line.currentInningOrdinal&&line.inningState) return state+" · "+line.inningState+" "+line.currentInningOrdinal; return state; }
 async function loadLiveStats(){ const today=nyDate(0); const schedule=await getJson("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+today); let liveGames=[], liveKs=[], liveHits=[]; (schedule.dates||[]).forEach(date=>date.games.forEach(game=>{ if(game.status.abstractGameState==="Live") liveGames.push(game); })); for(const game of liveGames){ const live=await getGameFeed(game.gamePk); const latestHitMap=buildLatestHitMap(live); const awayTeam=live.gameData.teams.away, homeTeam=live.gameData.teams.home; const gameText=awayTeam.name+" @ "+homeTeam.name; const statusText=liveStatus(live); ["away","home"].forEach(side=>{ const team=side==="away"?awayTeam:homeTeam; const players=live.liveData.boxscore.teams[side].players||{}; Object.values(players).forEach(player=>{ const pitching=player.stats&&player.stats.pitching; const batting=player.stats&&player.stats.batting; if(pitching&&Number(pitching.strikeOuts||0)>0) liveKs.push({value:Number(pitching.strikeOuts||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,boxscoreGroup:"pitching"}); if(batting&&Number(batting.hits||0)>0){ const hitInfo=latestHitMap[player.person.id]||{}; liveHits.push({value:Number(batting.hits||0),name:player.person.fullName,personId:player.person.id,team:team.name,game:gameText,gamePk:game.gamePk,status:statusText,teamId:team.id,lastHitType:hitInfo.lastHitType,lastHitLabel:hitInfo.lastHitLabel,lastHitBases:hitInfo.lastHitBases,lastHitInning:hitInfo.lastHitInning,lastHitDescription:hitInfo.lastHitDescription,boxscoreGroup:"hitting"}); } }); }); } liveKs.sort((a,b)=>b.value-a.value); liveHits.sort((a,b)=>b.value-a.value); await attachRecentBoxscores(liveKs,"pitching",3); await attachRecentBoxscores(liveHits,"hitting",3); appState.liveKs=liveKs; appState.liveHits=liveHits; renderAllData(); document.getElementById("lastUpdated").innerText="Last live update: "+new Date().toLocaleTimeString()+" · Live games: "+liveGames.length; }
@@ -1763,6 +1823,214 @@ window.addEventListener("error", function(e){ showSiteError(e.error || e.message
 window.addEventListener("unhandledrejection", function(e){ showSiteError(e.reason || e); });
 
 
+
+
+const DAILY_PULSE_SYNC_KEY = 'diamond-pulse-main';
+const DAILY_PULSE_SCHEDULER_URL = 'https://diamond-pulse-scheduler.kadescott97.workers.dev';
+async function schedulerDailyPulseGet(date){
+  const url = DAILY_PULSE_SCHEDULER_URL + '/latest' + (date ? '?date=' + encodeURIComponent(date) : '');
+  const res = await fetch(url,{headers:{Accept:'application/json'},cache:'no-store'});
+  const data = await res.json().catch(()=>({ok:false,error:'Bad scheduler response'}));
+  if(!res.ok || !data.ok || !data.snapshot) throw new Error(data.error || 'Scheduler Daily Pulse load failed');
+  return data.snapshot;
+}
+async function schedulerDailyPulseRunNow(){
+  const res = await fetch(DAILY_PULSE_SCHEDULER_URL + '/run-now',{headers:{Accept:'application/json'},cache:'no-store'});
+  const data = await res.json().catch(()=>({ok:false,error:'Bad scheduler response'}));
+  if(!res.ok || !data.ok || !data.snapshot) throw new Error(data.error || 'Scheduler Daily Pulse generation failed');
+  return data.snapshot;
+}
+let homepageDailyPulseState = { loadedDate:'', snapshot:null, saving:false, refreshTimer:null };
+
+function safeInt(v){ return Number.isFinite(Number(v)) ? Number(v) : 0; }
+function dailyPulseApiPost(key,date,payload){
+  return fetch(DAILY_RECAP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,date,payload})})
+    .then(res=>res.json().catch(()=>({ok:false,error:'Bad response'})).then(data=>{ if(!res.ok||!data.ok) throw new Error(data.error||'Save failed'); return data; }));
+}
+function dailyPulseApiGet(key,date){ return proofApiGet(key,date); }
+function dailyPulsePickId(prefix,row,idx){ return prefix+'-'+(row&&row.personId?row.personId:idx); }
+function compactDailyPulseSource(row,group,rank,source,score){
+  return {
+    rank, group, source, score,
+    name:row&&row.name||'', personId:row&&row.personId||'', team:row&&row.team||'', teamId:row&&row.teamId||'',
+    opponent:row&&row.opponent||'', opponentId:row&&row.opponentId||'', game:row&&row.game||'', signal:edgeSignal(row||{},source||''),
+    value:row&&row.value||0, whiffPct:row&&row.whiffPct||'', seasonKRank:row&&row.seasonKRank||'', seasonKs:row&&row.seasonKs||'',
+    k9:row&&row.k9||'', era:row&&row.era||'', whip:row&&row.whip||'', qualifiedGames:row&&row.qualifiedGames||0,
+    bestKs:row&&row.bestKs||0, hits:row&&row.hits||0, hr:row&&row.hr||0, hrPulsePct:row&&row.hrPulsePct||'',
+    recentBoxscores:row&&row.recentBoxscores||[], logs:row&&row.logs||[]
+  };
+}
+function addUniquePulseCandidate(list,map,row,source,group,bucket,extraScore){
+  if(!row) return;
+  const id = String(row.personId || row.name || '') + ':' + group;
+  if(!id || id===':') return;
+  const score = group==='pitcher' ? pitcherEdgeScore(row,source||'') : hitterEdgeScore(row,source||'');
+  const item = {row,source,group,bucket,score:Math.round(score + (extraScore||0))};
+  const old = map.get(id);
+  if(!old || item.score > old.score){ map.set(id,item); }
+}
+function selectHomepagePitcherPicks(){
+  const map = new Map();
+  (appState.hotPitchers||[]).forEach(row=>addUniquePulseCandidate(null,map,row,'Current Form Edge','pitcher','Best Current Form Arm',4));
+  (appState.pitcherPostPool||[]).forEach(row=>{
+    const seasonScore = pitcherSeasonAuthorityScore(row);
+    const bucket = seasonScore>=18 ? 'Best Proven K Arm' : 'Best Upside / Matchup Arm';
+    addUniquePulseCandidate(null,map,row,'Probable Starter Pool','pitcher',bucket,seasonScore>=18?5:0);
+  });
+  (appState.pitcherH2H||[]).forEach(row=>{
+    const eligible = pitcherCurrentFormEligible(row);
+    addUniquePulseCandidate(null,map,row,'Pitcher H2H Support','pitcher',eligible?'Best Matchup Support Arm':'H2H Note Only',eligible?0:-12);
+  });
+  const all = Array.from(map.values()).sort((a,b)=>b.score-a.score);
+  const used = new Set();
+  const picks=[];
+  function take(predicate,label){
+    const item = all.find(x=>!used.has(String(x.row.personId||x.row.name)) && predicate(x));
+    if(item){ used.add(String(item.row.personId||item.row.name)); picks.push({...item,bucket:label||item.bucket}); }
+  }
+  take(x=>pitcherSeasonAuthorityScore(x.row)>=18,'Best Proven K Arm');
+  take(x=>x.source.includes('Current Form') || pitcherRecentFormScore(x.row)>=16,'Best Current Form Arm');
+  take(x=>true,'Best Upside / Matchup Arm');
+  while(picks.length<3){ take(x=>true, picks.length===0?'Best Proven K Arm':(picks.length===1?'Best Current Form Arm':'Best Upside / Matchup Arm')); if(used.size>=all.length) break; }
+  return picks.slice(0,3);
+}
+function selectHomepageHitterPicks(){
+  const map = new Map();
+  (appState.batterH2H||[]).forEach(row=>addUniquePulseCandidate(null,map,row,'Batter H2H Edge','batter','Starter Matchup',4));
+  (appState.hotHitters||[]).forEach(row=>addUniquePulseCandidate(null,map,row,'Hot Bat Edge','batter','Current Form',2));
+  (appState.streakingHitters||[]).forEach(row=>addUniquePulseCandidate(null,map,row,'Hit Streak Edge','batter','Contact Form',1));
+  (appState.liveHits||[]).forEach(row=>addUniquePulseCandidate(null,map,row,'Live Hit Edge','batter','Live Movement',0));
+  const all = Array.from(map.values()).sort((a,b)=>b.score-a.score);
+  const used = new Set();
+  const picks=[];
+  function take(predicate,label){ const item=all.find(x=>!used.has(String(x.row.personId||x.row.name)) && predicate(x)); if(item){used.add(String(item.row.personId||item.row.name)); picks.push({...item,bucket:label||item.bucket});} }
+  take(x=>x.source.includes('Batter H2H'),'Starter Matchup');
+  take(x=>x.source.includes('Hot Bat') || x.source.includes('Streak'),'Current Form');
+  take(x=>true,'Power / Live Watch');
+  while(picks.length<3){ take(x=>true, picks.length===0?'Starter Matchup':(picks.length===1?'Current Form':'Power / Live Watch')); if(used.size>=all.length) break; }
+  return picks.slice(0,3);
+}
+function pitcherPulseText(item,index){
+  const row=item.row||{};
+  const score=item.score||pitcherEdgeScore(row,item.source||'');
+  const tier=pitcherHomepageTier(row,score);
+  const current=pitcherRecentLine(row);
+  const authority=pitcherStrikeoutAuthority(row);
+  const h2h=pitcherH2HLine(row);
+  const env=weatherTimeContext(row);
+  return 'Round the Mound #'+(index+1)+' — '+(row.name||'Pitcher Read')+'\n'+
+    item.bucket+' · '+tier+'\n'+
+    (row.team||'')+(row.opponent?' vs '+row.opponent:'')+'\n\n'+
+    'Current form: '+current+'\n'+
+    'Season K profile: '+authority+'\n'+
+    'Matchup/H2H: '+h2h+'\n'+
+    'Weather/time: '+env+'\n\n'+
+    'Read: '+pitcherBalancedEvaluationLine(row);
+}
+function hitterPulseText(item,index){
+  const row=item.row||{};
+  const score=item.score||hitterEdgeScore(row,item.source||'');
+  const signal=edgeSignal(row,item.source||'');
+  const recent=row.recentBoxscores&&row.recentBoxscores.length?row.recentBoxscores.slice(0,3).map(g=>(g.date||'')+': '+(g.hits||0)+' H'+(g.hr?(' · '+g.hr+' HR'):'')).join(' | '):(row.logs&&row.logs.length?row.logs.slice(0,3).map(g=>(g.date||'')+': '+(g.hits||0)+' H').join(' | '):'Recent boxscore sample unavailable');
+  return 'Batters Edge #'+(index+1)+' — '+(row.name||'Hitter Read')+'\n'+
+    item.bucket+' · Edge '+score+'\n'+
+    (row.team||'')+(row.opponent?' vs '+row.opponent:'')+'\n\n'+
+    'Primary signal: '+signal+'\n'+
+    'Power/contact context: '+(row.hrPulsePct?('HR Pulse '+row.hrPulsePct+'% · '):'')+(row.hits?row.hits+' H ':'')+(row.hr?row.hr+' HR ':'')+'\n'+
+    'Recent form: '+recent+'\n\n'+
+    'Read: '+(item.source&&item.source.includes('Batter H2H')?'Starter history and power context are the main driver.':'Current contact form and matchup context are the main driver.');
+}
+function buildHomepageDailyPulseSnapshot(){
+  const date=nyDate(0);
+  const pitcherItems=selectHomepagePitcherPicks();
+  const hitterItems=selectHomepageHitterPicks();
+  const generatedPosts=[];
+  pitcherItems.forEach((item,i)=>generatedPosts.push({
+    id:dailyPulsePickId('round-the-mound',item.row,i), group:'pitcher', label:'Round the Mound #'+(i+1), title:'Round the Mound #'+(i+1)+': '+(item.row.name||'Pitcher Read'),
+    meta:[item.bucket,pitcherHomepageTier(item.row,item.score),pitcherStrikeoutAuthority(item.row)], text:pitcherPulseText(item,i),
+    source:compactDailyPulseSource(item.row,'pitcher',i+1,item.source,item.score)
+  }));
+  hitterItems.forEach((item,i)=>generatedPosts.push({
+    id:dailyPulsePickId('batters-edge',item.row,i), group:'batter', label:'Batters Edge #'+(i+1), title:'Batters Edge #'+(i+1)+': '+(item.row.name||'Hitter Read'),
+    meta:[item.bucket,'Edge '+item.score,(item.row.hrPulsePct?'HR Pulse '+item.row.hrPulsePct+'%':edgeSignal(item.row,item.source))], text:hitterPulseText(item,i),
+    source:compactDailyPulseSource(item.row,'batter',i+4,item.source,item.score)
+  }));
+  return {
+    site:'Diamond Pulse', saveType:'daily-recap', version:7, date, savedAt:new Date().toISOString(),
+    purpose:'Homepage auto-generated Daily Pulse picks: three Round the Mound pitcher posts and three Batters Edge hitter posts',
+    postMode:'six-split-posts', generatedPosts,
+    postGroups:{pitchers:generatedPosts.filter(p=>p.group==='pitcher').map(p=>p.id), batters:generatedPosts.filter(p=>p.group==='batter').map(p=>p.id)},
+    summary:{posts:generatedPosts.length,pitcherPosts:generatedPosts.filter(p=>p.group==='pitcher').length,batterPosts:generatedPosts.filter(p=>p.group==='batter').length,signals:generatedPosts.length,live:(appState.scoreGames||[]).filter(g=>g.status&&g.status.abstractGameState==='Live').length,pitchers:pitcherItems.length,hitters:hitterItems.length}
+  };
+}
+function homepagePickCard(post){
+  const src=post.source||{};
+  const meta=(post.meta||[]).filter(Boolean).slice(0,2).join(' · ');
+  return '<article class="homepage-pick-card"><div class="homepage-pick-top"><div><div class="homepage-pick-label">'+h(post.label||'Pick')+'</div><div class="homepage-pick-name">'+h(src.name||String(post.title||'').replace(/^.*?:\s*/,''))+'</div><div class="homepage-pick-meta">'+h((src.team||'')+(src.opponent?' vs '+src.opponent:'')+(meta?' · '+meta:''))+'</div></div><div class="homepage-pick-score">'+h(src.score||'--')+'<span>edge</span></div></div><div class="homepage-pick-reason">'+h((src.signal||post.text||'').split(/\n/)[0]).slice(0,180)+'</div></article>';
+}
+function renderHomepageDailyPicks(snapshot){
+  const grid=document.getElementById('homepageDailyPicksGrid');
+  const status=document.getElementById('homepageDailyPicksStatus');
+  if(!grid||!status) return;
+  const posts=(snapshot&&Array.isArray(snapshot.generatedPosts))?snapshot.generatedPosts:[];
+  const pitchers=posts.filter(p=>p.group==='pitcher');
+  const batters=posts.filter(p=>p.group==='batter');
+  status.textContent = posts.length ? ('Today’s picks loaded for '+(snapshot.date||nyDate(0))+' · '+pitchers.length+' pitchers · '+batters.length+' hitters. These are also saved for the tracker when cloud storage is available.') : 'No Daily Pulse picks are ready yet. Refresh after the board data finishes loading.';
+  grid.innerHTML = '<article class="homepage-pick-group"><div class="homepage-pick-group-title"><strong>Round the Mound</strong><span>'+pitchers.length+' pitchers</span></div>'+(pitchers.length?pitchers.map(homepagePickCard).join(''):'<div class="homepage-pick-empty">No pitcher picks generated yet.</div>')+'</article>'+
+    '<article class="homepage-pick-group"><div class="homepage-pick-group-title"><strong>Batters Edge</strong><span>'+batters.length+' hitters</span></div>'+(batters.length?batters.map(homepagePickCard).join(''):'<div class="homepage-pick-empty">No hitter picks generated yet.</div>')+'</article>';
+}
+async function refreshHomepageDailyPicks(force){
+  const status=document.getElementById('homepageDailyPicksStatus');
+  if(status) status.textContent = force ? 'Asking the scheduler Worker to generate fresh picks...' : 'Loading scheduler-generated Daily Pulse picks...';
+  const today=nyDate(0);
+
+  try{
+    const schedulerSnapshot = force ? await schedulerDailyPulseRunNow() : await schedulerDailyPulseGet(today);
+    if(schedulerSnapshot && Array.isArray(schedulerSnapshot.generatedPosts) && schedulerSnapshot.generatedPosts.length>=6){
+      homepageDailyPulseState.snapshot=schedulerSnapshot;
+      homepageDailyPulseState.loadedDate=schedulerSnapshot.date || today;
+      renderHomepageDailyPicks(schedulerSnapshot);
+      const st=document.getElementById('homepageDailyPicksStatus');
+      if(st) st.textContent='Today’s six picks loaded from the scheduled Daily Pulse Worker for '+(schedulerSnapshot.date||today)+'.';
+      return schedulerSnapshot;
+    }
+  }catch(err){
+    if(status) status.textContent='Scheduler picks are not ready yet, falling back to browser-generated picks: '+(err.message||err);
+  }
+
+  try{
+    if(!force){
+      const saved=await dailyPulseApiGet(DAILY_PULSE_SYNC_KEY,today);
+      if(saved && saved.date===today && Array.isArray(saved.generatedPosts) && saved.generatedPosts.length>=6){
+        homepageDailyPulseState.snapshot=saved; homepageDailyPulseState.loadedDate=today; renderHomepageDailyPicks(saved); return saved;
+      }
+    }
+  }catch(err){ /* no saved fallback daily pulse yet */ }
+
+  const snapshot=buildHomepageDailyPulseSnapshot();
+  homepageDailyPulseState.snapshot=snapshot; homepageDailyPulseState.loadedDate=today;
+  renderHomepageDailyPicks(snapshot);
+  if(snapshot.generatedPosts.length>=6 && !homepageDailyPulseState.saving){
+    homepageDailyPulseState.saving=true;
+    dailyPulseApiPost(DAILY_PULSE_SYNC_KEY,today,snapshot).then(()=>{
+      homepageDailyPulseState.saving=false;
+      const st=document.getElementById('homepageDailyPicksStatus');
+      if(st) st.textContent='Today’s six browser fallback picks are saved to the Daily Pulse cloud snapshot and ready for the tracker.';
+    }).catch(err=>{
+      homepageDailyPulseState.saving=false;
+      const st=document.getElementById('homepageDailyPicksStatus');
+      if(st) st.textContent='Today’s picks are visible, but fallback cloud save did not finish yet: '+(err.message||err);
+    });
+  }
+  return snapshot;
+}
+function scheduleHomepageDailyPicks(force){
+  if(homepageDailyPulseState.refreshTimer) clearTimeout(homepageDailyPulseState.refreshTimer);
+  homepageDailyPulseState.refreshTimer=setTimeout(()=>refreshHomepageDailyPicks(!!force).catch(err=>{
+    const st=document.getElementById('homepageDailyPicksStatus'); if(st) st.textContent='Could not build today’s picks yet: '+(err.message||err);
+  }), force?100:1200);
+}
+
 const DAILY_RECAP_API_URL = 'https://diamond-pulse-daily-recap-api.kadescott97.workers.dev';
 const RESULTS_SYNC_KEY = 'diamond-pulse-results';
 const RESULTS_LEDGER_SYNC_KEY = 'diamond-pulse-results-ytd';
@@ -1805,8 +2073,9 @@ function proofSummarizeRecords(records, label){
 }
 function proofRate(summary){ return summary.graded ? Math.round((summary.hits / summary.graded) * 100) + '%' : '0%'; }
 function proofLine(summary){ return summary.hits + '-' + summary.misses + (summary.pending ? ' · ' + summary.pending + ' pending' : ''); }
-function proofCard(title, summary, subtitle){
-  return '<article class="proof-card"><div class="proof-card-title"><span>'+h(title)+'</span><span class="proof-badge">'+h(summary.graded)+' graded</span></div><div class="proof-rate">'+h(proofRate(summary))+'</div><div class="proof-meta">'+h(proofLine(summary))+'</div><div class="proof-meta">'+h(subtitle || (summary.dates.length ? summary.dates[0] + (summary.dates.length>1 ? ' - ' + summary.dates[summary.dates.length-1] : '') : 'No saved results yet'))+'</div><div class="proof-split"><div class="proof-mini"><strong>'+h(proofRate(summary.pitchers))+'</strong><span>Pitchers · '+h(summary.pitchers.hits)+'-'+h(summary.pitchers.misses)+'</span></div><div class="proof-mini"><strong>'+h(proofRate(summary.hitters))+'</strong><span>Hitters · '+h(summary.hitters.hits)+'-'+h(summary.hitters.misses)+'</span></div></div></article>';
+function proofCard(title, summary, subtitle, extraClass){
+  const className = 'proof-card' + (extraClass ? ' ' + extraClass : '');
+  return '<article class="'+className+'"><div class="proof-card-title"><span>'+h(title)+'</span><span class="proof-badge">'+h(summary.graded)+' graded</span></div><div class="proof-rate">'+h(proofRate(summary))+'</div><div class="proof-meta">'+h(proofLine(summary))+'</div><div class="proof-meta">'+h(subtitle || (summary.dates.length ? summary.dates[0] + (summary.dates.length>1 ? ' - ' + summary.dates[summary.dates.length-1] : '') : 'No saved results yet'))+'</div><div class="proof-split"><div class="proof-mini"><strong>'+h(proofRate(summary.pitchers))+'</strong><span>Pitchers · '+h(summary.pitchers.hits)+'-'+h(summary.pitchers.misses)+'</span></div><div class="proof-mini"><strong>'+h(proofRate(summary.hitters))+'</strong><span>Hitters · '+h(summary.hitters.hits)+'-'+h(summary.hitters.misses)+'</span></div></div></article>';
 }
 function proofRecordsFromLedger(ledger){
   const records = ledger && ledger.records ? Object.values(ledger.records) : [];
@@ -1828,7 +2097,7 @@ async function loadHomepageProofTracker(force){
   const tbody=document.getElementById('homepageProofTable');
   if(!status || !summaryBox || !tbody) return;
   if(homepageProofState.loaded && !force) return;
-  status.textContent='Loading day, week, and YTD pick results...';
+  status.textContent='Loading yesterday, day, week, and YTD pick results...';
   try{
     let records=[];
     try{
@@ -1841,19 +2110,22 @@ async function loadHomepageProofTracker(force){
     records=records.filter(r=>String(r.date||'').slice(0,4)===String(currentSeason()));
     const today=nyDate(0);
     const latestRecord=records.length ? records[records.length-1] : null;
+    const yesterday=nyDate(-1);
+    const yesterdayRecord=records.find(r=>String(r.date||'')===yesterday) || null;
     const weekStart=proofDateOffset(today,-6);
     const weekRecords=records.filter(r=>String(r.date||'')>=weekStart && String(r.date||'')<=today);
+    const yesterdaySummary=proofSummarizeRecords(yesterdayRecord?[yesterdayRecord]:[], 'Yesterday');
     const daySummary=proofSummarizeRecords(latestRecord?[latestRecord]:[], 'Latest day');
     const weekSummary=proofSummarizeRecords(weekRecords, 'This week');
     const ytdSummary=proofSummarizeRecords(records, 'YTD');
-    summaryBox.innerHTML = proofCard('Latest Day', daySummary, latestRecord ? latestRecord.date : 'No daily tracker saved yet') + proofCard('This Week', weekSummary, weekRecords.length ? 'Last 7 days · '+weekRecords.length+' tracked slate(s)' : 'No week results saved yet') + proofCard('YTD', ytdSummary, records.length ? currentSeason()+' · '+records.length+' tracked slate(s)' : 'No YTD ledger yet');
+    summaryBox.innerHTML = proofCard('Yesterday', yesterdaySummary, yesterdayRecord ? yesterday : 'No saved results for yesterday yet', 'yesterday-card') + proofCard('Latest Day', daySummary, latestRecord ? latestRecord.date : 'No daily tracker saved yet') + proofCard('This Week', weekSummary, weekRecords.length ? 'Last 7 days · '+weekRecords.length+' tracked slate(s)' : 'No week results saved yet') + proofCard('YTD', ytdSummary, records.length ? currentSeason()+' · '+records.length+' tracked slate(s)' : 'No YTD ledger yet');
     if(records.length){
       tableWrap.style.display='block';
       tbody.innerHTML = records.slice(-10).reverse().map(record=>{
         const s=proofSummarizeRecords([record], record.date || '');
         return '<tr><td><strong>'+h(record.date||'--')+'</strong></td><td>'+h(proofLine(s))+' <span class="proof-badge">'+h(proofRate(s))+'</span></td><td>'+h(s.pitchers.hits)+'-'+h(s.pitchers.misses)+' <span style="color:#94a3b8">('+h(proofRate(s.pitchers))+')</span></td><td>'+h(s.hitters.hits)+'-'+h(s.hitters.misses)+' <span style="color:#94a3b8">('+h(proofRate(s.hitters))+')</span></td><td>'+h(s.pending ? s.pending+' pending' : 'Complete')+'</td></tr>';
       }).join('');
-      status.textContent='Tracking latest day, last 7 days, and YTD from saved Results Tracker slates.';
+      status.textContent='Tracking yesterday, latest day, last 7 days, and YTD from saved Results Tracker slates.';
     } else {
       tableWrap.style.display='none';
       status.innerHTML='No saved tracked results found yet. Once picks are graded and saved, day, week, and YTD records will show here.';
@@ -1871,6 +2143,7 @@ function bootDiamondPulse(){
     appState.followedPlayers=loadFollowedPlayers();
     renderAllData();
     loadHomepageProofTracker(false).catch(showSiteError);
+    scheduleHomepageDailyPicks(false);
   } catch(err) {
     showSiteError(err);
   }
